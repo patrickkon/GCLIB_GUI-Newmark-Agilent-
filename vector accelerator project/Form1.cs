@@ -23,16 +23,29 @@ namespace vector_accelerator_project
         private int increment_unit = 10000;
 
         //Variables that store coordinates:
-        int[] abs_position = new int[2] {0,0};
-        int[] start_position = new int[2] { 0, 0};
-        int[] end_position = new int[2] { 0, 0};
+
+        private int[] start_position = new int[2] { 0, 0};
+        private int[] end_position = new int[2] { 0, 0};
         //a list of integer arrays, each with 2 elements:
-        List<int[]> intermediate_positions = new List<int[]>{ new int[2] { 0, 0 } };
+        private List<int[]> intermediate_positions = new List<int[]>{ new int[2] { 0, 0 } };
+
+        // for abs_position the coor will be constantly displayed/updated, so I use this method:
+        public int[] abs_position
+        {
+            get { return _abs_position; }
+            set
+            {
+                _abs_position = value;
+                textBox2.Text = "X = " + _abs_position[0] + " Y = " + _abs_position[1];
+            }
+        }
+        private int[] _abs_position;
 
 
         //Variables that store other parameters:
-        int drop_by = 0;  //axis-c drop by how many units while sampling
-        int[] sample_units = new int[2] { 0, 0 }; //sample every "sample_units" units
+        private int drop_by = 0;  //axis-c drop by how many units while sampling
+        private int[] sample_units = new int[2] { 0, 0 }; //sample every "sample_units" units
+        private int axis_c_rest_position = 0;
 
         #endregion
 
@@ -70,8 +83,10 @@ namespace vector_accelerator_project
 
 
             //disable ability to move before a connection with controller has been established
-            DisconnectStripButton.Enabled = false;
+            DisconnectStripButton.Enabled = false; groupBox1.Enabled = false;
             GeneralGroup.Enabled = false;
+            originButton.Enabled = false; returnOriginButton.Enabled = false;
+            pictureBox1.Enabled = false; textBox6.Enabled = false;
         }
 
         //Various print styles.
@@ -126,6 +141,8 @@ namespace vector_accelerator_project
             }//invoke check
         }
 
+
+        // function still not used as of yet:
         private void runCommand(string command)
         {
             try
@@ -149,12 +166,13 @@ namespace vector_accelerator_project
         }
 
 
-        //Note to self: axis must be in Capital letters
-        private void runMoveCommand(string axis, int distance_units)
+        //Note to self: axis must be in Capital letters.
+        //Simple PR movement:
+        private void runRelativeMoveCommand(string axis, int distance_units)
         {
             try
             {
-                PrintOutput(textBox1, "Preparing " + axis + " axis. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
+                PrintOutput(textBox1, "Preparing " + axis + " axis for PR movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
                 gclib.GCommand("AB;MO;SH" + axis);
                 //compound commands are possible though typically not recommended
                 PrintOutput(textBox1, "Ok");
@@ -170,9 +188,36 @@ namespace vector_accelerator_project
             }
             catch (Exception ex)
             {
-                PrintOutput(textBox1, "ERROR in runMoveCommand on axis " + axis+ ": " + ex.Message, PrintStyle.Instruction);
+                PrintOutput(textBox1, "ERROR in runRelativeMoveCommand on axis " + axis+ ": " + ex.Message, PrintStyle.Instruction);
             }
         }
+
+        //Note to self: axis must be in Capital letters
+        //Simple PA movement:
+        private void runAbsoluteMoveCommand(string axis, int distance_units)
+        {
+            try
+            {
+                PrintOutput(textBox1, "Preparing " + axis + " axis for PA movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
+                gclib.GCommand("AB;MO;SH" + axis);
+                //compound commands are possible though typically not recommended
+                PrintOutput(textBox1, "Ok");
+                gclib.GCommand("PA" + axis + "=" + distance_units);
+
+                //might implement speed control parameter in future
+                gclib.GCommand("SP" + axis + "=" + "5000");
+                PrintOutput(textBox1, "Profiling a move on axis" + axis + "... ", PrintStyle.Normal, true);
+                gclib.GCommand("BG" + axis);
+                PrintOutput(textBox1, "Waiting for motion to complete... ", PrintStyle.Normal, true);
+                gclib.GMotionComplete(axis);
+                PrintOutput(textBox1, "done");
+            }
+            catch (Exception ex)
+            {
+                PrintOutput(textBox1, "ERROR in runAbsoluteMoveCommand on axis " + axis + ": " + ex.Message, PrintStyle.Instruction);
+            }
+        }
+
 
         //Function for event when enter key is pressed, for "unitbox". 
         //registered as eventhandler for unitbox in .designer file
@@ -191,6 +236,43 @@ namespace vector_accelerator_project
                 }
             }
         }
+
+
+        private int[] coor_string_to_int(string text, int[] prev_position)
+        {
+            int[] converted = { 0, 0 };
+            string temp = text.Substring(0, text.IndexOf(", ") + 1);
+            if (Int32.TryParse(temp, out converted[0]) != true)
+            {
+                //if conversion failed
+                converted[0] = prev_position[0];
+            }
+
+            temp = text.Substring(text.IndexOf(", ") + 2);
+            if (Int32.TryParse(temp, out converted[1]) != true)
+            {
+                //if conversion failed
+                converted[1] = prev_position[1];
+            }
+            return converted;
+        }
+
+
+        //display variables that are tied up with textbox4
+        private void display_textbox4()
+        {
+            textBox4.Clear();
+            textBox4.Text += "Start position: " + start_position[0] + ", " + start_position[1] + "\n";
+            textBox4.Text += "End position: " + end_position[0] + ", " + end_position[1] + "\n";
+            foreach (int[] a in intermediate_positions)
+            {
+                textBox4.Text += "Intermediate position: " + a[0] + ", " + a[1] + "\n";
+            }
+            textBox4.Text += "Drop bar by (units): " + drop_by + "\n";
+            textBox4.Text += "Sample every (units): " + sample_units[0] + ", " + sample_units[1] + "\n";
+            textBox4.Text += "Axis-c resting position: " + axis_c_rest_position;
+        }
+
 
         //Note to self: currently not working
         public void Main(string address)
@@ -280,6 +362,12 @@ namespace vector_accelerator_project
 
         #region "Controls currently unused"
 
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
 
@@ -365,6 +453,7 @@ namespace vector_accelerator_project
 
         #endregion
 
+        #region "Completed control implementations"
 
         private void ConnectStripButton_Click(object sender, EventArgs e)
         {
@@ -389,8 +478,11 @@ namespace vector_accelerator_project
                 //can interact with the app:
                 AddressTextBox.Enabled = false;
                 ConnectStripButton.Enabled = false;
-                DisconnectStripButton.Enabled = true;
+
+                DisconnectStripButton.Enabled = true; groupBox1.Enabled = true;
                 GeneralGroup.Enabled = true;
+                originButton.Enabled = true; returnOriginButton.Enabled = true;
+                pictureBox1.Enabled = true; textBox6.Enabled = true;
 
                 return;
             }
@@ -411,11 +503,14 @@ namespace vector_accelerator_project
             gclib.GClose();
             AddressTextBox.Enabled = true;
             ConnectStripButton.Enabled = true;
-            DisconnectStripButton.Enabled = false;
+
+            DisconnectStripButton.Enabled = false; groupBox1.Enabled = false;
             GeneralGroup.Enabled = false;
+            originButton.Enabled = false; returnOriginButton.Enabled = false;
+            pictureBox1.Enabled = false; textBox6.Enabled = false;
+
             PrintOutput(textBox1, "DISCONNECTED!", PrintStyle.Normal);
         }        
-
 
         //Note to self: this is complete. Can be applied to other buttons in this group
         private void button1_Click(object sender, EventArgs e)
@@ -424,8 +519,36 @@ namespace vector_accelerator_project
             //runCommand("i=0\r#A;MG i{N};i=i+1;WT10;JP#A,i<10;EN");
 
             //take a single button click as moving 10000 units in a-axis
-            runMoveCommand("A", increment_unit);           
+            runRelativeMoveCommand("A", increment_unit);           
         }
+
+        //Set as origin button:
+        private void originButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                PrintOutput(textBox1, "Setting origin..", PrintStyle.Normal, true);
+                gclib.GCommand("AB;MO;SH");
+                //command to controller to set origin:
+                gclib.GCommand("DP0,0,0");
+                PrintOutput(textBox1, "done");
+            }
+            catch (Exception ex)
+            {
+                PrintOutput(textBox1, "ERROR in setting gantry origin: " + ex.Message, PrintStyle.Instruction);
+            }
+        }
+
+        //Return to origin button:
+        private void returnOriginButton_Click(object sender, EventArgs e)
+        {
+            runAbsoluteMoveCommand("A", 0);
+            runAbsoluteMoveCommand("B", 0);
+            runAbsoluteMoveCommand("C", 0);
+        }
+
+        #endregion
+
 
         // For mapping grid to movement, based on mouse click in grid box:
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
@@ -439,6 +562,40 @@ namespace vector_accelerator_project
 
         }
 
-       
+        //Set start_position:
+        private void button7_Click(object sender, EventArgs e)
+        {
+            start_position = coor_string_to_int(textBox3.Text, start_position);
+            display_textbox4();
+             
+        }
+
+        //Set end position:
+        private void button10_Click(object sender, EventArgs e)
+        {
+            end_position = coor_string_to_int(textBox3.Text, end_position);
+            display_textbox4();
+        }
+
+        //Add intermediate position:
+        private void button8_Click(object sender, EventArgs e)
+        {
+            int[] temp_pos = new int[2] { 0, 0 }; 
+            temp_pos = coor_string_to_int(textBox3.Text, temp_pos);
+            intermediate_positions.Add(temp_pos);
+            display_textbox4();
+        }
+
+        //Clear all intermediate positions:
+        private void button9_Click(object sender, EventArgs e)
+        {
+            intermediate_positions.Clear();
+            display_textbox4();
+        }
+
+
+
     }
+        
+        
 }

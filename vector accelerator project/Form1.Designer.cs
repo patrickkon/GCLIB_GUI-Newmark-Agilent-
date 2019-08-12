@@ -74,8 +74,9 @@ namespace vector_accelerator_project
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
-            this.button13 = new System.Windows.Forms.Button();
+            this.returnOriginButton = new System.Windows.Forms.Button();
             this.button14 = new System.Windows.Forms.Button();
+            this.button13 = new System.Windows.Forms.Button();
             this.MainToolStrip.SuspendLayout();
             this.GeneralGroup.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -199,7 +200,7 @@ namespace vector_accelerator_project
             this.GeneralGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GeneralGroup.Location = new System.Drawing.Point(641, 58);
             this.GeneralGroup.Name = "GeneralGroup";
-            this.GeneralGroup.Size = new System.Drawing.Size(435, 223);
+            this.GeneralGroup.Size = new System.Drawing.Size(464, 223);
             this.GeneralGroup.TabIndex = 16;
             this.GeneralGroup.TabStop = false;
             this.GeneralGroup.Text = "General Movement";
@@ -208,11 +209,11 @@ namespace vector_accelerator_project
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(356, 52);
+            this.label5.Location = new System.Drawing.Point(325, 52);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(47, 20);
+            this.label5.Size = new System.Drawing.Size(104, 20);
             this.label5.TabIndex = 20;
-            this.label5.Text = "Unit:";
+            this.label5.Text = "Unit (>300):";
             this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // unitbox
@@ -314,6 +315,7 @@ namespace vector_accelerator_project
             this.originButton.TabIndex = 17;
             this.originButton.Text = "Set as Origin";
             this.originButton.UseVisualStyleBackColor = true;
+            this.originButton.Click += new System.EventHandler(this.originButton_Click);
             // 
             // button7
             // 
@@ -323,6 +325,7 @@ namespace vector_accelerator_project
             this.button7.TabIndex = 18;
             this.button7.Text = "Set Start point";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button8
             // 
@@ -332,6 +335,7 @@ namespace vector_accelerator_project
             this.button8.TabIndex = 19;
             this.button8.Text = "Set Intermediate point (multiple)";
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button9
             // 
@@ -341,6 +345,7 @@ namespace vector_accelerator_project
             this.button9.TabIndex = 20;
             this.button9.Text = "Clear Intermediate points";
             this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // button10
             // 
@@ -350,10 +355,11 @@ namespace vector_accelerator_project
             this.button10.TabIndex = 21;
             this.button10.Text = "Set End point";
             this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(109, 30);
+            this.textBox3.Location = new System.Drawing.Point(217, 30);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(100, 26);
             this.textBox3.TabIndex = 22;
@@ -362,15 +368,16 @@ namespace vector_accelerator_project
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(13, 33);
+            this.label8.Location = new System.Drawing.Point(15, 33);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(90, 20);
+            this.label8.Size = new System.Drawing.Size(196, 20);
             this.label8.TabIndex = 23;
-            this.label8.Text = "Point Input:";
+            this.label8.Text = "Point Input (format \"X, Y\"):";
             this.label8.Click += new System.EventHandler(this.label8_Click);
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.button13);
             this.groupBox1.Controls.Add(this.button15);
             this.groupBox1.Controls.Add(this.label10);
             this.groupBox1.Controls.Add(this.button12);
@@ -454,6 +461,7 @@ namespace vector_accelerator_project
             this.textBox4.TabIndex = 25;
             this.textBox4.Text = "Click on button once input has been added. Allows multi intermediate points. This" +
     " textbox displays our parameters";
+            this.textBox4.TextChanged += new System.EventHandler(this.textBox4_TextChanged);
             // 
             // pictureBox1
             // 
@@ -493,24 +501,35 @@ namespace vector_accelerator_project
             this.label12.TabIndex = 28;
             this.label12.Text = "Mapped relative position:";
             // 
-            // button13
+            // returnOriginButton
             // 
-            this.button13.Location = new System.Drawing.Point(929, 4);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(134, 29);
-            this.button13.TabIndex = 29;
-            this.button13.Text = "Return to Origin";
-            this.button13.UseVisualStyleBackColor = true;
+            this.returnOriginButton.Location = new System.Drawing.Point(929, 4);
+            this.returnOriginButton.Name = "returnOriginButton";
+            this.returnOriginButton.Size = new System.Drawing.Size(134, 29);
+            this.returnOriginButton.TabIndex = 29;
+            this.returnOriginButton.Text = "Return to Origin";
+            this.returnOriginButton.UseVisualStyleBackColor = true;
+            this.returnOriginButton.Click += new System.EventHandler(this.returnOriginButton_Click);
             // 
             // button14
             // 
-            this.button14.Location = new System.Drawing.Point(320, 659);
+            this.button14.Location = new System.Drawing.Point(242, 678);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(181, 30);
             this.button14.TabIndex = 31;
-            this.button14.Text = "Start motion";
+            this.button14.Text = "Start mapped motion";
             this.button14.UseVisualStyleBackColor = true;
             this.button14.Click += new System.EventHandler(this.button14_Click);
+            // 
+            // button13
+            // 
+            this.button13.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button13.Location = new System.Drawing.Point(441, 245);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(160, 30);
+            this.button13.TabIndex = 32;
+            this.button13.Text = "Start special motion";
+            this.button13.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -518,7 +537,7 @@ namespace vector_accelerator_project
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1292, 714);
             this.Controls.Add(this.button14);
-            this.Controls.Add(this.button13);
+            this.Controls.Add(this.returnOriginButton);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.textBox6);
@@ -590,9 +609,10 @@ namespace vector_accelerator_project
         private TextBox textBox6;
         private Label label11;
         private Label label12;
-        private Button button13;
+        private Button returnOriginButton;
         private Button button14;
         private Button button15;
+        private Button button13;
     }
 }
 
