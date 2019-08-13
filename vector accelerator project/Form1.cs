@@ -22,9 +22,11 @@ namespace vector_accelerator_project
         //Note to self: might reformat this to include values
         // for each independent axis, and type of movement. Total = 6
         private int increment_unit = 10000;
+        private int speed_a = 5000; //recommended speed
+        private int speed_b = 5000; //recommended speed
+        private int speed_c = 400000; //recommended speed
 
         //Variables that store coordinates:
-
         private int[] start_position = new int[2] { 0, 0};
         private int[] end_position = new int[2] { 0, 0};
         //a list of integer arrays, each with 2 elements:
@@ -211,7 +213,7 @@ namespace vector_accelerator_project
 
         //Note to self: axis must be in Capital letters.
         //Simple PR movement:
-        private void runRelativeMoveCommand(string axis, int distance_units)
+        private void runRelativeMoveCommand(string axis, int distance_units, int speed)
         {
             try
             {
@@ -222,7 +224,7 @@ namespace vector_accelerator_project
                 gclib.GCommand("PR" + axis + "=" + distance_units);
 
                 //might implement speed control parameter in future
-                gclib.GCommand("SP" + axis + "=" +"5000");
+                gclib.GCommand("SP" + axis + "=" +speed);
                 PrintOutput(textBox1, "Profiling a move on axis"+ axis + "... ", PrintStyle.Normal, true);
                 gclib.GCommand("BG" + axis);
                 PrintOutput(textBox1, "Waiting for motion to complete... ", PrintStyle.Normal, true);
@@ -239,7 +241,7 @@ namespace vector_accelerator_project
 
         //Note to self: axis must be in Capital letters
         //Simple PA movement:
-        private void runAbsoluteMoveCommand(string axis, int distance_units)
+        private void runAbsoluteMoveCommand(string axis, int distance_units, int speed)
         {
             try
             {
@@ -250,7 +252,7 @@ namespace vector_accelerator_project
                 gclib.GCommand("PA" + axis + "=" + distance_units);
 
                 //might implement speed control parameter in future
-                gclib.GCommand("SP" + axis + "=" + "5000");
+                gclib.GCommand("SP" + axis + "=" + speed);
                 PrintOutput(textBox1, "Profiling a move on axis" + axis + "... ", PrintStyle.Normal, true);
                 gclib.GCommand("BG" + axis);
                 PrintOutput(textBox1, "Waiting for motion to complete... ", PrintStyle.Normal, true);
@@ -410,6 +412,11 @@ namespace vector_accelerator_project
 
 
         #region "Controls currently unused"
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
 
 
         private void textBox4_TextChanged(object sender, EventArgs e)
@@ -571,7 +578,7 @@ namespace vector_accelerator_project
             //runCommand("i=0\r#A;MG i{N};i=i+1;WT10;JP#A,i<10;EN");
 
             //take a single button click as moving 10000 units in a-axis
-            runRelativeMoveCommand("A", increment_unit);           
+            runRelativeMoveCommand("A", increment_unit, speed_a);           
         }
 
         //Set as origin button:
@@ -584,6 +591,7 @@ namespace vector_accelerator_project
                 //command to controller to set origin:
                 gclib.GCommand("DP0,0,0");
                 PrintOutput(textBox1, "done");
+                cur_abs_pos(abs_position);
             }
             catch (Exception ex)
             {
@@ -594,9 +602,9 @@ namespace vector_accelerator_project
         //Return to origin button:
         private void returnOriginButton_Click(object sender, EventArgs e)
         {
-            runAbsoluteMoveCommand("A", 0);
-            runAbsoluteMoveCommand("B", 0);
-            runAbsoluteMoveCommand("C", 0);
+            runAbsoluteMoveCommand("A", 0, speed_a);
+            runAbsoluteMoveCommand("B", 0, speed_b);
+            runAbsoluteMoveCommand("C", 0, speed_c);
             PrintOutput(textBox1, "Move back to origin successful!");
         }
 
@@ -668,10 +676,10 @@ namespace vector_accelerator_project
         private void special_move_helper(int[] position, int drop_by)
         {
             int dropped_abs_position = drop_by + axis_c_rest_position;
-            runAbsoluteMoveCommand("C", axis_c_rest_position);
-            runAbsoluteMoveCommand("A", position[0]);
-            runAbsoluteMoveCommand("B", position[1]);
-            runAbsoluteMoveCommand("C", dropped_abs_position);
+            runAbsoluteMoveCommand("C", axis_c_rest_position, speed_c);
+            runAbsoluteMoveCommand("A", position[0], speed_a);
+            runAbsoluteMoveCommand("B", position[1], speed_b);
+            runAbsoluteMoveCommand("C", dropped_abs_position, speed_c);
         }
 
         //Button for start special movement:
@@ -714,7 +722,7 @@ namespace vector_accelerator_project
 
         }
 
-        
+ 
     }
     
         

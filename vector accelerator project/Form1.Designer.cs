@@ -98,9 +98,9 @@ namespace vector_accelerator_project
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 58);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(104, 20);
+            this.label2.Size = new System.Drawing.Size(115, 20);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Configuration";
+            this.label2.Text = "System Output";
             // 
             // label6
             // 
@@ -203,7 +203,7 @@ namespace vector_accelerator_project
             this.GeneralGroup.Size = new System.Drawing.Size(464, 223);
             this.GeneralGroup.TabIndex = 16;
             this.GeneralGroup.TabStop = false;
-            this.GeneralGroup.Text = "General Movement";
+            this.GeneralGroup.Text = "General Relative Movement";
             this.GeneralGroup.Enter += new System.EventHandler(this.GeneralGroup_Enter);
             // 
             // label5
@@ -434,7 +434,7 @@ namespace vector_accelerator_project
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(164, 48);
             this.button11.TabIndex = 28;
-            this.button11.Text = "Axis-c drop bar by:";
+            this.button11.Text = "Axis-c drop bar by (relative):";
             this.button11.UseVisualStyleBackColor = true;
             this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
@@ -530,10 +530,10 @@ namespace vector_accelerator_project
             this.richTextBox1.Location = new System.Drawing.Point(902, 340);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(378, 139);
+            this.richTextBox1.Size = new System.Drawing.Size(378, 240);
             this.richTextBox1.TabIndex = 32;
-            this.richTextBox1.Text = "(Reference) Range for Axes a,b, c:\nAxis-a: \nAxis-b:\nAxis-c:\n(Note: do keep input " +
-    "coordinates within this range)";
+            this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
+            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
             // 
             // Form1
             // 
