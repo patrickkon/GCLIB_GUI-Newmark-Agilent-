@@ -38,10 +38,10 @@ namespace vector_accelerator_project
             set
             {
                 _abs_position = value;
-                textBox2.Text = "X = " + _abs_position[0] + " Y = " + _abs_position[1];
+                textBox2.Text += "X = " + _abs_position[0] + " Y = " + _abs_position[1] + "Z = " + _abs_position[2] + Environment.NewLine; 
             }
         }
-        private int[] _abs_position = new int[3];
+        private int[] _abs_position = new int[3] {0,0,0};
 
 
         //Retrieve absolute position of gantry (Axes a,b, c):
@@ -53,17 +53,30 @@ namespace vector_accelerator_project
             {
                 PrintOutput(textBox1, "Updating absolute position.. ", PrintStyle.Normal, true);
                 PrintOutput(textBox2, "Updating absolute position.. ", PrintStyle.Normal, true);
-                //Apparently GCommand would not allow me to display the TD returned result in GMessage
-                //So I used these 2 lines instead:
+                // Apparently GCommand would not allow me to display the TD returned result in GMessage
+                // So I used these 2 lines instead:
                 gclib.GProgramDownload("TD", "");
                 gclib.GCommand("XQ");
                 string td_value = gclib.GMessage();
-                //Needed to extract substring because for some reason there is another string being outputted:
+                // Needed to extract substring because for some reason there is another string being outputted:
                 td_value =td_value.Substring(0, td_value.IndexOf(Environment.NewLine));
                 PrintOutput(textBox2, td_value , PrintStyle.GalilData);
                 PrintOutput(textBox1, "Done!", PrintStyle.Normal, true);
 
-
+                // Here onwards we update the variable abs_position:
+                // this function only updates X, Y coordinates
+                coor_string_to_intArr(td_value, abs_position);
+                // To update Z coordinate (axis-c), we do so manually:
+                // Note that IndexOf in this case has 2 args and works like such:
+                // 1st arg = char to look for in str, 2nd arg = index in str to begin searching
+                int index_2nd_comma = td_value.IndexOf(',', td_value.IndexOf(',') + 2);    
+                string temp = td_value.Substring(index_2nd_comma);
+                int temp_abs = abs_position[2];
+                if (!(Int32.TryParse(temp, out abs_position[2])))
+                {
+                    //if conversion failed
+                    abs_position[2] = temp_abs;
+                }
 
             }
             catch (Exception ex)
@@ -215,7 +228,8 @@ namespace vector_accelerator_project
                 PrintOutput(textBox1, "Waiting for motion to complete... ", PrintStyle.Normal, true);
                 gclib.GMotionComplete(axis);
                 PrintOutput(textBox1, "done");
-                cur_abs_pos();
+                //update absolute position and display in textBox2:
+                cur_abs_pos(abs_position);
             }
             catch (Exception ex)
             {
@@ -242,6 +256,8 @@ namespace vector_accelerator_project
                 PrintOutput(textBox1, "Waiting for motion to complete... ", PrintStyle.Normal, true);
                 gclib.GMotionComplete(axis);
                 PrintOutput(textBox1, "done");
+                //update absolute position and display in textBox2:
+                cur_abs_pos(abs_position);
             }
             catch (Exception ex)
             {
@@ -509,16 +525,17 @@ namespace vector_accelerator_project
                 PrintOutput(textBox1, "CONNECTED!", PrintStyle.Normal);
                 PrintOutput(textBox1, gclib.GInfo(), PrintStyle.GalilData);
 
-                //now that we've successfully connected, here we modify how user
-                //can interact with the app:
+                //Now that we've successfully connected, here we modify how user
+                //can interact with the GUI:
                 AddressTextBox.Enabled = false;
                 ConnectStripButton.Enabled = false;
-
                 DisconnectStripButton.Enabled = true; groupBox1.Enabled = true;
                 GeneralGroup.Enabled = true;
                 originButton.Enabled = true; returnOriginButton.Enabled = true;
                 pictureBox1.Enabled = true; textBox6.Enabled = true;
 
+                //Update gantry absolute position to variable abs_position:
+                cur_abs_pos(abs_position); 
                 return;
             }
             catch (Exception ex)
