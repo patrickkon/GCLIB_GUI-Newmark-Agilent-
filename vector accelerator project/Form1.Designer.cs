@@ -63,6 +63,7 @@ namespace vector_accelerator_project
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button13 = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.button11 = new System.Windows.Forms.Button();
@@ -75,7 +76,7 @@ namespace vector_accelerator_project
             this.label12 = new System.Windows.Forms.Label();
             this.returnOriginButton = new System.Windows.Forms.Button();
             this.button14 = new System.Windows.Forms.Button();
-            this.button13 = new System.Windows.Forms.Button();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.MainToolStrip.SuspendLayout();
             this.GeneralGroup.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -308,7 +309,7 @@ namespace vector_accelerator_project
             // 
             // originButton
             // 
-            this.originButton.Location = new System.Drawing.Point(944, 4);
+            this.originButton.Location = new System.Drawing.Point(1039, 4);
             this.originButton.Name = "originButton";
             this.originButton.Size = new System.Drawing.Size(110, 28);
             this.originButton.TabIndex = 17;
@@ -397,6 +398,17 @@ namespace vector_accelerator_project
             this.groupBox1.Text = "Anchor coordinates";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
+            // button13
+            // 
+            this.button13.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button13.Location = new System.Drawing.Point(441, 245);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(160, 30);
+            this.button13.TabIndex = 32;
+            this.button13.Text = "Start special motion";
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
+            // 
             // button15
             // 
             this.button15.Location = new System.Drawing.Point(437, 176);
@@ -405,6 +417,7 @@ namespace vector_accelerator_project
             this.button15.TabIndex = 31;
             this.button15.Text = "Set Axis-c resting position:";
             this.button15.UseVisualStyleBackColor = true;
+            this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
             // label10
             // 
@@ -494,7 +507,7 @@ namespace vector_accelerator_project
             // 
             // returnOriginButton
             // 
-            this.returnOriginButton.Location = new System.Drawing.Point(1060, 4);
+            this.returnOriginButton.Location = new System.Drawing.Point(1155, 4);
             this.returnOriginButton.Name = "returnOriginButton";
             this.returnOriginButton.Size = new System.Drawing.Size(134, 29);
             this.returnOriginButton.TabIndex = 29;
@@ -512,22 +525,22 @@ namespace vector_accelerator_project
             this.button14.UseVisualStyleBackColor = true;
             this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
-            // button13
+            // richTextBox1
             // 
-            this.button13.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button13.Location = new System.Drawing.Point(441, 245);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(160, 30);
-            this.button13.TabIndex = 32;
-            this.button13.Text = "Start special motion";
-            this.button13.UseVisualStyleBackColor = true;
-            this.button13.Click += new System.EventHandler(this.button13_Click);
+            this.richTextBox1.Location = new System.Drawing.Point(902, 340);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(378, 139);
+            this.richTextBox1.TabIndex = 32;
+            this.richTextBox1.Text = "(Reference) Range for Axes a,b, c:\nAxis-a: \nAxis-b:\nAxis-c:\n(Note: do keep input " +
+    "coordinates within this range)";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1292, 714);
+            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.button14);
             this.Controls.Add(this.returnOriginButton);
             this.Controls.Add(this.label12);
@@ -604,6 +617,7 @@ namespace vector_accelerator_project
         private Button button14;
         private Button button15;
         private Button button13;
+        private RichTextBox richTextBox1;
     }
 }
 

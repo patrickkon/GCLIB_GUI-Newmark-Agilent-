@@ -12,6 +12,7 @@ namespace vector_accelerator_project
 {
     public partial class Form1 : Form
     {
+        public const int G_SMALL_BUFFER = 1024;
 
         #region "Variable declaration"
         //global gclib so that other functions can use the most updated one
@@ -40,12 +41,40 @@ namespace vector_accelerator_project
                 textBox2.Text = "X = " + _abs_position[0] + " Y = " + _abs_position[1];
             }
         }
-        private int[] _abs_position;
+        private int[] _abs_position = new int[3];
 
+
+        //Retrieve absolute position of gantry (Axes a,b, c):
+        //Note that retrieval can only be done when the gantry is no longer moving.
+        private void cur_abs_pos(int[] abs_position)
+        {
+
+            try
+            {
+                PrintOutput(textBox1, "Updating absolute position.. ", PrintStyle.Normal, true);
+                PrintOutput(textBox2, "Updating absolute position.. ", PrintStyle.Normal, true);
+                //Apparently GCommand would not allow me to display the TD returned result in GMessage
+                //So I used these 2 lines instead:
+                gclib.GProgramDownload("TD", "");
+                gclib.GCommand("XQ");
+                string td_value = gclib.GMessage();
+                //Needed to extract substring because for some reason there is another string being outputted:
+                td_value =td_value.Substring(0, td_value.IndexOf(Environment.NewLine));
+                PrintOutput(textBox2, td_value , PrintStyle.GalilData);
+                PrintOutput(textBox1, "Done!", PrintStyle.Normal, true);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                PrintOutput(textBox1, "ERROR in TD command (absolute position): " + ex.Message, PrintStyle.Instruction);
+            }
+        }
 
         //Variables that store other parameters:
         private int drop_by = 0;  //axis-c drop by how many units while sampling
-        private int[] sample_units = new int[2] { 0, 0 }; //sample every "sample_units" units
+        //private int[] sample_units = new int[2] { 0, 0 }; //sample every "sample_units" units
         private int axis_c_rest_position = 0;
 
         #endregion
@@ -186,6 +215,7 @@ namespace vector_accelerator_project
                 PrintOutput(textBox1, "Waiting for motion to complete... ", PrintStyle.Normal, true);
                 gclib.GMotionComplete(axis);
                 PrintOutput(textBox1, "done");
+                cur_abs_pos();
             }
             catch (Exception ex)
             {
@@ -239,7 +269,7 @@ namespace vector_accelerator_project
         }
 
         // From string from textBox, to X, Y coordinates in int array:
-        private void coor_string_to_int(string text, int[] prev_position)
+        private void coor_string_to_intArr(string text, int[] prev_position)
         {
             int[] arr = new int[2];
             Array.Copy(prev_position, arr, 0);
@@ -272,7 +302,7 @@ namespace vector_accelerator_project
             });
             
             textBox4.Text += "Drop bar by (units): " + drop_by + Environment.NewLine;
-            textBox4.Text += "Sample every (units): " + sample_units[0] + ", " + sample_units[1] + Environment.NewLine;
+            //textBox4.Text += "Sample every (units): " + sample_units[0] + ", " + sample_units[1] + Environment.NewLine;
             textBox4.Text += "Axis-c resting position: " + axis_c_rest_position;
         }
 
@@ -456,6 +486,8 @@ namespace vector_accelerator_project
 
         #endregion
 
+
+
         #region "Completed control implementations"
 
         private void ConnectStripButton_Click(object sender, EventArgs e)
@@ -531,7 +563,7 @@ namespace vector_accelerator_project
             try
             {
                 PrintOutput(textBox1, "Setting origin..", PrintStyle.Normal, true);
-                gclib.GCommand("AB;MO;SH");
+                gclib.GCommand("AB;MO;SHA");
                 //command to controller to set origin:
                 gclib.GCommand("DP0,0,0");
                 PrintOutput(textBox1, "done");
@@ -551,43 +583,58 @@ namespace vector_accelerator_project
             PrintOutput(textBox1, "Move back to origin successful!");
         }
 
-        #endregion
 
+        #region "Special movement controls"
 
-        // For mapping grid to movement, based on mouse click in grid box:
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        // Set number of units to drop axis-c, according to input from textBox5: 
+        private void button11_Click(object sender, EventArgs e)
         {
-            Point coordinates = e.Location;
+            int temp = drop_by; //restore in case of conversion failure of input from textBox
+            if (!(Int32.TryParse(textBox5.Text, out drop_by)))
+            {
+                //if conversion failed
+                drop_by = temp;
+            }
+
+            display_textbox4();
+
         }
 
-        // Start "mapped" motion:
-        // i.e. move gantry to mouse click position on "map" (X,Y coordinates)
-        private void button14_Click(object sender, EventArgs e)
+        //Set Axis-c rest position (for special movement)
+        private void button15_Click(object sender, EventArgs e)
         {
+            int temp = axis_c_rest_position; //restore in case of conversion failure of input from textBox
+            if (!(Int32.TryParse(textBox5.Text, out axis_c_rest_position)))
+            {
+                //if conversion failed
+                axis_c_rest_position = temp;
+            }
 
+            display_textbox4();
         }
+
 
         //Set start_position:
         private void button7_Click(object sender, EventArgs e)
         {
-            coor_string_to_int(textBox3.Text, start_position);
+            coor_string_to_intArr(textBox3.Text, start_position);
             //System.Threading.Thread.Sleep(200);
             display_textbox4();
-             
+
         }
 
         //Set end position:
         private void button10_Click(object sender, EventArgs e)
         {
-            coor_string_to_int(textBox3.Text, end_position);
+            coor_string_to_intArr(textBox3.Text, end_position);
             display_textbox4();
         }
 
         //Add intermediate position:
         private void button8_Click(object sender, EventArgs e)
         {
-            int[] temp_pos = new int[2] { 0, 0 }; 
-            coor_string_to_int(textBox3.Text, temp_pos);
+            int[] temp_pos = new int[2] { 0, 0 };
+            coor_string_to_intArr(textBox3.Text, temp_pos);
             if (intermediate_positions == null) intermediate_positions = new List<int[]>();
             intermediate_positions.Add(temp_pos);
             display_textbox4();
@@ -623,7 +670,7 @@ namespace vector_accelerator_project
                 // I replace it temporarily with a simple pause:
                 System.Threading.Thread.Sleep(200);
             });
-            
+
             special_move_helper(end_position, drop_by);
             // BLOCK of code to complete user specified task....
             // I replace it temporarily with a simple pause:
@@ -632,13 +679,27 @@ namespace vector_accelerator_project
 
         }
 
+        #endregion
 
-        // Set number of units to drop axis-c, according to input from textBox5: 
-        private void button11_Click(object sender, EventArgs e)
+        #endregion
+
+
+        // For mapping grid to movement, based on mouse click in grid box:
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            Point coordinates = e.Location;
+        }
+
+        // Start "mapped" motion:
+        // i.e. move gantry to mouse click position on "map" (X,Y coordinates)
+        private void button14_Click(object sender, EventArgs e)
         {
 
         }
+
+        
     }
+    
         
         
 }
