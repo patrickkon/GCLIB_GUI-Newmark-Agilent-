@@ -65,7 +65,6 @@ namespace vector_accelerator_project
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button15 = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
-            this.button12 = new System.Windows.Forms.Button();
             this.button11 = new System.Windows.Forms.Button();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -309,7 +308,7 @@ namespace vector_accelerator_project
             // 
             // originButton
             // 
-            this.originButton.Location = new System.Drawing.Point(813, 4);
+            this.originButton.Location = new System.Drawing.Point(944, 4);
             this.originButton.Name = "originButton";
             this.originButton.Size = new System.Drawing.Size(110, 28);
             this.originButton.TabIndex = 17;
@@ -380,7 +379,6 @@ namespace vector_accelerator_project
             this.groupBox1.Controls.Add(this.button13);
             this.groupBox1.Controls.Add(this.button15);
             this.groupBox1.Controls.Add(this.label10);
-            this.groupBox1.Controls.Add(this.button12);
             this.groupBox1.Controls.Add(this.button11);
             this.groupBox1.Controls.Add(this.textBox5);
             this.groupBox1.Controls.Add(this.label9);
@@ -417,23 +415,15 @@ namespace vector_accelerator_project
             this.label10.TabIndex = 30;
             this.label10.Text = "Other parameter input:";
             // 
-            // button12
-            // 
-            this.button12.Location = new System.Drawing.Point(437, 131);
-            this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(130, 30);
-            this.button12.TabIndex = 29;
-            this.button12.Text = "Sample every:";
-            this.button12.UseVisualStyleBackColor = true;
-            // 
             // button11
             // 
             this.button11.Location = new System.Drawing.Point(437, 97);
             this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(120, 28);
+            this.button11.Size = new System.Drawing.Size(164, 48);
             this.button11.TabIndex = 28;
-            this.button11.Text = "Drop bar by:";
+            this.button11.Text = "Axis-c drop bar by:";
             this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // textBox5
             // 
@@ -457,6 +447,7 @@ namespace vector_accelerator_project
             this.textBox4.Multiline = true;
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
+            this.textBox4.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox4.Size = new System.Drawing.Size(389, 133);
             this.textBox4.TabIndex = 25;
             this.textBox4.Text = "Click on button once input has been added. Allows multi intermediate points. This" +
@@ -503,7 +494,7 @@ namespace vector_accelerator_project
             // 
             // returnOriginButton
             // 
-            this.returnOriginButton.Location = new System.Drawing.Point(929, 4);
+            this.returnOriginButton.Location = new System.Drawing.Point(1060, 4);
             this.returnOriginButton.Name = "returnOriginButton";
             this.returnOriginButton.Size = new System.Drawing.Size(134, 29);
             this.returnOriginButton.TabIndex = 29;
@@ -530,6 +521,7 @@ namespace vector_accelerator_project
             this.button13.TabIndex = 32;
             this.button13.Text = "Start special motion";
             this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // Form1
             // 
@@ -603,7 +595,6 @@ namespace vector_accelerator_project
         private TextBox textBox5;
         private Label label9;
         private Label label10;
-        private Button button12;
         private Button button11;
         private PictureBox pictureBox1;
         private TextBox textBox6;

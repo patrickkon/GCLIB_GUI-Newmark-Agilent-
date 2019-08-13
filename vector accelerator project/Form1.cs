@@ -27,9 +27,10 @@ namespace vector_accelerator_project
         private int[] start_position = new int[2] { 0, 0};
         private int[] end_position = new int[2] { 0, 0};
         //a list of integer arrays, each with 2 elements:
-        private List<int[]> intermediate_positions = new List<int[]>{ new int[2] { 0, 0 } };
+        private List<int[]> intermediate_positions = null;
 
         // for abs_position the coor will be constantly displayed/updated, so I use this method:
+        // Accessor function for private variable _abs_position (absolute position of gantry)
         public int[] abs_position
         {
             get { return _abs_position; }
@@ -237,39 +238,41 @@ namespace vector_accelerator_project
             }
         }
 
-
-        private int[] coor_string_to_int(string text, int[] prev_position)
+        // From string from textBox, to X, Y coordinates in int array:
+        private void coor_string_to_int(string text, int[] prev_position)
         {
-            int[] converted = { 0, 0 };
-            string temp = text.Substring(0, text.IndexOf(", ") + 1);
-            if (Int32.TryParse(temp, out converted[0]) != true)
+            int[] arr = new int[2];
+            Array.Copy(prev_position, arr, 0);
+            string temp = text.Substring(0, text.IndexOf(", "));
+            if (!(Int32.TryParse(temp, out prev_position[0])))
             {
                 //if conversion failed
-                converted[0] = prev_position[0];
+                prev_position[0] = arr[0];
             }
 
             temp = text.Substring(text.IndexOf(", ") + 2);
-            if (Int32.TryParse(temp, out converted[1]) != true)
+           
+            if (!(Int32.TryParse(temp, out prev_position[1])))
             {
                 //if conversion failed
-                converted[1] = prev_position[1];
+                prev_position[1] = arr[1];
             }
-            return converted;
+           
         }
 
 
-        //display variables that are tied up with textbox4
+        //display for textbox4 : displays variables in groupBox1
         private void display_textbox4()
-        {
+        {   
             textBox4.Clear();
-            textBox4.Text += "Start position: " + start_position[0] + ", " + start_position[1] + "\n";
-            textBox4.Text += "End position: " + end_position[0] + ", " + end_position[1] + "\n";
-            foreach (int[] a in intermediate_positions)
-            {
-                textBox4.Text += "Intermediate position: " + a[0] + ", " + a[1] + "\n";
-            }
-            textBox4.Text += "Drop bar by (units): " + drop_by + "\n";
-            textBox4.Text += "Sample every (units): " + sample_units[0] + ", " + sample_units[1] + "\n";
+            textBox4.Text += "Start position: " + start_position[0] + ", " + start_position[1] + Environment.NewLine;
+            textBox4.Text += "End position: " + end_position[0] + ", " + end_position[1] + Environment.NewLine;
+            intermediate_positions?.ForEach(a => {
+                textBox4.Text += "Intermediate position: " + a[0] + ", " + a[1] + Environment.NewLine;
+            });
+            
+            textBox4.Text += "Drop bar by (units): " + drop_by + Environment.NewLine;
+            textBox4.Text += "Sample every (units): " + sample_units[0] + ", " + sample_units[1] + Environment.NewLine;
             textBox4.Text += "Axis-c resting position: " + axis_c_rest_position;
         }
 
@@ -545,6 +548,7 @@ namespace vector_accelerator_project
             runAbsoluteMoveCommand("A", 0);
             runAbsoluteMoveCommand("B", 0);
             runAbsoluteMoveCommand("C", 0);
+            PrintOutput(textBox1, "Move back to origin successful!");
         }
 
         #endregion
@@ -556,7 +560,8 @@ namespace vector_accelerator_project
             Point coordinates = e.Location;
         }
 
-        // Start selected "special movement" motion:
+        // Start "mapped" motion:
+        // i.e. move gantry to mouse click position on "map" (X,Y coordinates)
         private void button14_Click(object sender, EventArgs e)
         {
 
@@ -565,7 +570,8 @@ namespace vector_accelerator_project
         //Set start_position:
         private void button7_Click(object sender, EventArgs e)
         {
-            start_position = coor_string_to_int(textBox3.Text, start_position);
+            coor_string_to_int(textBox3.Text, start_position);
+            //System.Threading.Thread.Sleep(200);
             display_textbox4();
              
         }
@@ -573,7 +579,7 @@ namespace vector_accelerator_project
         //Set end position:
         private void button10_Click(object sender, EventArgs e)
         {
-            end_position = coor_string_to_int(textBox3.Text, end_position);
+            coor_string_to_int(textBox3.Text, end_position);
             display_textbox4();
         }
 
@@ -581,7 +587,8 @@ namespace vector_accelerator_project
         private void button8_Click(object sender, EventArgs e)
         {
             int[] temp_pos = new int[2] { 0, 0 }; 
-            temp_pos = coor_string_to_int(textBox3.Text, temp_pos);
+            coor_string_to_int(textBox3.Text, temp_pos);
+            if (intermediate_positions == null) intermediate_positions = new List<int[]>();
             intermediate_positions.Add(temp_pos);
             display_textbox4();
         }
@@ -593,8 +600,44 @@ namespace vector_accelerator_project
             display_textbox4();
         }
 
+        //Simplifier function used for function proceeding this:
+        private void special_move_helper(int[] position, int drop_by)
+        {
+            int dropped_abs_position = drop_by + axis_c_rest_position;
+            runAbsoluteMoveCommand("C", axis_c_rest_position);
+            runAbsoluteMoveCommand("A", position[0]);
+            runAbsoluteMoveCommand("B", position[1]);
+            runAbsoluteMoveCommand("C", dropped_abs_position);
+        }
+
+        //Button for start special movement:
+        private void button13_Click(object sender, EventArgs e)
+        {
+            special_move_helper(start_position, drop_by);
+            // BLOCK of code to complete user specified task....
+            // I replace it temporarily with a simple pause:
+            System.Threading.Thread.Sleep(200);
+            intermediate_positions?.ForEach(a => {
+                special_move_helper(a, drop_by);
+                // BLOCK of code to complete user specified task....
+                // I replace it temporarily with a simple pause:
+                System.Threading.Thread.Sleep(200);
+            });
+            
+            special_move_helper(end_position, drop_by);
+            // BLOCK of code to complete user specified task....
+            // I replace it temporarily with a simple pause:
+            System.Threading.Thread.Sleep(200);
 
 
+        }
+
+
+        // Set number of units to drop axis-c, according to input from textBox5: 
+        private void button11_Click(object sender, EventArgs e)
+        {
+
+        }
     }
         
         
