@@ -27,8 +27,8 @@ namespace vector_accelerator_project
         private int speed_c = 400000; //recommended speed
 
         //Variables that store coordinates:
-        private int[] start_position = new int[2] { 0, 0};
-        private int[] end_position = new int[2] { 0, 0};
+        private int[] start_position = new int[2] {0, 0};
+        private int[] end_position = new int[2] {0, 0};
         //a list of integer arrays, each with 2 elements:
         private List<int[]> intermediate_positions = null;
 
@@ -40,11 +40,11 @@ namespace vector_accelerator_project
             set
             {
                 _abs_position = value;
-                textBox2.Text += "X = " + _abs_position[0] + " Y = " + _abs_position[1] + "Z = " + _abs_position[2] + Environment.NewLine; 
+                //next line does not work:
+                //textBox2.Text += "X = " + _abs_position[0] + " Y = " + _abs_position[1] + "Z = " + _abs_position[2] + Environment.NewLine; 
             }
         }
         private int[] _abs_position = new int[3] {0,0,0};
-
 
         //Retrieve absolute position of gantry (Axes a,b, c):
         //Note that retrieval can only be done when the gantry is no longer moving.
@@ -417,6 +417,16 @@ namespace vector_accelerator_project
 
         #region "Controls currently unused"
 
+        private void label14_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void richTextBox1_TextChanged(object sender, EventArgs e)
         {
 
@@ -705,7 +715,8 @@ namespace vector_accelerator_project
             // I replace it temporarily with a simple pause:
             System.Threading.Thread.Sleep(200);
 
-
+            // return to original axis-c rest position before ending movement:
+            runAbsoluteMoveCommand("C", axis_c_rest_position, speed_c);
         }
 
         // For mapping grid to movement, based on mouse click in grid box:
@@ -731,16 +742,16 @@ namespace vector_accelerator_project
         }
 
 
+
+
         #endregion
 
         #endregion
 
+        private void button17_Click(object sender, EventArgs e)
+        {
 
-
-
-
+        }
     }
-    
-        
-        
+       
 }

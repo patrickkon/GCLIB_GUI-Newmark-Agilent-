@@ -179,9 +179,14 @@ Axis-b: 249000
 Axis-c: 5090000
 (Note: do keep minimum increment above 500 units)
 
-For Relative movement:
+Universal:
 Axis-a: +ve (front),  -ve (back)
 Axis-b: +ve (left), -ve (right)
-Axis-c: +ve (downwards), -ve (upwards)</value>
+Axis-c: +ve (downwards), -ve (upwards)
+
+Slew Speed normal range: 5000 - 500,000</value>
   </data>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>52</value>
+  </metadata>
 </root>
