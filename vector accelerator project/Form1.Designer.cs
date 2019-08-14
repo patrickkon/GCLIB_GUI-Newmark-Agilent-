@@ -372,7 +372,7 @@ namespace vector_accelerator_project
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(196, 20);
             this.label8.TabIndex = 23;
-            this.label8.Text = "Point Input (format \"X, Y\"):";
+            this.label8.Text = "Point Input (format \"A, B\"):";
             this.label8.Click += new System.EventHandler(this.label8_Click);
             // 
             // groupBox1
@@ -470,7 +470,7 @@ namespace vector_accelerator_project
             // pictureBox1
             // 
             this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(16, 456);
+            this.pictureBox1.Location = new System.Drawing.Point(16, 466);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(200, 200);
             this.pictureBox1.TabIndex = 25;
@@ -480,7 +480,7 @@ namespace vector_accelerator_project
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(12, 682);
+            this.textBox6.Location = new System.Drawing.Point(12, 700);
             this.textBox6.Name = "textBox6";
             this.textBox6.ReadOnly = true;
             this.textBox6.Size = new System.Drawing.Size(224, 26);
@@ -489,17 +489,16 @@ namespace vector_accelerator_project
             // 
             // label11
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(12, 433);
+            this.label11.Location = new System.Drawing.Point(10, 433);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(207, 20);
+            this.label11.Size = new System.Drawing.Size(242, 30);
             this.label11.TabIndex = 27;
             this.label11.Text = "Single Coor (Clickable Map):";
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(12, 659);
+            this.label12.Location = new System.Drawing.Point(12, 677);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(184, 20);
             this.label12.TabIndex = 28;
@@ -517,7 +516,7 @@ namespace vector_accelerator_project
             // 
             // button14
             // 
-            this.button14.Location = new System.Drawing.Point(242, 678);
+            this.button14.Location = new System.Drawing.Point(242, 696);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(181, 30);
             this.button14.TabIndex = 31;
@@ -539,7 +538,7 @@ namespace vector_accelerator_project
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1292, 714);
+            this.ClientSize = new System.Drawing.Size(1292, 738);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.button14);
             this.Controls.Add(this.returnOriginButton);

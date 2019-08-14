@@ -92,6 +92,10 @@ namespace vector_accelerator_project
         //private int[] sample_units = new int[2] { 0, 0 }; //sample every "sample_units" units
         private int axis_c_rest_position = 0;
 
+        // Used in "mapped" movement to store X, Y coordinates:
+        Point coordinates = new Point();
+
+
         #endregion
 
         public Form1()
@@ -704,25 +708,37 @@ namespace vector_accelerator_project
 
         }
 
-        #endregion
-
-        #endregion
-
-
         // For mapping grid to movement, based on mouse click in grid box:
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
-            Point coordinates = e.Location;
+            coordinates = e.Location;
+            textBox6.Clear();
+            textBox6.Text += "X = " + coordinates.X.ToString() + ", Y = " + coordinates.Y.ToString();
+
         }
 
         // Start "mapped" motion:
         // i.e. move gantry to mouse click position on "map" (X,Y coordinates)
         private void button14_Click(object sender, EventArgs e)
         {
+            //first, go to bottom left edge (move faster than normal):
+            runRelativeMoveCommand("A", -249000, speed_a + 10000);
+            runRelativeMoveCommand("B", 249000, speed_b + 10000);
 
+            //go to position indicated by mouse click on "map":
+            runRelativeMoveCommand("A", 1245 * coordinates.Y, speed_a);
+            runRelativeMoveCommand("B", 1245 * coordinates.X, speed_b);
         }
 
- 
+
+        #endregion
+
+        #endregion
+
+
+
+
+
     }
     
         
