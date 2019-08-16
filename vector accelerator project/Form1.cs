@@ -350,7 +350,7 @@ namespace vector_accelerator_project
             int counter = 1;
             //here we display completed/validated segments:
             segment_positions?.ForEach(a => {
-                if (counter != segment_positions.Count())
+                if (counter != segment_positions.Count)
                 {
                     textBox4.Text += "Segment " + counter + ".. " + Environment.NewLine;
                     textBox4.Text += "A(start): " + a[0] + ", A(end): " + a[1] + ", delta A: " + a[2] + Environment.NewLine;
@@ -737,8 +737,7 @@ namespace vector_accelerator_project
             runAbsoluteMoveCommand("C", dropped_abs_position, speed_c);
         }
 
-        //Button for start special movement:
-        private void button13_Click(object sender, EventArgs e)
+        private void special_manual_movement()
         {
             special_move_helper(start_position, drop_by);
             // BLOCK of code to complete user specified task....
@@ -758,6 +757,37 @@ namespace vector_accelerator_project
 
             // return to original axis-c rest position before ending movement:
             runAbsoluteMoveCommand("C", axis_c_rest_position, speed_c);
+        }
+
+        //Button for start special movement (movement depends on which radio box (manual or segment) is checked):
+        private void button13_Click(object sender, EventArgs e)
+        {
+            if (manualButton.Checked == true)
+            {
+                special_manual_movement();
+            }
+            else if (segmentButton.Checked == true)
+            {
+                //remove last element of list (as it only contains values that we have not validated via function call to button21_clicked):
+                segment_positions.RemoveAt(segment_positions.Count - 1);
+
+                segment_positions?.ForEach(a =>
+                {
+                    int counter = 0;
+                    while (true)
+                    {
+                        start_position[0] = counter * a[2] + a[0];
+                        start_position[1] = counter * a[5] + a[3];
+                        if (start_position[0] > a[1] || start_position[1] > a[4]) break;
+                        special_move_helper(start_position, drop_by);
+                        counter += 1;
+                    }
+
+                });
+
+                // return to original axis-c rest position before ending movement:
+                runAbsoluteMoveCommand("C", axis_c_rest_position, speed_c);
+            }
         }
 
         // For mapping grid to movement, based on mouse click in grid box:
@@ -936,6 +966,8 @@ namespace vector_accelerator_project
                 manualBox.Enabled = true;
                 segment_positions.Clear();
                 segmentBox.Enabled = false;
+                start_position = new int[2]; end_position = new int[2];
+                intermediate_positions.Clear();
                 textBox4.Clear();
             }
         }
@@ -953,12 +985,16 @@ namespace vector_accelerator_project
             }
         }
 
-        #endregion
-
-
 
 
         #endregion
+
+        #endregion
+
+        private void mmButton_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }

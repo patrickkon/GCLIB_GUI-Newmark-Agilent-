@@ -725,6 +725,7 @@ namespace vector_accelerator_project
             this.mmButton.TabStop = true;
             this.mmButton.Text = "Mm";
             this.mmButton.UseVisualStyleBackColor = true;
+            this.mmButton.CheckedChanged += new System.EventHandler(this.mmButton_CheckedChanged);
             // 
             // stepperButton
             // 
