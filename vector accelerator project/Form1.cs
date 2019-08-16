@@ -35,7 +35,7 @@ namespace vector_accelerator_project
         // used for movement by segment:
         // each int[] has 6 elements (in-order): 
         // a(start), a(end), a(delta), b(start), b(end), b(delta)
-        private List<int[]> segment_positions = null;
+        private List<int[]> segment_positions= new List<int[]>();
 
         // for abs_position the coor will be constantly displayed/updated, so I use this method:
         // Accessor function for private variable _abs_position (absolute position of gantry)
@@ -359,11 +359,14 @@ namespace vector_accelerator_project
                 }
             });
             //here we display the segment that that the user is currently trying to input:
-            int[] b = segment_positions.Last();
-            textBox4.Text += "Current segment input.. : " + Environment.NewLine;
-            textBox4.Text += "A(start): " + b[0] + ", A(end): " + b[1] + ", delta A: " + b[2] + Environment.NewLine;
-            textBox4.Text += "B(start): " + b[3] + ", B(end): " + b[4] + ", delta B: " + b[5] + Environment.NewLine;
-            counter += 1;
+            if (segment_positions.Count > 0)
+            {
+                int[] b = segment_positions.Last();
+                textBox4.Text += "Current segment input.. : " + Environment.NewLine;
+                textBox4.Text += "A(start): " + b[0] + ", A(end): " + b[1] + ", delta A: " + b[2] + Environment.NewLine;
+                textBox4.Text += "B(start): " + b[3] + ", B(end): " + b[4] + ", delta B: " + b[5] + Environment.NewLine;
+                
+            }
 
             textBox4.Text += "Drop bar by (units): " + drop_by + Environment.NewLine;
             textBox4.Text += "Axis-c resting position: " + axis_c_rest_position;
@@ -675,8 +678,10 @@ namespace vector_accelerator_project
                 //if conversion failed
                 drop_by = temp;
             }
+            if(manualButton.Checked == true) display_textbox4_manual();
 
-            display_textbox4_manual();
+            if (segmentButton.Checked == true) display_textbox4_segment();
+
 
         }
 
@@ -690,7 +695,9 @@ namespace vector_accelerator_project
                 axis_c_rest_position = temp;
             }
 
-            display_textbox4_manual();
+            if (manualButton.Checked == true) display_textbox4_manual();
+
+            if (segmentButton.Checked == true) display_textbox4_segment();
         }
 
 
@@ -768,18 +775,25 @@ namespace vector_accelerator_project
             }
             else if (segmentButton.Checked == true)
             {
-                //remove last element of list (as it only contains values that we have not validated via function call to button21_clicked):
-                segment_positions.RemoveAt(segment_positions.Count - 1);
-
+                int counter = 0;
                 segment_positions?.ForEach(a =>
-                {
-                    int counter = 0;
-                    while (true)
+                {   
+                    int multiplier = 0;
+                    // Do not consider last element of segment_positions as it does not contain validated input that has passed through the function button21_clicked:
+                    if (counter < segment_positions.Count - 1)
                     {
-                        start_position[0] = counter * a[2] + a[0];
-                        start_position[1] = counter * a[5] + a[3];
-                        if (start_position[0] > a[1] || start_position[1] > a[4]) break;
-                        special_move_helper(start_position, drop_by);
+                        while (true)
+                        {
+                            start_position[0] = multiplier * a[2] + a[0];
+                            start_position[1] = multiplier * a[5] + a[3];
+                            multiplier += 1;
+                            if (Math.Abs(start_position[0]) > Math.Abs(a[1]) || Math.Abs(start_position[1]) > Math.Abs(a[4])) break;
+                            special_move_helper(start_position, drop_by);
+                            // BLOCK of code to complete user specified task....
+                            // I replace it temporarily with a simple pause:
+                            System.Threading.Thread.Sleep(200);
+
+                        }
                         counter += 1;
                     }
 
@@ -829,7 +843,7 @@ namespace vector_accelerator_project
             // initialize if segment_positions has not been initialized before
             // length (.Count) of list is now 1. This is important because we only display in 
             // textBox4 if list has items. 
-            if (!segment_positions.Any()) {
+            if (segment_positions.Count == 0) {
                 segment_positions = new List<int[]>();
                 segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
             }
@@ -847,7 +861,7 @@ namespace vector_accelerator_project
             // initialize if segment_positions has not been initialized before
             // length (.Count) of list is now 1. This is important because we only display in 
             // textBox4 if list has items. 
-            if (!segment_positions.Any())
+            if (segment_positions.Count == 0)
             {
                 segment_positions = new List<int[]>();
                 segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
@@ -866,7 +880,7 @@ namespace vector_accelerator_project
             // initialize if segment_positions has not been initialized before
             // length (.Count) of list is now 1. This is important because we only display in 
             // textBox4 if list has items. 
-            if (!segment_positions.Any())
+            if (segment_positions.Count == 0)
             {
                 segment_positions = new List<int[]>();
                 segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
@@ -884,7 +898,7 @@ namespace vector_accelerator_project
             // initialize if segment_positions has not been initialized before
             // length (.Count) of list is now 1. This is important because we only display in 
             // textBox4 if list has items. 
-            if (!segment_positions.Any())
+            if (segment_positions.Count == 0)
             {
                 segment_positions = new List<int[]>();
                 segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
@@ -902,7 +916,7 @@ namespace vector_accelerator_project
             // initialize if segment_positions has not been initialized before
             // length (.Count) of list is now 1. This is important because we only display in 
             // textBox4 if list has items. 
-            if (!segment_positions.Any())
+            if (segment_positions.Count == 0)
             {
                 segment_positions = new List<int[]>();
                 segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
@@ -920,7 +934,7 @@ namespace vector_accelerator_project
             // initialize if segment_positions has not been initialized before
             // length (.Count) of list is now 1. This is important because we only display in 
             // textBox4 if list has items. 
-            if (!segment_positions.Any())
+            if (segment_positions.Count == 0)
             {
                 segment_positions = new List<int[]>();
                 segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
@@ -936,23 +950,28 @@ namespace vector_accelerator_project
         private void button22_Click(object sender, EventArgs e)
         {
             segment_positions.Clear();
-            display_textbox4_segment();
         }
 
         // Segment movement: add segment button:
         private void button21_Click(object sender, EventArgs e)
         {
-            // check if segment values are valid (i.e. if they add up):
-            if( ((segment_positions.Last()[1] - segment_positions.Last()[0]) % segment_positions.Last()[2] == 0) && ((segment_positions.Last()[4] - segment_positions.Last()[3]) % segment_positions.Last()[5] == 0) )
+            if (segment_positions.Count > 0)
             {
-                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
-                
+                // check if segment values are valid (i.e. if they add up):
+                bool same_num_samples = false;
+                int b_sample_num = (Math.Abs(segment_positions.Last()[5]) > 0) ? (segment_positions.Last()[4] - segment_positions.Last()[3]) / segment_positions.Last()[5] : 0;
+                int a_sample_num = (Math.Abs(segment_positions.Last()[2]) > 0) ? (segment_positions.Last()[1] - segment_positions.Last()[0]) / segment_positions.Last()[2] : 0;
+                same_num_samples = (b_sample_num == 0 || a_sample_num == 0 || (b_sample_num != a_sample_num)) ? false : true;
+                if (same_num_samples && ((segment_positions.Last()[1] - segment_positions.Last()[0]) % segment_positions.Last()[2] == 0) && ((segment_positions.Last()[4] - segment_positions.Last()[3]) % segment_positions.Last()[5] == 0))
+                {
+                    segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+                }
+                else
+                {
+                    MessageBox.Show("Segment values do not add up. Check your input values.", "Invalid Input.");
+                }
+                display_textbox4_segment();
             }
-            else
-            {
-                MessageBox.Show("Segment values do not add up. Check your input values.", "Invalid Input.");
-            }
-            display_textbox4_segment();
         }
 
 
@@ -964,10 +983,10 @@ namespace vector_accelerator_project
             {
 
                 manualBox.Enabled = true;
-                segment_positions.Clear();
+                if(segment_positions.Any()) segment_positions.Clear();
                 segmentBox.Enabled = false;
                 start_position = new int[2]; end_position = new int[2];
-                intermediate_positions.Clear();
+                if (intermediate_positions !=null) intermediate_positions.Clear();
                 textBox4.Clear();
             }
         }
@@ -980,7 +999,7 @@ namespace vector_accelerator_project
                 segmentBox.Enabled = true;
                 manualBox.Enabled = false;
                 start_position = new int[2]; end_position = new int[2];
-                intermediate_positions.Clear();
+                if (intermediate_positions != null) intermediate_positions.Clear();
                 textBox4.Clear();
             }
         }
@@ -992,6 +1011,11 @@ namespace vector_accelerator_project
         #endregion
 
         private void mmButton_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label19_Click(object sender, EventArgs e)
         {
 
         }

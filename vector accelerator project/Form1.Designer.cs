@@ -437,10 +437,11 @@ namespace vector_accelerator_project
             // label19
             // 
             this.label19.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label19.Location = new System.Drawing.Point(16, 447);
+            this.label19.Location = new System.Drawing.Point(16, 320);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(390, 2);
             this.label19.TabIndex = 49;
+            this.label19.Click += new System.EventHandler(this.label19_Click);
             // 
             // button22
             // 
@@ -562,7 +563,6 @@ namespace vector_accelerator_project
             this.segmentButton.Name = "segmentButton";
             this.segmentButton.Size = new System.Drawing.Size(138, 24);
             this.segmentButton.TabIndex = 34;
-            this.segmentButton.TabStop = true;
             this.segmentButton.Text = "Segment input";
             this.segmentButton.UseVisualStyleBackColor = true;
             this.segmentButton.CheckedChanged += new System.EventHandler(this.segmentButton_CheckedChanged);
@@ -592,7 +592,7 @@ namespace vector_accelerator_project
             // 
             // button15
             // 
-            this.button15.Location = new System.Drawing.Point(201, 490);
+            this.button15.Location = new System.Drawing.Point(211, 263);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(195, 50);
             this.button15.TabIndex = 31;
@@ -603,7 +603,7 @@ namespace vector_accelerator_project
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(13, 456);
+            this.label10.Location = new System.Drawing.Point(23, 229);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(169, 20);
             this.label10.TabIndex = 30;
@@ -611,7 +611,7 @@ namespace vector_accelerator_project
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(16, 490);
+            this.button11.Location = new System.Drawing.Point(26, 263);
             this.button11.Name = "button11";
             this.button11.Size = new System.Drawing.Size(164, 48);
             this.button11.TabIndex = 28;
@@ -621,7 +621,7 @@ namespace vector_accelerator_project
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(188, 456);
+            this.textBox5.Location = new System.Drawing.Point(198, 229);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(100, 26);
             this.textBox5.TabIndex = 27;
@@ -790,7 +790,7 @@ namespace vector_accelerator_project
             this.segmentBox.Controls.Add(this.button12);
             this.segmentBox.Controls.Add(this.button19);
             this.segmentBox.Controls.Add(this.button20);
-            this.segmentBox.Location = new System.Drawing.Point(16, 229);
+            this.segmentBox.Location = new System.Drawing.Point(7, 326);
             this.segmentBox.Name = "segmentBox";
             this.segmentBox.Size = new System.Drawing.Size(407, 211);
             this.segmentBox.TabIndex = 44;
