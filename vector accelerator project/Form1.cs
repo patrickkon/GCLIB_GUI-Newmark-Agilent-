@@ -32,6 +32,11 @@ namespace vector_accelerator_project
         //a list of integer arrays, each with 2 elements:
         private List<int[]> intermediate_positions = null;
 
+        // used for movement by segment:
+        // each int[] has 6 elements (in-order): 
+        // a(start), a(end), a(delta), b(start), b(end), b(delta)
+        private List<int[]> segment_positions = null;
+
         // for abs_position the coor will be constantly displayed/updated, so I use this method:
         // Accessor function for private variable _abs_position (absolute position of gantry)
         public int[] abs_position
@@ -294,37 +299,73 @@ namespace vector_accelerator_project
         private void coor_string_to_intArr(string text, int[] prev_position)
         {
             int[] arr = new int[2];
-            Array.Copy(prev_position, arr, 0);
-            string temp = text.Substring(0, text.IndexOf(", "));
-            if (!(Int32.TryParse(temp, out prev_position[0])))
+
+            try
             {
-                //if conversion failed
-                prev_position[0] = arr[0];
+                
+                Array.Copy(prev_position, arr, 0);
+                string temp = text.Substring(0, text.IndexOf(", "));
+                if (!(Int32.TryParse(temp, out prev_position[0])))
+                {
+                    //if conversion failed
+                    prev_position[0] = arr[0];
+                }
+
+                temp = text.Substring(text.IndexOf(", ") + 2);
+
+                if (!(Int32.TryParse(temp, out prev_position[1])))
+                {
+                    //if conversion failed
+                    prev_position[1] = arr[1];
+                }
+            }
+            catch (Exception ex)
+            {
+                PrintOutput(textBox1, "ERROR in converting text to int: " + ex.Message, PrintStyle.Instruction);
+                // revert back to previous values.  
+                prev_position[1] = arr[1]; prev_position[0] = arr[0];
             }
 
-            temp = text.Substring(text.IndexOf(", ") + 2);
-           
-            if (!(Int32.TryParse(temp, out prev_position[1])))
-            {
-                //if conversion failed
-                prev_position[1] = arr[1];
-            }
-           
         }
 
 
         //display for textbox4 : displays variables in groupBox1
-        private void display_textbox4()
+        private void display_textbox4_manual()
         {   
             textBox4.Clear();
             textBox4.Text += "Start position: " + start_position[0] + ", " + start_position[1] + Environment.NewLine;
-            textBox4.Text += "End position: " + end_position[0] + ", " + end_position[1] + Environment.NewLine;
+            
             intermediate_positions?.ForEach(a => {
                 textBox4.Text += "Intermediate position: " + a[0] + ", " + a[1] + Environment.NewLine;
             });
-            
+            textBox4.Text += "End position: " + end_position[0] + ", " + end_position[1] + Environment.NewLine;
             textBox4.Text += "Drop bar by (units): " + drop_by + Environment.NewLine;
             //textBox4.Text += "Sample every (units): " + sample_units[0] + ", " + sample_units[1] + Environment.NewLine;
+            textBox4.Text += "Axis-c resting position: " + axis_c_rest_position;
+        }
+
+        private void display_textbox4_segment()
+        {
+            textBox4.Clear();
+            int counter = 1;
+            //here we display completed/validated segments:
+            segment_positions?.ForEach(a => {
+                if (counter != segment_positions.Count())
+                {
+                    textBox4.Text += "Segment " + counter + ".. " + Environment.NewLine;
+                    textBox4.Text += "A(start): " + a[0] + ", A(end): " + a[1] + ", delta A: " + a[2] + Environment.NewLine;
+                    textBox4.Text += "B(start): " + a[3] + ", B(end): " + a[4] + ", delta B: " + a[5] + Environment.NewLine;
+                    counter += 1;
+                }
+            });
+            //here we display the segment that that the user is currently trying to input:
+            int[] b = segment_positions.Last();
+            textBox4.Text += "Current segment input.. : " + Environment.NewLine;
+            textBox4.Text += "A(start): " + b[0] + ", A(end): " + b[1] + ", delta A: " + b[2] + Environment.NewLine;
+            textBox4.Text += "B(start): " + b[3] + ", B(end): " + b[4] + ", delta B: " + b[5] + Environment.NewLine;
+            counter += 1;
+
+            textBox4.Text += "Drop bar by (units): " + drop_by + Environment.NewLine;
             textBox4.Text += "Axis-c resting position: " + axis_c_rest_position;
         }
 
@@ -539,7 +580,7 @@ namespace vector_accelerator_project
 
  
             try
-            {
+            {   
                 string address = AddressTextBox.Text;
                 PrintOutput(textBox1, "Opening connection to \"" + address + "\"... ", PrintStyle.Normal, true);
                 gclib.GOpen(address);
@@ -635,7 +676,7 @@ namespace vector_accelerator_project
                 drop_by = temp;
             }
 
-            display_textbox4();
+            display_textbox4_manual();
 
         }
 
@@ -649,7 +690,7 @@ namespace vector_accelerator_project
                 axis_c_rest_position = temp;
             }
 
-            display_textbox4();
+            display_textbox4_manual();
         }
 
 
@@ -658,7 +699,7 @@ namespace vector_accelerator_project
         {
             coor_string_to_intArr(textBox3.Text, start_position);
             //System.Threading.Thread.Sleep(200);
-            display_textbox4();
+            display_textbox4_manual();
 
         }
 
@@ -666,7 +707,7 @@ namespace vector_accelerator_project
         private void button10_Click(object sender, EventArgs e)
         {
             coor_string_to_intArr(textBox3.Text, end_position);
-            display_textbox4();
+            display_textbox4_manual();
         }
 
         //Add intermediate position:
@@ -676,14 +717,14 @@ namespace vector_accelerator_project
             coor_string_to_intArr(textBox3.Text, temp_pos);
             if (intermediate_positions == null) intermediate_positions = new List<int[]>();
             intermediate_positions.Add(temp_pos);
-            display_textbox4();
+            display_textbox4_manual();
         }
 
         //Clear all intermediate positions:
         private void button9_Click(object sender, EventArgs e)
         {
             intermediate_positions.Clear();
-            display_textbox4();
+            display_textbox4_manual();
         }
 
         //Simplifier function used for function proceeding this:
@@ -748,10 +789,176 @@ namespace vector_accelerator_project
 
         #endregion
 
-        private void button17_Click(object sender, EventArgs e)
+        #region "controllers under construction"
+
+        #region "Segment_movement input buttons"
+
+        // Segment movement: A (start) button:
+        private void button12_Click(object sender, EventArgs e)
         {
+            // initialize if segment_positions has not been initialized before
+            // length (.Count) of list is now 1. This is important because we only display in 
+            // textBox4 if list has items. 
+            if (!segment_positions.Any()) {
+                segment_positions = new List<int[]>();
+                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+            }
+            if (!(Int32.TryParse(textBox7.Text, out segment_positions.Last()[0]))) {
+                segment_positions.Last()[0] = 0;
+            }
+
+            display_textbox4_segment();
 
         }
-    }
+
+        // Segment movement: A (end) button:
+        private void button17_Click(object sender, EventArgs e)
+        {
+            // initialize if segment_positions has not been initialized before
+            // length (.Count) of list is now 1. This is important because we only display in 
+            // textBox4 if list has items. 
+            if (!segment_positions.Any())
+            {
+                segment_positions = new List<int[]>();
+                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+            }
+            if (!(Int32.TryParse(textBox7.Text, out segment_positions.Last()[1])))
+            {
+                segment_positions.Last()[1] = 0;
+            }
+
+            display_textbox4_segment();
+        }
+
+        // Segment movement: A (delta) button:
+        private void button19_Click(object sender, EventArgs e)
+        {
+            // initialize if segment_positions has not been initialized before
+            // length (.Count) of list is now 1. This is important because we only display in 
+            // textBox4 if list has items. 
+            if (!segment_positions.Any())
+            {
+                segment_positions = new List<int[]>();
+                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+            }
+            if (!(Int32.TryParse(textBox7.Text, out segment_positions.Last()[2])))
+            {
+                segment_positions.Last()[2] = 0;
+            }
+            display_textbox4_segment();
+        }
+
+        // Segment movement: B (start) button:
+        private void button16_Click(object sender, EventArgs e)
+        {
+            // initialize if segment_positions has not been initialized before
+            // length (.Count) of list is now 1. This is important because we only display in 
+            // textBox4 if list has items. 
+            if (!segment_positions.Any())
+            {
+                segment_positions = new List<int[]>();
+                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+            }
+            if (!(Int32.TryParse(textBox7.Text, out segment_positions.Last()[3])))
+            {
+                segment_positions.Last()[3] = 0;
+            }
+            display_textbox4_segment();
+        }
+
+        // Segment movement: B (end) button:
+        private void button18_Click(object sender, EventArgs e)
+        {
+            // initialize if segment_positions has not been initialized before
+            // length (.Count) of list is now 1. This is important because we only display in 
+            // textBox4 if list has items. 
+            if (!segment_positions.Any())
+            {
+                segment_positions = new List<int[]>();
+                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+            }
+            if (!(Int32.TryParse(textBox7.Text, out segment_positions.Last()[4])))
+            {
+                segment_positions.Last()[4] = 0;
+            }
+            display_textbox4_segment();
+        }
+
+        // Segment movement: B (delta) button:
+        private void button20_Click(object sender, EventArgs e)
+        {
+            // initialize if segment_positions has not been initialized before
+            // length (.Count) of list is now 1. This is important because we only display in 
+            // textBox4 if list has items. 
+            if (!segment_positions.Any())
+            {
+                segment_positions = new List<int[]>();
+                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+            }
+            if (!(Int32.TryParse(textBox7.Text, out segment_positions.Last()[5])))
+            {
+                segment_positions.Last()[5] = 0;
+            }
+            display_textbox4_segment();
+        }
+
+        // Segment movement: clear segments button:
+        private void button22_Click(object sender, EventArgs e)
+        {
+            segment_positions.Clear();
+            display_textbox4_segment();
+        }
+
+        // Segment movement: add segment button:
+        private void button21_Click(object sender, EventArgs e)
+        {
+            // check if segment values are valid (i.e. if they add up):
+            if( ((segment_positions.Last()[1] - segment_positions.Last()[0]) % segment_positions.Last()[2] == 0) && ((segment_positions.Last()[4] - segment_positions.Last()[3]) % segment_positions.Last()[5] == 0) )
+            {
+                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+                
+            }
+            else
+            {
+                MessageBox.Show("Segment values do not add up. Check your input values.", "Invalid Input.");
+            }
+            display_textbox4_segment();
+        }
+
+
        
+        //Configuration of GUI if manual_button is checked:
+        private void manualButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (manualButton.Checked == true)
+            {
+
+                manualBox.Enabled = true;
+                segment_positions.Clear();
+                segmentBox.Enabled = false;
+                textBox4.Clear();
+            }
+        }
+
+        //Configuration of GUI if segment_button is checked:
+        private void segmentButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (segmentButton.Checked == true)
+            {
+                segmentBox.Enabled = true;
+                manualBox.Enabled = false;
+                start_position = new int[2]; end_position = new int[2];
+                intermediate_positions.Clear();
+                textBox4.Clear();
+            }
+        }
+
+        #endregion
+
+
+
+
+        #endregion
+    }
+
 }
