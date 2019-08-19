@@ -254,6 +254,11 @@ namespace vector_accelerator_project
         {
             try
             {
+                // do unit (mm to stepper counts) conversion if necessary:
+
+                int units = 0;
+
+
                 PrintOutput(textBox1, "Preparing " + axis + " axis for PA movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
                 gclib.GCommand("AB;MO;SH" + axis);
                 //compound commands are possible though typically not recommended
@@ -372,6 +377,26 @@ namespace vector_accelerator_project
             textBox4.Text += "Axis-c resting position: " + axis_c_rest_position + Environment.NewLine;
         }
 
+
+        private int convert_mm_step(int axis, int input)
+        {
+            // Parameters:
+            // axis: 0 = axis-a, 1 = axis-b, 2 = axis-c
+
+            int converted = 0;
+ 
+            // convert mm to step:
+            // Note measured mm lengths for axis a b and c, are 120,120,34cm respectively. 
+            if(axis == 0) converted = input * 207;
+            if (axis == 1) converted = input * 207;
+            if (axis == 2) converted = input * 149705;
+
+            return converted;
+        }
+
+
+       
+          
 
         //Note to self: currently not working
         public void Main(string address)
@@ -598,7 +623,7 @@ namespace vector_accelerator_project
                 GeneralGroup.Enabled = true;
                 originButton.Enabled = true; returnOriginButton.Enabled = true;
                 pictureBox1.Enabled = true; textBox6.Enabled = true;
-
+                axisCinputBox.Enabled = false; manualBox.Enabled = false; segmentBox.Enabled = false;
 
 
                 //Update gantry absolute position to variable abs_position:
@@ -988,10 +1013,9 @@ namespace vector_accelerator_project
         {
             if (manualButton.Checked == true)
             {
-
-                manualBox.Enabled = true;
                 if(segment_positions.Any()) segment_positions.Clear();
-                segmentBox.Enabled = false;
+                segmentBox.Enabled = false; axisCinputBox.Enabled = true;
+                manualBox.Enabled = true;
                 start_position = new int[2]; end_position = new int[2];
                 if (intermediate_positions !=null) intermediate_positions.Clear();
                 textBox4.Clear();
@@ -1003,7 +1027,7 @@ namespace vector_accelerator_project
         {
             if (segmentButton.Checked == true)
             {
-                segmentBox.Enabled = true;
+                segmentBox.Enabled = true; axisCinputBox.Enabled = true;
                 manualBox.Enabled = false;
                 start_position = new int[2]; end_position = new int[2];
                 if (intermediate_positions != null) intermediate_positions.Clear();
