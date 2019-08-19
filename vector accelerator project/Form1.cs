@@ -343,7 +343,7 @@ namespace vector_accelerator_project
             //textBox4.Text += "Sample every (units): " + sample_units[0] + ", " + sample_units[1] + Environment.NewLine;
             textBox4.Text += "Axis-c resting position: " + axis_c_rest_position;
         }
-
+      
         private void display_textbox4_segment()
         {
             textBox4.Clear();
@@ -354,7 +354,7 @@ namespace vector_accelerator_project
                 {
                     textBox4.Text += "Segment " + counter + ".. " + Environment.NewLine;
                     textBox4.Text += "A(start): " + a[0] + ", A(end): " + a[1] + ", delta A: " + a[2] + Environment.NewLine;
-                    textBox4.Text += "B(start): " + a[3] + ", B(end): " + a[4] + ", delta B: " + a[5] + Environment.NewLine;
+                    textBox4.Text += "B(start): " + a[3] + ", B(end): " + a[4] + ", delta B: " + a[5] + Environment.NewLine + Environment.NewLine;
                     counter += 1;
                 }
             });
@@ -364,12 +364,12 @@ namespace vector_accelerator_project
                 int[] b = segment_positions.Last();
                 textBox4.Text += "Current segment input.. : " + Environment.NewLine;
                 textBox4.Text += "A(start): " + b[0] + ", A(end): " + b[1] + ", delta A: " + b[2] + Environment.NewLine;
-                textBox4.Text += "B(start): " + b[3] + ", B(end): " + b[4] + ", delta B: " + b[5] + Environment.NewLine;
+                textBox4.Text += "B(start): " + b[3] + ", B(end): " + b[4] + ", delta B: " + b[5] + Environment.NewLine + Environment.NewLine;
                 
             }
 
             textBox4.Text += "Drop bar by (units): " + drop_by + Environment.NewLine;
-            textBox4.Text += "Axis-c resting position: " + axis_c_rest_position;
+            textBox4.Text += "Axis-c resting position: " + axis_c_rest_position + Environment.NewLine;
         }
 
 
@@ -599,6 +599,8 @@ namespace vector_accelerator_project
                 originButton.Enabled = true; returnOriginButton.Enabled = true;
                 pictureBox1.Enabled = true; textBox6.Enabled = true;
 
+
+
                 //Update gantry absolute position to variable abs_position:
                 cur_abs_pos(abs_position); 
                 return;
@@ -664,6 +666,7 @@ namespace vector_accelerator_project
             runAbsoluteMoveCommand("B", 0, speed_b);
             runAbsoluteMoveCommand("C", 0, speed_c);
             PrintOutput(textBox1, "Move back to origin successful!");
+            cur_abs_pos(abs_position);
         }
 
 
@@ -775,9 +778,10 @@ namespace vector_accelerator_project
             }
             else if (segmentButton.Checked == true)
             {
-                int counter = 0;
+                int counter = 0; // indicates how many segments have been processed.
                 segment_positions?.ForEach(a =>
-                {   
+                {
+                    MessageBox.Show(a[3].ToString() +a[4].ToString() +a[5].ToString());
                     int multiplier = 0;
                     // Do not consider last element of segment_positions as it does not contain validated input that has passed through the function button21_clicked:
                     if (counter < segment_positions.Count - 1)
@@ -787,11 +791,13 @@ namespace vector_accelerator_project
                             start_position[0] = multiplier * a[2] + a[0];
                             start_position[1] = multiplier * a[5] + a[3];
                             multiplier += 1;
-                            if (Math.Abs(start_position[0]) > Math.Abs(a[1]) || Math.Abs(start_position[1]) > Math.Abs(a[4])) break;
+                            //if ( (start_position[0] < 0 && (Math.Abs(start_position[0]) > Math.Abs(a[1])  || Math.Abs(start_position[1]) > Math.Abs(a[4])) ) || (start_position[0] < 0 && (Math.Abs(start_position[0]) > Math.Abs(a[1]) || Math.Abs(start_position[1]) > Math.Abs(a[4])))) break;
                             special_move_helper(start_position, drop_by);
                             // BLOCK of code to complete user specified task....
                             // I replace it temporarily with a simple pause:
                             System.Threading.Thread.Sleep(200);
+
+                            if (start_position[0] == a[1] || start_position[1] == a[4]) break;
 
                         }
                         counter += 1;
@@ -950,6 +956,7 @@ namespace vector_accelerator_project
         private void button22_Click(object sender, EventArgs e)
         {
             segment_positions.Clear();
+            textBox4.Clear();
         }
 
         // Segment movement: add segment button:
@@ -1016,6 +1023,11 @@ namespace vector_accelerator_project
         }
 
         private void label19_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
         {
 
         }
