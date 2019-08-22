@@ -138,9 +138,10 @@ namespace vector_accelerator_project
 
             //disable ability to move before a connection with controller has been established
             DisconnectStripButton.Enabled = false; groupBox1.Enabled = false;
-            GeneralGroup.Enabled = false;
+            GeneralGroup.Enabled = false; configBox.Enabled = false;
             originButton.Enabled = false; returnOriginButton.Enabled = false;
             pictureBox1.Enabled = false; textBox6.Enabled = false;
+
         }
 
         //Various print styles.
@@ -226,11 +227,30 @@ namespace vector_accelerator_project
         {
             try
             {
+                int units = distance_units;
+                // do unit (mm to stepper counts) conversion if necessary:
+                if (mmButton.Checked)
+                {
+                    switch (axis)
+                    {
+                        case "A":
+                            units = convert_mm_step(0, distance_units);
+                            break;
+                        case "B":
+                            units = convert_mm_step(1, distance_units);
+                            break;
+                        case "C":
+                            units = convert_mm_step(2, distance_units);
+                            break;
+
+                    }
+                }
+
                 PrintOutput(textBox1, "Preparing " + axis + " axis for PR movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
                 gclib.GCommand("AB;MO;SH" + axis);
                 //compound commands are possible though typically not recommended
                 PrintOutput(textBox1, "Ok");
-                gclib.GCommand("PR" + axis + "=" + distance_units);
+                gclib.GCommand("PR" + axis + "=" + units);
 
                 //might implement speed control parameter in future
                 gclib.GCommand("SP" + axis + "=" +speed);
@@ -254,16 +274,29 @@ namespace vector_accelerator_project
         {
             try
             {
+                int units = distance_units;
                 // do unit (mm to stepper counts) conversion if necessary:
+                if (mmButton.Checked)
+                {
+                    switch (axis)
+                    {
+                        case "A":
+                            units = convert_mm_step(0, distance_units);
+                            break;
+                        case "B":
+                            units = convert_mm_step(1, distance_units);
+                            break;
+                        case "C":
+                            units = convert_mm_step(2, distance_units);
+                            break;
 
-                int units = 0;
-
-
+                    }
+                }
                 PrintOutput(textBox1, "Preparing " + axis + " axis for PA movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
                 gclib.GCommand("AB;MO;SH" + axis);
                 //compound commands are possible though typically not recommended
                 PrintOutput(textBox1, "Ok");
-                gclib.GCommand("PA" + axis + "=" + distance_units);
+                gclib.GCommand("PA" + axis + "=" + units);
 
                 //might implement speed control parameter in future
                 gclib.GCommand("SP" + axis + "=" + speed);
@@ -300,6 +333,7 @@ namespace vector_accelerator_project
             }
         }
 
+
         // From string from textBox, to X, Y coordinates in int array:
         private void coor_string_to_intArr(string text, int[] prev_position)
         {
@@ -323,12 +357,23 @@ namespace vector_accelerator_project
                     //if conversion failed
                     prev_position[1] = arr[1];
                 }
+
+                if (mmButton.Checked)
+                {
+                    prev_position[0] = (int)((float)prev_position[0] * 207);
+                    prev_position[1] = (int)((float)prev_position[1] * 207);
+                }
             }
             catch (Exception ex)
             {
                 PrintOutput(textBox1, "ERROR in converting text to int: " + ex.Message, PrintStyle.Instruction);
                 // revert back to previous values.  
                 prev_position[1] = arr[1]; prev_position[0] = arr[0];
+                if (mmButton.Checked)
+                {
+                    prev_position[0] = (int)((float)prev_position[0] * 207);
+                    prev_position[1] = (int)((float)prev_position[1] * 207);
+                }
             }
 
         }
@@ -386,17 +431,14 @@ namespace vector_accelerator_project
             int converted = 0;
  
             // convert mm to step:
-            // Note measured mm lengths for axis a b and c, are 120,120,34cm respectively. 
+            // Note measured mm lengths for axis a b and c, are ~120,120,34cm respectively. 
             if(axis == 0) converted = input * 207;
             if (axis == 1) converted = input * 207;
-            if (axis == 2) converted = input * 149705;
+            if (axis == 2) converted = input * 14970;
 
             return converted;
         }
 
-
-       
-          
 
         //Note to self: currently not working
         public void Main(string address)
@@ -617,17 +659,10 @@ namespace vector_accelerator_project
 
                 //Now that we've successfully connected, here we modify how user
                 //can interact with the GUI:
+                DisconnectStripButton.Enabled = true; ConnectStripButton.Enabled = false;
                 AddressTextBox.Enabled = false;
-                ConnectStripButton.Enabled = false;
-                DisconnectStripButton.Enabled = true; groupBox1.Enabled = true;
-                GeneralGroup.Enabled = true;
-                originButton.Enabled = true; returnOriginButton.Enabled = true;
-                pictureBox1.Enabled = true; textBox6.Enabled = true;
-                axisCinputBox.Enabled = false; manualBox.Enabled = false; segmentBox.Enabled = false;
+                configBox.Enabled = true;
 
-
-                //Update gantry absolute position to variable abs_position:
-                cur_abs_pos(abs_position); 
                 return;
             }
             catch (Exception ex)
@@ -649,14 +684,16 @@ namespace vector_accelerator_project
             ConnectStripButton.Enabled = true;
 
             DisconnectStripButton.Enabled = false; groupBox1.Enabled = false;
-            GeneralGroup.Enabled = false;
+            GeneralGroup.Enabled = false; configBox.Enabled = false;
             originButton.Enabled = false; returnOriginButton.Enabled = false;
             pictureBox1.Enabled = false; textBox6.Enabled = false;
+            mmButton.Checked = false; stepperButton.Checked = false;
 
             PrintOutput(textBox1, "DISCONNECTED!", PrintStyle.Normal);
         }        
 
         //Note to self: this is complete. Can be applied to other buttons in this group
+        // general movement, + axis-a incremental movement button: 
         private void button1_Click(object sender, EventArgs e)
         {
             //FUTURE: not sure what this string command does
@@ -664,6 +701,36 @@ namespace vector_accelerator_project
 
             //take a single button click as moving 10000 units in a-axis
             runRelativeMoveCommand("A", increment_unit, speed_a);           
+        }
+
+        // general movement, - axis-a incremental movement button: 
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            runRelativeMoveCommand("A", -1 * increment_unit, speed_a);
+        } 
+
+        // general movement, + axis-b incremental movement button: 
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            runRelativeMoveCommand("B", increment_unit, speed_b);
+        }
+
+        // general movement, - axis-b incremental movement button: 
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+            runRelativeMoveCommand("B", -1 * increment_unit, speed_b);
+        }
+
+        // general movement, + axis-c incremental movement button: 
+        private void button6_Click(object sender, EventArgs e)
+        {
+            runRelativeMoveCommand("C", increment_unit, speed_c);
+        }
+
+        // general movement, - axis-c incremental movement button: 
+        private void button5_Click(object sender, EventArgs e)
+        {
+            runRelativeMoveCommand("C", -1 * increment_unit, speed_c);
         }
 
         //Set as origin button:
@@ -683,6 +750,20 @@ namespace vector_accelerator_project
                 PrintOutput(textBox1, "ERROR in setting gantry origin: " + ex.Message, PrintStyle.Instruction);
             }
         }
+
+        // GUI components to enable once a unit (either mm or stepper count) is selected:
+        private void unit_selected()
+        {
+            groupBox1.Enabled = true;
+            GeneralGroup.Enabled = true;
+            originButton.Enabled = true; returnOriginButton.Enabled = true;
+            pictureBox1.Enabled = true; textBox6.Enabled = true;
+            axisCinputBox.Enabled = false; manualBox.Enabled = false; segmentBox.Enabled = false;
+
+            //Also Update gantry absolute position to variable abs_position:
+            cur_abs_pos(abs_position);
+        }
+
 
         //Return to origin button:
         private void returnOriginButton_Click(object sender, EventArgs e)
@@ -706,7 +787,13 @@ namespace vector_accelerator_project
                 //if conversion failed
                 drop_by = temp;
             }
-            if(manualButton.Checked == true) display_textbox4_manual();
+
+            if (mmButton.Checked)
+            {
+                drop_by = drop_by * 14970;
+            }
+
+            if (manualButton.Checked == true) display_textbox4_manual();
 
             if (segmentButton.Checked == true) display_textbox4_segment();
 
@@ -721,6 +808,11 @@ namespace vector_accelerator_project
             {
                 //if conversion failed
                 axis_c_rest_position = temp;
+            }
+
+            if (mmButton.Checked)
+            {
+                axis_c_rest_position = axis_c_rest_position * 14970;
             }
 
             if (manualButton.Checked == true) display_textbox4_manual();
@@ -806,23 +898,38 @@ namespace vector_accelerator_project
                 int counter = 0; // indicates how many segments have been processed.
                 segment_positions?.ForEach(a =>
                 {
-                    MessageBox.Show(a[3].ToString() +a[4].ToString() +a[5].ToString());
+                    
                     int multiplier = 0;
                     // Do not consider last element of segment_positions as it does not contain validated input that has passed through the function button21_clicked:
                     if (counter < segment_positions.Count - 1)
                     {
                         while (true)
                         {
-                            start_position[0] = multiplier * a[2] + a[0];
-                            start_position[1] = multiplier * a[5] + a[3];
+                            if (!mmButton.Checked)
+                            {
+                                start_position[0] = multiplier * a[2] + a[0];
+                                start_position[1] = multiplier * a[5] + a[3];
+                            }
+                            else
+                            {
+                                start_position[0] = multiplier * 207 * a[2] + 207 * a[0];
+                                start_position[1] = multiplier * 207 * a[5] + 207 * a[3];
+                            }
+
                             multiplier += 1;
                             //if ( (start_position[0] < 0 && (Math.Abs(start_position[0]) > Math.Abs(a[1])  || Math.Abs(start_position[1]) > Math.Abs(a[4])) ) || (start_position[0] < 0 && (Math.Abs(start_position[0]) > Math.Abs(a[1]) || Math.Abs(start_position[1]) > Math.Abs(a[4])))) break;
                             special_move_helper(start_position, drop_by);
                             // BLOCK of code to complete user specified task....
                             // I replace it temporarily with a simple pause:
                             System.Threading.Thread.Sleep(200);
+                            if (!mmButton.Checked)
+                            {
+                                if (start_position[0] == a[1] || start_position[1] == a[4]) break;
+                            }
 
-                            if (start_position[0] == a[1] || start_position[1] == a[4]) break;
+                            else {
+                                if (start_position[0] == 207 * a[1] || start_position[1] == 207 * a[4]) break;
+                            }
 
                         }
                         counter += 1;
@@ -1043,7 +1150,10 @@ namespace vector_accelerator_project
 
         private void mmButton_CheckedChanged(object sender, EventArgs e)
         {
-
+            if (mmButton.Checked || stepperButton.Checked)
+            {
+                unit_selected();
+            }
         }
 
         private void label19_Click(object sender, EventArgs e)
@@ -1055,6 +1165,52 @@ namespace vector_accelerator_project
         {
 
         }
+
+        private void stepperButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (mmButton.Checked || stepperButton.Checked)
+            {
+                unit_selected();
+            }
+        }
+
+        private void textBox8_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        //axis-a slew speed button:
+        private void button23_Click(object sender, EventArgs e)
+        {
+
+            if (!(Int32.TryParse(textBox8.Text, out speed_a)))
+            {
+                //if conversion failed, revert to default slew speed
+                speed_a = 5000;
+            }
+        }
+
+        //axis-b slew speed button:
+        private void button24_Click(object sender, EventArgs e)
+        {
+            if (!(Int32.TryParse(textBox8.Text, out speed_b)))
+            {
+                //if conversion failed, revert to default slew speed
+                speed_a = 5000;
+            }
+        }
+
+        //axis-c slew speed button:
+        private void button25_Click(object sender, EventArgs e)
+        {
+            if (!(Int32.TryParse(textBox8.Text, out speed_c)))
+            {
+                //if conversion failed, revert to default slew speed
+                speed_a = 400000;
+            }
+        }
+
+        
     }
 
 }

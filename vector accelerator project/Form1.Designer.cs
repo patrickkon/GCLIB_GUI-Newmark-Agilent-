@@ -42,7 +42,9 @@ namespace vector_accelerator_project
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.DisconnectStripButton = new System.Windows.Forms.ToolStripButton();
             this.ConnectStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.AddressTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.GeneralGroup = new System.Windows.Forms.GroupBox();
             this.label5 = new System.Windows.Forms.Label();
             this.unitbox = new System.Windows.Forms.TextBox();
@@ -63,6 +65,11 @@ namespace vector_accelerator_project
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.axisCinputBox = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.button11 = new System.Windows.Forms.Button();
+            this.button15 = new System.Windows.Forms.Button();
             this.segmentBox = new System.Windows.Forms.GroupBox();
             this.label18 = new System.Windows.Forms.Label();
             this.textBox7 = new System.Windows.Forms.TextBox();
@@ -82,10 +89,6 @@ namespace vector_accelerator_project
             this.segmentButton = new System.Windows.Forms.RadioButton();
             this.manualButton = new System.Windows.Forms.RadioButton();
             this.button13 = new System.Windows.Forms.Button();
-            this.button15 = new System.Windows.Forms.Button();
-            this.label10 = new System.Windows.Forms.Label();
-            this.button11 = new System.Windows.Forms.Button();
-            this.textBox5 = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -101,16 +104,17 @@ namespace vector_accelerator_project
             this.label21 = new System.Windows.Forms.Label();
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.configBox = new System.Windows.Forms.GroupBox();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.axisCinputBox = new System.Windows.Forms.GroupBox();
+            this.button25 = new System.Windows.Forms.Button();
+            this.button24 = new System.Windows.Forms.Button();
+            this.button23 = new System.Windows.Forms.Button();
             this.MainToolStrip.SuspendLayout();
             this.GeneralGroup.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.axisCinputBox.SuspendLayout();
             this.segmentBox.SuspendLayout();
             this.manualBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.configBox.SuspendLayout();
-            this.axisCinputBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox1
@@ -174,10 +178,11 @@ namespace vector_accelerator_project
             this.DisconnectStripButton,
             this.ConnectStripButton,
             this.toolStripButton1,
-            this.AddressTextBox});
+            this.AddressTextBox,
+            this.toolStripButton2});
             this.MainToolStrip.Location = new System.Drawing.Point(0, 0);
             this.MainToolStrip.Name = "MainToolStrip";
-            this.MainToolStrip.Size = new System.Drawing.Size(828, 32);
+            this.MainToolStrip.Size = new System.Drawing.Size(856, 32);
             this.MainToolStrip.TabIndex = 15;
             this.MainToolStrip.Text = "toolStrip1";
             // 
@@ -208,12 +213,30 @@ namespace vector_accelerator_project
             this.ConnectStripButton.Text = "Connect";
             this.ConnectStripButton.Click += new System.EventHandler(this.ConnectStripButton_Click);
             // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(28, 29);
+            this.toolStripButton1.Text = "toolStripButton1";
+            // 
             // AddressTextBox
             // 
             this.AddressTextBox.Name = "AddressTextBox";
             this.AddressTextBox.Size = new System.Drawing.Size(450, 32);
             this.AddressTextBox.Text = "COM14 --direct --baud 19200 --subscribe ALL";
             this.AddressTextBox.Click += new System.EventHandler(this.AddressTextBox_Click);
+            // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(28, 29);
+            this.toolStripButton2.Text = "toolStripButton2";
             // 
             // GeneralGroup
             // 
@@ -264,6 +287,7 @@ namespace vector_accelerator_project
             this.button5.TabIndex = 19;
             this.button5.Text = "- (c-axis)";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // label4
             // 
@@ -282,6 +306,7 @@ namespace vector_accelerator_project
             this.button6.TabIndex = 17;
             this.button6.Text = "+ (c-axis)";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // button3
             // 
@@ -291,6 +316,7 @@ namespace vector_accelerator_project
             this.button3.TabIndex = 16;
             this.button3.Text = "- (b-axis)";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click_1);
             // 
             // label3
             // 
@@ -309,6 +335,7 @@ namespace vector_accelerator_project
             this.button4.TabIndex = 14;
             this.button4.Text = "+ (b-axis)";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click_1);
             // 
             // button2
             // 
@@ -318,6 +345,7 @@ namespace vector_accelerator_project
             this.button2.TabIndex = 13;
             this.button2.Text = "- (a-axis)";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click_1);
             // 
             // label1
             // 
@@ -427,6 +455,56 @@ namespace vector_accelerator_project
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Anchor coordinates";
             this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // axisCinputBox
+            // 
+            this.axisCinputBox.Controls.Add(this.label10);
+            this.axisCinputBox.Controls.Add(this.textBox5);
+            this.axisCinputBox.Controls.Add(this.button11);
+            this.axisCinputBox.Controls.Add(this.button15);
+            this.axisCinputBox.Location = new System.Drawing.Point(10, 229);
+            this.axisCinputBox.Name = "axisCinputBox";
+            this.axisCinputBox.Size = new System.Drawing.Size(399, 110);
+            this.axisCinputBox.TabIndex = 51;
+            this.axisCinputBox.TabStop = false;
+            this.axisCinputBox.Text = "Axis-c input:";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(6, 24);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(169, 20);
+            this.label10.TabIndex = 30;
+            this.label10.Text = "Other parameter input:";
+            // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(181, 24);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(100, 26);
+            this.textBox5.TabIndex = 27;
+            this.textBox5.TextChanged += new System.EventHandler(this.textBox5_TextChanged);
+            // 
+            // button11
+            // 
+            this.button11.Location = new System.Drawing.Point(9, 58);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(164, 48);
+            this.button11.TabIndex = 28;
+            this.button11.Text = "Axis-c drop bar by (relative):";
+            this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
+            // 
+            // button15
+            // 
+            this.button15.Location = new System.Drawing.Point(194, 58);
+            this.button15.Name = "button15";
+            this.button15.Size = new System.Drawing.Size(195, 50);
+            this.button15.TabIndex = 31;
+            this.button15.Text = "Set Axis-c resting position:";
+            this.button15.UseVisualStyleBackColor = true;
+            this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
             // segmentBox
             // 
@@ -627,43 +705,6 @@ namespace vector_accelerator_project
             this.button13.UseVisualStyleBackColor = true;
             this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
-            // button15
-            // 
-            this.button15.Location = new System.Drawing.Point(194, 58);
-            this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(195, 50);
-            this.button15.TabIndex = 31;
-            this.button15.Text = "Set Axis-c resting position:";
-            this.button15.UseVisualStyleBackColor = true;
-            this.button15.Click += new System.EventHandler(this.button15_Click);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 24);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(169, 20);
-            this.label10.TabIndex = 30;
-            this.label10.Text = "Other parameter input:";
-            // 
-            // button11
-            // 
-            this.button11.Location = new System.Drawing.Point(9, 58);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(164, 48);
-            this.button11.TabIndex = 28;
-            this.button11.Text = "Axis-c drop bar by (relative):";
-            this.button11.UseVisualStyleBackColor = true;
-            this.button11.Click += new System.EventHandler(this.button11_Click);
-            // 
-            // textBox5
-            // 
-            this.textBox5.Location = new System.Drawing.Point(181, 24);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(100, 26);
-            this.textBox5.TabIndex = 27;
-            this.textBox5.TextChanged += new System.EventHandler(this.textBox5_TextChanged);
-            // 
             // label9
             // 
             this.label9.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -693,6 +734,7 @@ namespace vector_accelerator_project
             this.pictureBox1.Size = new System.Drawing.Size(200, 200);
             this.pictureBox1.TabIndex = 25;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Visible = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
             // 
@@ -703,6 +745,7 @@ namespace vector_accelerator_project
             this.textBox6.ReadOnly = true;
             this.textBox6.Size = new System.Drawing.Size(224, 26);
             this.textBox6.TabIndex = 26;
+            this.textBox6.Visible = false;
             this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
             // 
             // label11
@@ -712,6 +755,7 @@ namespace vector_accelerator_project
             this.label11.Size = new System.Drawing.Size(242, 30);
             this.label11.TabIndex = 27;
             this.label11.Text = "Single Coor (Clickable Map):";
+            this.label11.Visible = false;
             // 
             // label12
             // 
@@ -721,6 +765,7 @@ namespace vector_accelerator_project
             this.label12.Size = new System.Drawing.Size(184, 20);
             this.label12.TabIndex = 28;
             this.label12.Text = "Mapped relative position:";
+            this.label12.Visible = false;
             // 
             // returnOriginButton
             // 
@@ -740,6 +785,7 @@ namespace vector_accelerator_project
             this.button14.TabIndex = 31;
             this.button14.Text = "Start mapped motion";
             this.button14.UseVisualStyleBackColor = true;
+            this.button14.Visible = false;
             this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
             // richTextBox1
@@ -747,7 +793,7 @@ namespace vector_accelerator_project
             this.richTextBox1.Location = new System.Drawing.Point(1169, 316);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(415, 256);
+            this.richTextBox1.Size = new System.Drawing.Size(450, 270);
             this.richTextBox1.TabIndex = 32;
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
@@ -774,6 +820,7 @@ namespace vector_accelerator_project
             this.stepperButton.TabStop = true;
             this.stepperButton.Text = "Stepper Units";
             this.stepperButton.UseVisualStyleBackColor = true;
+            this.stepperButton.CheckedChanged += new System.EventHandler(this.stepperButton_CheckedChanged);
             // 
             // label13
             // 
@@ -799,9 +846,13 @@ namespace vector_accelerator_project
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(139, 26);
             this.textBox8.TabIndex = 41;
+            this.textBox8.TextChanged += new System.EventHandler(this.textBox8_TextChanged);
             // 
             // configBox
             // 
+            this.configBox.Controls.Add(this.button25);
+            this.configBox.Controls.Add(this.button24);
+            this.configBox.Controls.Add(this.button23);
             this.configBox.Controls.Add(this.label13);
             this.configBox.Controls.Add(this.label21);
             this.configBox.Controls.Add(this.mmButton);
@@ -809,33 +860,41 @@ namespace vector_accelerator_project
             this.configBox.Controls.Add(this.stepperButton);
             this.configBox.Location = new System.Drawing.Point(1134, 58);
             this.configBox.Name = "configBox";
-            this.configBox.Size = new System.Drawing.Size(310, 177);
+            this.configBox.Size = new System.Drawing.Size(420, 223);
             this.configBox.TabIndex = 43;
             this.configBox.TabStop = false;
             this.configBox.Text = "Start-up Config";
             this.configBox.Enter += new System.EventHandler(this.groupBox2_Enter);
             // 
-            // toolStripButton1
+            // button25
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(28, 29);
-            this.toolStripButton1.Text = "toolStripButton1";
+            this.button25.Location = new System.Drawing.Point(216, 161);
+            this.button25.Name = "button25";
+            this.button25.Size = new System.Drawing.Size(75, 29);
+            this.button25.TabIndex = 45;
+            this.button25.Text = "axis-c";
+            this.button25.UseVisualStyleBackColor = true;
+            this.button25.Click += new System.EventHandler(this.button25_Click);
             // 
-            // axisCinputBox
+            // button24
             // 
-            this.axisCinputBox.Controls.Add(this.label10);
-            this.axisCinputBox.Controls.Add(this.textBox5);
-            this.axisCinputBox.Controls.Add(this.button11);
-            this.axisCinputBox.Controls.Add(this.button15);
-            this.axisCinputBox.Location = new System.Drawing.Point(10, 229);
-            this.axisCinputBox.Name = "axisCinputBox";
-            this.axisCinputBox.Size = new System.Drawing.Size(399, 110);
-            this.axisCinputBox.TabIndex = 51;
-            this.axisCinputBox.TabStop = false;
-            this.axisCinputBox.Text = "Axis-c input:";
+            this.button24.Location = new System.Drawing.Point(125, 161);
+            this.button24.Name = "button24";
+            this.button24.Size = new System.Drawing.Size(75, 29);
+            this.button24.TabIndex = 44;
+            this.button24.Text = "axis-b";
+            this.button24.UseVisualStyleBackColor = true;
+            this.button24.Click += new System.EventHandler(this.button24_Click);
+            // 
+            // button23
+            // 
+            this.button23.Location = new System.Drawing.Point(37, 161);
+            this.button23.Name = "button23";
+            this.button23.Size = new System.Drawing.Size(75, 29);
+            this.button23.TabIndex = 43;
+            this.button23.Text = "axis-a";
+            this.button23.UseVisualStyleBackColor = true;
+            this.button23.Click += new System.EventHandler(this.button23_Click);
             // 
             // Form1
             // 
@@ -868,6 +927,8 @@ namespace vector_accelerator_project
             this.GeneralGroup.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.axisCinputBox.ResumeLayout(false);
+            this.axisCinputBox.PerformLayout();
             this.segmentBox.ResumeLayout(false);
             this.segmentBox.PerformLayout();
             this.manualBox.ResumeLayout(false);
@@ -875,8 +936,6 @@ namespace vector_accelerator_project
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.configBox.ResumeLayout(false);
             this.configBox.PerformLayout();
-            this.axisCinputBox.ResumeLayout(false);
-            this.axisCinputBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -955,6 +1014,10 @@ namespace vector_accelerator_project
         private GroupBox configBox;
         private ToolStripButton toolStripButton1;
         private GroupBox axisCinputBox;
+        private Button button25;
+        private Button button24;
+        private Button button23;
+        private ToolStripButton toolStripButton2;
     }
 }
 
