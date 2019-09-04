@@ -12,6 +12,11 @@ namespace vector_accelerator_project
 {
     public partial class Form1 : Form
     {
+        //Agilent VNA variable declaration (mixture of items I gathered from SurfaceScan proj:
+        private PNA analyzer; //this is an instance of a defined class - look it up!
+        private DataDisplay dataDisplay; //this is an instance of a defined class
+
+
         public const int G_SMALL_BUFFER = 1024;
 
         #region "Variable declaration"
@@ -842,9 +847,16 @@ namespace vector_accelerator_project
 
         private void special_manual_movement()
         {
-            try
-            {
-                special_move_helper(start_position, drop_by);
+            special_move_helper(start_position, drop_by);
+            // BLOCK of code to complete user specified task....
+            // I replace it temporarily with a simple pause:
+
+            // i add VNA stuff in now:
+
+
+            System.Threading.Thread.Sleep(200);
+            intermediate_positions?.ForEach(a => {
+                special_move_helper(a, drop_by);
                 // BLOCK of code to complete user specified task....
                 // I replace it temporarily with a simple pause:
                 System.Threading.Thread.Sleep(200);
@@ -875,6 +887,28 @@ namespace vector_accelerator_project
         //Button for start special movement (movement depends on which radio box (manual or segment) is checked):
         private void button13_Click(object sender, EventArgs e)
         {
+            #region "agilent setup"
+            //Agilent VNA (surfaceScan) code:
+
+            this.analyzer.StartFrequency
+                = Convert.ToSingle(this.numericUpDownStart.Value) * 1e6F;
+            this.analyzer.StopFrequency
+                = Convert.ToSingle(this.numericUpDownStop.Value) * 1e6F;
+            this.analyzer.Points =
+                Convert.ToInt32(this.numericUpDownPoints.Value);
+            this.analyzer.IFBW =
+                Convert.ToInt32(this.numericUpDownIFBW.Value);
+            this.analyzer.AvgFactor =
+                Convert.ToInt32(this.numericUpDownAvg.Value); //added this line
+            //this.analyzer.CalFile = calFileTemp;  *This is supposed to store PNA state, but I don't want to implement it now, might make it more complex
+            this.analyzer.Type = (PNA.MEASUREMENT)this.comboBoxMeasure.SelectedIndex;
+            this.analyzer.Format = (PNA.FORMAT)this.comboBoxFormat.SelectedIndex;
+            this.analyzer.SetupMeasurement();
+
+
+            #endregion
+
+
             if (manualButton.Checked == true)
             {
                 special_manual_movement();
@@ -1200,7 +1234,25 @@ namespace vector_accelerator_project
             }
         }
 
-        
+
+
+
+        #region "agilent helper functions"
+
+        private void PNA_scan()
+        {
+            DataPoint dbpt = new DataPoint(analyzer.Points);
+            // Let the probe settle
+            System.Threading.Thread.Sleep(200);
+            dbpt.Data = analyzer.Measure();
+            // Landing point to do PNA scan:
+            dbpt.Location = this.probePoints[i_xy];
+            dbpt.LocationZ = this.probeZPoints[i_z];
+            dbpt.Index = i;
+            dataPoints.Add(dbpt);
+        }
+
+        #endregion
     }
 
 }

@@ -42,9 +42,7 @@ namespace vector_accelerator_project
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.DisconnectStripButton = new System.Windows.Forms.ToolStripButton();
             this.ConnectStripButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.AddressTextBox = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.GeneralGroup = new System.Windows.Forms.GroupBox();
             this.label5 = new System.Windows.Forms.Label();
             this.unitbox = new System.Windows.Forms.TextBox();
@@ -177,12 +175,10 @@ namespace vector_accelerator_project
             this.toolStripLabel1,
             this.DisconnectStripButton,
             this.ConnectStripButton,
-            this.toolStripButton1,
-            this.AddressTextBox,
-            this.toolStripButton2});
+            this.AddressTextBox});
             this.MainToolStrip.Location = new System.Drawing.Point(0, 0);
             this.MainToolStrip.Name = "MainToolStrip";
-            this.MainToolStrip.Size = new System.Drawing.Size(902, 32);
+            this.MainToolStrip.Size = new System.Drawing.Size(800, 32);
             this.MainToolStrip.TabIndex = 15;
             this.MainToolStrip.Text = "toolStrip1";
             // 
@@ -213,30 +209,12 @@ namespace vector_accelerator_project
             this.ConnectStripButton.Text = "Connect";
             this.ConnectStripButton.Click += new System.EventHandler(this.ConnectStripButton_Click);
             // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(28, 29);
-            this.toolStripButton1.Text = "toolStripButton1";
-            // 
             // AddressTextBox
             // 
             this.AddressTextBox.Name = "AddressTextBox";
             this.AddressTextBox.Size = new System.Drawing.Size(450, 32);
             this.AddressTextBox.Text = "192.168.1.1 --direct --baud 19200 --subscribe ALL";
             this.AddressTextBox.Click += new System.EventHandler(this.AddressTextBox_Click);
-            // 
-            // toolStripButton2
-            // 
-            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(28, 29);
-            this.toolStripButton2.Text = "toolStripButton2";
             // 
             // GeneralGroup
             // 
@@ -1012,12 +990,10 @@ namespace vector_accelerator_project
         private GroupBox segmentBox;
         private GroupBox manualBox;
         private GroupBox configBox;
-        private ToolStripButton toolStripButton1;
         private GroupBox axisCinputBox;
         private Button button25;
         private Button button24;
         private Button button23;
-        private ToolStripButton toolStripButton2;
     }
 }
 
