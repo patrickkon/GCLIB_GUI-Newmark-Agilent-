@@ -40,6 +40,7 @@ namespace vector_accelerator_project
             this.GClibBackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.MainToolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.DisconnectStripButton = new System.Windows.Forms.ToolStripButton();
             this.ConnectStripButton = new System.Windows.Forms.ToolStripButton();
@@ -204,13 +205,14 @@ namespace vector_accelerator_project
             this.MainToolStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.MainToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
+            this.toolStripButton2,
             this.toolStripLabel1,
             this.DisconnectStripButton,
             this.ConnectStripButton,
             this.AddressTextBox});
             this.MainToolStrip.Location = new System.Drawing.Point(0, 0);
             this.MainToolStrip.Name = "MainToolStrip";
-            this.MainToolStrip.Size = new System.Drawing.Size(919, 32);
+            this.MainToolStrip.Size = new System.Drawing.Size(1118, 32);
             this.MainToolStrip.TabIndex = 15;
             this.MainToolStrip.Text = "toolStrip1";
             // 
@@ -219,9 +221,18 @@ namespace vector_accelerator_project
             this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(119, 29);
-            this.toolStripButton1.Text = "Save Data";
+            this.toolStripButton1.Size = new System.Drawing.Size(159, 29);
+            this.toolStripButton1.Text = "Save PNA Data";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(159, 29);
+            this.toolStripButton2.Text = "Clear PNA data";
+            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // toolStripLabel1
             // 
@@ -1019,7 +1030,7 @@ namespace vector_accelerator_project
             // button13
             // 
             this.button13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button13.Location = new System.Drawing.Point(115, 635);
+            this.button13.Location = new System.Drawing.Point(115, 624);
             this.button13.Name = "button13";
             this.button13.Size = new System.Drawing.Size(221, 39);
             this.button13.TabIndex = 32;
@@ -1410,6 +1421,7 @@ namespace vector_accelerator_project
         private NumericUpDown numericUpDownIFBW;
         private Label label23;
         private SaveFileDialog saveFileDialog;
+        private ToolStripButton toolStripButton2;
     }
 }
 

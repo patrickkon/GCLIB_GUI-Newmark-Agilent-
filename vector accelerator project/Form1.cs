@@ -14,7 +14,6 @@ namespace vector_accelerator_project
     {
         //Agilent VNA variable declaration (mixture of items I gathered from SurfaceScan proj:
         private PNA analyzer; //this is an instance of a defined class - look it up!
-        private DataDisplay dataDisplay; //this is an instance of a defined class
         private List<DataPoint> dataPoints;
 
 
@@ -1257,8 +1256,10 @@ namespace vector_accelerator_project
 
 
 
+
         #region "agilent helper functions"
 
+        // run PNA VNA scanning when position has been reached by controller:
         private void PNA_scan(int[] coor, int drop_by)
         {
             DataPoint dbpt = new DataPoint(analyzer.Points);
@@ -1272,6 +1273,7 @@ namespace vector_accelerator_project
             this.dataPoints.Add(dbpt);
         }
 
+        //Saving PNA datapoints that have been recorded:
         public void SaveData(string filename)
         {
             using (StreamWriter sw = File.CreateText(filename))
@@ -1299,7 +1301,16 @@ namespace vector_accelerator_project
             }
         }
 
-
+        // Clearing PNA dataPoints that have been recorded:
+        public void ClearDataPoints()
+        {
+            DialogResult result = MessageBox.Show("Are you sure you wish to clear all data points?",
+                "Warning", MessageBoxButtons.YesNo);
+            if (result == DialogResult.No)
+                return;
+            else
+                this.dataPoints.Clear();
+        }
 
         #endregion
 
@@ -1308,7 +1319,7 @@ namespace vector_accelerator_project
 
         }
 
-        // when SaveData button is clicked:
+        // when Save PNA data button is clicked:
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             this.saveFileDialog.ShowDialog();
@@ -1320,7 +1331,11 @@ namespace vector_accelerator_project
             this.SaveData(this.saveFileDialog.FileName);
         }
 
-       
+        // when Clear PNA data button is clicked:
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            ClearDataPoints();
+        }
     }
 
 }
