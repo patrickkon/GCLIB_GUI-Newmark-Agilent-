@@ -15,6 +15,7 @@ namespace vector_accelerator_project
         //Agilent VNA variable declaration (mixture of items I gathered from SurfaceScan proj:
         private PNA analyzer; //this is an instance of a defined class - look it up!
         private DataDisplay dataDisplay; //this is an instance of a defined class
+        private List<DataPoint> dataPoints;
 
 
         public const int G_SMALL_BUFFER = 1024;
@@ -852,7 +853,7 @@ namespace vector_accelerator_project
             // I replace it temporarily with a simple pause:
 
             // i add VNA stuff in now:
-
+            PNA_scan(start_position, drop_by);
 
             System.Threading.Thread.Sleep(200);
             intermediate_positions?.ForEach(a => {
@@ -860,28 +861,21 @@ namespace vector_accelerator_project
                 // BLOCK of code to complete user specified task....
                 // I replace it temporarily with a simple pause:
                 System.Threading.Thread.Sleep(200);
-                intermediate_positions?.ForEach(a =>
-                {
-                    special_move_helper(a, drop_by);
-                    // BLOCK of code to complete user specified task....
-                    // I replace it temporarily with a simple pause:
-                    System.Threading.Thread.Sleep(200);
-                });
+
+                // i add VNA stuff in now:
+                PNA_scan(a, drop_by);
+            });
 
                 special_move_helper(end_position, drop_by);
                 // BLOCK of code to complete user specified task....
                 // I replace it temporarily with a simple pause:
                 System.Threading.Thread.Sleep(200);
 
-                // return to original axis-c rest position before ending movement:
-                runAbsoluteMoveCommand("C", axis_c_rest_position, speed_c);
-            }
-            catch (Exception ex)
-            {
-                PrintOutput(textBox1, "YOYO WHATSAP: " + ex.Message, PrintStyle.GalilData);
-                
+            // i add VNA stuff in now:
+            PNA_scan(end_position, drop_by);
 
-            }
+            // return to original axis-c rest position before ending movement:
+            runAbsoluteMoveCommand("C", axis_c_rest_position, speed_c);
         }
 
         //Button for start special movement (movement depends on which radio box (manual or segment) is checked):
@@ -943,6 +937,10 @@ namespace vector_accelerator_project
                             // BLOCK of code to complete user specified task....
                             // I replace it temporarily with a simple pause:
                             System.Threading.Thread.Sleep(200);
+
+                            // i add VNA stuff in now:
+                            PNA_scan(start_position, drop_by);
+
                             if (!mmButton.Checked)
                             {
                                 if (start_position[0] == a[1] || start_position[1] == a[4]) break;
@@ -972,6 +970,8 @@ namespace vector_accelerator_project
 
         }
 
+
+        // This function is obsolete, since I will not implement mapped motion anymore:
         // Start "mapped" motion:
         // i.e. move gantry to mouse click position on "map" (X,Y coordinates)
         private void button14_Click(object sender, EventArgs e)
@@ -1239,20 +1239,68 @@ namespace vector_accelerator_project
 
         #region "agilent helper functions"
 
-        private void PNA_scan()
+        private void PNA_scan(int[] coor, int drop_by)
         {
             DataPoint dbpt = new DataPoint(analyzer.Points);
             // Let the probe settle
             System.Threading.Thread.Sleep(200);
             dbpt.Data = analyzer.Measure();
             // Landing point to do PNA scan:
-            dbpt.Location = this.probePoints[i_xy];
-            dbpt.LocationZ = this.probeZPoints[i_z];
-            dbpt.Index = i;
-            dataPoints.Add(dbpt);
+            dbpt.Location = new Point(coor[0], coor[1]);
+            dbpt.LocationZ = this.axis_c_rest_position + drop_by;
+            //dbpt.Index = i;
+            this.dataPoints.Add(dbpt);
         }
 
+        public void SaveData(string filename)
+        {
+            using (StreamWriter sw = File.CreateText(filename))
+            {
+
+                if (this.dataPoints.Count != 0)
+                {
+                    sw.WriteLine("Number of probe points: {0}", this.dataPoints.Count);
+                    sw.WriteLine("Number of sweep points: {0}", this.dataPoints[0].Data.Length);
+                }
+                foreach (DataPoint dataPoint in this.dataPoints)
+                {
+                    sw.Write("{0}, {1}, {2}, ",
+                        dataPoint.Location.X,
+                        dataPoint.Location.Y,
+                        dataPoint.LocationZ);
+                    foreach (NAComplex nadata in dataPoint.Data)
+                    {
+                        sw.Write("{0}, {1}, ",
+                            nadata.Re, nadata.Im);
+                    }
+                    sw.WriteLine();
+                }
+                sw.Close();
+            }
+        }
+
+
+
         #endregion
+
+        private void numericUpDownStart_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        // when SaveData button is clicked:
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            this.saveFileDialog.ShowDialog();
+        }
+
+        // when SaveData button is clicked, we eventually enter this function:
+        private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            this.SaveData(this.saveFileDialog.FileName);
+        }
+
+       
     }
 
 }

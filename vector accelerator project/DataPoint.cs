@@ -8,24 +8,20 @@ namespace vector_accelerator_project
 {
     class DataPoint
     {
-        private int index;
-        private PointF location;
-        private float locationZ;
+        
+        private Point location;
+        private int locationZ;
         private NAComplex[] data;
 
-        public int Index
-        {
-            get { return this.index; }
-            set { this.index = value; }
-        }
+        
 
-        public PointF Location
+        public Point Location
         {
             get { return this.location; }
             set { this.location = value; }
         }
 
-        public float LocationZ
+        public int LocationZ
         {
             get { return this.locationZ; }
             set { this.locationZ = value; }
@@ -39,7 +35,7 @@ namespace vector_accelerator_project
 
         public DataPoint(int num)
         {
-            location = new PointF();
+            location = new Point();
             //data = new NAComplex[num];
         }
     }
