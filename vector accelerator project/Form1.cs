@@ -227,24 +227,9 @@ namespace vector_accelerator_project
         {
             try
             {
+                // this variable is actually obsolete. can just use RHS param
                 int units = distance_units;
-                // do unit (mm to stepper counts) conversion if necessary:
-                if (mmButton.Checked)
-                {
-                    switch (axis)
-                    {
-                        case "A":
-                            units = convert_mm_step(0, distance_units);
-                            break;
-                        case "B":
-                            units = convert_mm_step(1, distance_units);
-                            break;
-                        case "C":
-                            units = convert_mm_step(2, distance_units);
-                            break;
 
-                    }
-                }
 
                 PrintOutput(textBox1, "Preparing " + axis + " axis for PR movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
                 gclib.GCommand("AB;MO;SH" + axis);
@@ -274,24 +259,10 @@ namespace vector_accelerator_project
         {
             try
             {
+                // this variable is actually obsolete. can just use RHS param
                 int units = distance_units;
-                // do unit (mm to stepper counts) conversion if necessary:
-                if (mmButton.Checked)
-                {
-                    switch (axis)
-                    {
-                        case "A":
-                            units = convert_mm_step(0, distance_units);
-                            break;
-                        case "B":
-                            units = convert_mm_step(1, distance_units);
-                            break;
-                        case "C":
-                            units = convert_mm_step(2, distance_units);
-                            break;
-
-                    }
-                }
+                
+           
                 PrintOutput(textBox1, "Preparing " + axis + " axis for PA movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
                 gclib.GCommand("AB;MO;SH" + axis);
                 //compound commands are possible though typically not recommended
