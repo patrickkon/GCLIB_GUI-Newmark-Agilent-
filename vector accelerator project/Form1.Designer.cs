@@ -169,7 +169,7 @@ namespace vector_accelerator_project
             // label6
             // 
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(259, 284);
+            this.label6.Location = new System.Drawing.Point(321, 284);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(263, 29);
             this.label6.TabIndex = 12;
@@ -190,7 +190,7 @@ namespace vector_accelerator_project
             this.textBox2.Location = new System.Drawing.Point(8, 307);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(220, 468);
+            this.textBox2.Size = new System.Drawing.Size(290, 731);
             this.textBox2.TabIndex = 13;
             this.textBox2.Text = "";
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
@@ -473,7 +473,7 @@ namespace vector_accelerator_project
             this.groupBox1.Controls.Add(this.textBox4);
             this.groupBox1.Controls.Add(this.segmentButton);
             this.groupBox1.Controls.Add(this.label20);
-            this.groupBox1.Location = new System.Drawing.Point(257, 316);
+            this.groupBox1.Location = new System.Drawing.Point(319, 316);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(1004, 680);
             this.groupBox1.TabIndex = 24;
