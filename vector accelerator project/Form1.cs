@@ -240,7 +240,6 @@ namespace vector_accelerator_project
             {
                 // this variable is actually obsolete. can just use RHS param
                 int units = distance_units;
-
                 PrintOutput(textBox1, "Preparing " + axis + " axis for PR movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
                 gclib.GCommand("AB;MO;SH" + axis);
                 //compound commands are possible though typically not recommended
@@ -271,8 +270,7 @@ namespace vector_accelerator_project
             {
                 // this variable is actually obsolete. can just use RHS param
                 int units = distance_units;
-                
-           
+
                 PrintOutput(textBox1, "Preparing " + axis + " axis for PA movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
                 gclib.GCommand("AB;MO;SH" + axis);
                 //compound commands are possible though typically not recommended
