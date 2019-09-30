@@ -876,6 +876,7 @@ namespace vector_accelerator_project
                     {
                         while (true)
                         {
+
                             if (!mmButton.Checked)
                             {
                                 start_position[0] = multiplier * a[2] + a[0];
@@ -1069,10 +1070,11 @@ namespace vector_accelerator_project
             {
                 // check if segment values are valid (i.e. if they add up):
                 bool same_num_samples = false;
+                //bool no_movement = (segment_positions.Last()[0] == segment_positions.Last()[1] && == segment_positions.Last()[2]);
                 int b_sample_num = (Math.Abs(segment_positions.Last()[5]) > 0) ? (segment_positions.Last()[4] - segment_positions.Last()[3]) / segment_positions.Last()[5] : 0;
                 int a_sample_num = (Math.Abs(segment_positions.Last()[2]) > 0) ? (segment_positions.Last()[1] - segment_positions.Last()[0]) / segment_positions.Last()[2] : 0;
                 same_num_samples = (b_sample_num == 0 || a_sample_num == 0 || (b_sample_num != a_sample_num)) ? false : true;
-                if (same_num_samples && ((segment_positions.Last()[1] - segment_positions.Last()[0]) % segment_positions.Last()[2] == 0) && ((segment_positions.Last()[4] - segment_positions.Last()[3]) % segment_positions.Last()[5] == 0))
+                if (() || (same_num_samples && ((segment_positions.Last()[1] - segment_positions.Last()[0]) % segment_positions.Last()[2] == 0) && ((segment_positions.Last()[4] - segment_positions.Last()[3]) % segment_positions.Last()[5] == 0))
                 {
                     segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
                 }
