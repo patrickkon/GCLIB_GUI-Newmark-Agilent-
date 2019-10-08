@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using AgilentPNA835x;
 
 namespace vector_accelerator_project
 {
@@ -111,6 +113,7 @@ namespace vector_accelerator_project
         public Form1()
         {
             InitializeComponent();
+            InitializePNA();
             this.Text = "gclib simple testing example (TITLE HERE)";
             
         }
@@ -148,6 +151,40 @@ namespace vector_accelerator_project
             pictureBox1.Enabled = false; textBox6.Enabled = false;
 
         }
+
+        // Added on 1st Oct 2019 (Post other PNA additions):
+        #region PNA Settings
+        private void InitializePNA()
+        {
+            this.analyzer = new PNA(); //instantiate an object PNA - find out what this does!  
+            dataPoints = new List<DataPoint>();
+            this.comboBoxMeasure.Items.Insert((int)PNA.MEASUREMENT.S11, "S11"); //give it the properties entered in the form
+            this.comboBoxMeasure.Items.Insert((int)PNA.MEASUREMENT.S12, "S12");
+            this.comboBoxMeasure.Items.Insert((int)PNA.MEASUREMENT.S21, "S21");
+            this.comboBoxMeasure.Items.Insert((int)PNA.MEASUREMENT.S22, "S22");
+
+            this.comboBoxMeasure.SelectedIndex = (int)PNA.MEASUREMENT.S11; // default measurement setting
+
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.LogMag, "Log Magnitude");
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.Phase, "Phase");
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.GroupDelay, "Group Delay");
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.SmithChart, "Smith Chart");
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.Polar, "Polar");
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.LinearMag, "Linear Magnitude");
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.SWR, "SWR");
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.Real, "Real");
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.Imaginary, "Imaginary");
+
+            this.comboBoxFormat.SelectedIndex = (int)PNA.FORMAT.LinearMag;
+
+            
+        }
+
+        private void numericUpDownPoints_ValueChanged(object sender, EventArgs e)
+        {
+            
+        }
+        #endregion
 
         //Various print styles.
         private enum PrintStyle
@@ -634,6 +671,8 @@ namespace vector_accelerator_project
                 AddressTextBox.Enabled = false;
                 configBox.Enabled = true;
 
+                this.analyzer.Open(); // meaning, we activate analyzer as soon as connect button is pressed.
+
                 return;
             }
             catch (Exception ex)
@@ -659,6 +698,8 @@ namespace vector_accelerator_project
             originButton.Enabled = false; returnOriginButton.Enabled = false;
             pictureBox1.Enabled = false; textBox6.Enabled = false;
             mmButton.Checked = false; stepperButton.Checked = false;
+
+            this.analyzer.Close();
 
             PrintOutput(textBox1, "DISCONNECTED!", PrintStyle.Normal);
         }        
@@ -1302,6 +1343,8 @@ namespace vector_accelerator_project
         {
             ClearDataPoints();
         }
+
+        
     }
 
 }
