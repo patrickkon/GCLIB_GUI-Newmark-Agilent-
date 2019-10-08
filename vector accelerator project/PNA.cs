@@ -9,6 +9,8 @@ using AgilentPNA835x;
 // I assume that the packages missing here will be included once i include the above missing
 // agilent library. 
 
+// Note that I converted the line AgilentPNA835x.ApplicationClass application to AgilentPNA835x.Application application
+
 namespace vector_accelerator_project
 {
     class PNA
@@ -24,9 +26,10 @@ namespace vector_accelerator_project
             SWR = 6, 
             Real = 7, 
             Imaginary = 8};
-        
-        //private bool online;
-        private AgilentPNA835x.ApplicationClass application; //send all instructions via this variable "application" which repr. PNA
+
+        // Pat: I uncommented this. Appears to be a mistake
+        private bool online;
+        private AgilentPNA835x.Application application; //send all instructions via this variable "application" which repr. PNA
         private IChannel channel;
         private IArrayTransfer measurement;
         //private ICalSet calSet; //calset object
@@ -103,7 +106,7 @@ namespace vector_accelerator_project
         {
             try
             {
-                application = new AgilentPNA835x.ApplicationClass(); //is this object obtained by running the PNAproxy script?
+                application = new AgilentPNA835x.Application(); //is this object obtained by running the PNAproxy script?
                 online = true;
             }
             catch(Exception e)
@@ -145,7 +148,7 @@ namespace vector_accelerator_project
             }
         }
 
-        public AgilentPNA835x.ApplicationClass Application
+        public AgilentPNA835x.Application Application
         {
             get { return application; }
         }
