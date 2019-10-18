@@ -212,7 +212,7 @@ namespace vector_accelerator_project
             this.AddressTextBox});
             this.MainToolStrip.Location = new System.Drawing.Point(0, 0);
             this.MainToolStrip.Name = "MainToolStrip";
-            this.MainToolStrip.Size = new System.Drawing.Size(1164, 32);
+            this.MainToolStrip.Size = new System.Drawing.Size(1118, 32);
             this.MainToolStrip.TabIndex = 15;
             this.MainToolStrip.Text = "toolStrip1";
             // 
@@ -230,14 +230,14 @@ namespace vector_accelerator_project
             this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(159, 30);
+            this.toolStripButton2.Size = new System.Drawing.Size(159, 29);
             this.toolStripButton2.Text = "Clear PNA data";
             this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(152, 30);
+            this.toolStripLabel1.Size = new System.Drawing.Size(152, 29);
             this.toolStripLabel1.Text = "GOpen() Address:";
             // 
             // DisconnectStripButton
@@ -247,7 +247,7 @@ namespace vector_accelerator_project
             this.DisconnectStripButton.Image = ((System.Drawing.Image)(resources.GetObject("DisconnectStripButton.Image")));
             this.DisconnectStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.DisconnectStripButton.Name = "DisconnectStripButton";
-            this.DisconnectStripButton.Size = new System.Drawing.Size(103, 30);
+            this.DisconnectStripButton.Size = new System.Drawing.Size(103, 29);
             this.DisconnectStripButton.Text = "Disconnect";
             this.DisconnectStripButton.Click += new System.EventHandler(this.DisconnectStripButton_Click);
             // 
@@ -257,14 +257,14 @@ namespace vector_accelerator_project
             this.ConnectStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.ConnectStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ConnectStripButton.Name = "ConnectStripButton";
-            this.ConnectStripButton.Size = new System.Drawing.Size(81, 30);
+            this.ConnectStripButton.Size = new System.Drawing.Size(81, 29);
             this.ConnectStripButton.Text = "Connect";
             this.ConnectStripButton.Click += new System.EventHandler(this.ConnectStripButton_Click);
             // 
             // AddressTextBox
             // 
             this.AddressTextBox.Name = "AddressTextBox";
-            this.AddressTextBox.Size = new System.Drawing.Size(450, 33);
+            this.AddressTextBox.Size = new System.Drawing.Size(450, 32);
             this.AddressTextBox.Text = "COM14 --direct --baud 19200 --subscribe ALL";
             this.AddressTextBox.Click += new System.EventHandler(this.AddressTextBox_Click);
             // 
