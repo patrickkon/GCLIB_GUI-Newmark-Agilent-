@@ -70,12 +70,18 @@ namespace vector_accelerator_project
                 PrintOutput(textBox2, td_value , PrintStyle.GalilData);
                 PrintOutput(textBox1, "Done!", PrintStyle.Normal, true);
 
+
+                // 231019: Note that the error messages (tagged with  "TD" and "text to int") are caused by this section:
+                   // I suspect that it is because the line td_value = gclib.GMessage returns messages not intended, i.e. commas disappeared?
+                   // Might be benign: can ignore for now. 
                 // Here onwards we update the variable abs_position:
                 // this function only updates X, Y coordinates
                 coor_string_to_intArr(td_value, abs_position);
                 // To update Z coordinate (axis-c), we do so manually:
                 // Note that IndexOf in this case has 2 args and works like such:
                 // 1st arg = char to look for in str, 2nd arg = index in str to begin searching
+
+                
                 int index_2nd_comma = td_value.IndexOf(',', td_value.IndexOf(',') + 2);    
                 string temp = td_value.Substring(index_2nd_comma);
                 int temp_abs = abs_position[2];
@@ -84,7 +90,7 @@ namespace vector_accelerator_project
                     //if conversion failed
                     abs_position[2] = temp_abs;
                 }
-
+                
             }
             catch (Exception ex)
             {
@@ -277,7 +283,7 @@ namespace vector_accelerator_project
                 gclib.GMotionComplete(axis);
                 PrintOutput(textBox1, "done");
                 //update absolute position and display in textBox2:
-                cur_abs_pos(abs_position);
+                //cur_abs_pos(abs_position);  // 231019 temporarily commented, as negative input movement is incorrect (explained in log file)
             }
             catch (Exception ex)
             {
@@ -837,24 +843,34 @@ namespace vector_accelerator_project
 
         private void special_manual_movement()
         {
-            special_move_helper(start_position, drop_by);
-            // BLOCK of code to complete user specified task....
-            // I replace it temporarily with a simple pause:
-            System.Threading.Thread.Sleep(200);
-            intermediate_positions?.ForEach(a => {
-                special_move_helper(a, drop_by);
+            try
+            {
+                special_move_helper(start_position, drop_by);
                 // BLOCK of code to complete user specified task....
                 // I replace it temporarily with a simple pause:
                 System.Threading.Thread.Sleep(200);
-            });
+                intermediate_positions?.ForEach(a =>
+                {
+                    special_move_helper(a, drop_by);
+                    // BLOCK of code to complete user specified task....
+                    // I replace it temporarily with a simple pause:
+                    System.Threading.Thread.Sleep(200);
+                });
 
-            special_move_helper(end_position, drop_by);
-            // BLOCK of code to complete user specified task....
-            // I replace it temporarily with a simple pause:
-            System.Threading.Thread.Sleep(200);
+                special_move_helper(end_position, drop_by);
+                // BLOCK of code to complete user specified task....
+                // I replace it temporarily with a simple pause:
+                System.Threading.Thread.Sleep(200);
 
-            // return to original axis-c rest position before ending movement:
-            runAbsoluteMoveCommand("C", axis_c_rest_position, speed_c);
+                // return to original axis-c rest position before ending movement:
+                runAbsoluteMoveCommand("C", axis_c_rest_position, speed_c);
+            }
+            catch (Exception ex)
+            {
+                PrintOutput(textBox1, "YOYO WHATSAP: " + ex.Message, PrintStyle.GalilData);
+                
+
+            }
         }
 
         //Button for start special movement (movement depends on which radio box (manual or segment) is checked):
@@ -1074,9 +1090,11 @@ namespace vector_accelerator_project
                 int b_sample_num = (Math.Abs(segment_positions.Last()[5]) > 0) ? (segment_positions.Last()[4] - segment_positions.Last()[3]) / segment_positions.Last()[5] : 0;
                 int a_sample_num = (Math.Abs(segment_positions.Last()[2]) > 0) ? (segment_positions.Last()[1] - segment_positions.Last()[0]) / segment_positions.Last()[2] : 0;
                 same_num_samples = (b_sample_num == 0 || a_sample_num == 0 || (b_sample_num != a_sample_num)) ? false : true;
-                if (() || (same_num_samples && ((segment_positions.Last()[1] - segment_positions.Last()[0]) % segment_positions.Last()[2] == 0) && ((segment_positions.Last()[4] - segment_positions.Last()[3]) % segment_positions.Last()[5] == 0))
-                {
-                    segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+                if ((same_num_samples && ((segment_positions.Last()[1] - segment_positions.Last()[0]) % segment_positions.Last()[2] == 0) && ((segment_positions.Last()[4] - segment_positions.Last()[3]) % segment_positions.Last()[5] == 0)))
+                               
+
+                    {
+                        segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
                 }
                 else
                 {

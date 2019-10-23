@@ -182,7 +182,7 @@ namespace vector_accelerator_project
             this.toolStripButton2});
             this.MainToolStrip.Location = new System.Drawing.Point(0, 0);
             this.MainToolStrip.Name = "MainToolStrip";
-            this.MainToolStrip.Size = new System.Drawing.Size(856, 32);
+            this.MainToolStrip.Size = new System.Drawing.Size(902, 32);
             this.MainToolStrip.TabIndex = 15;
             this.MainToolStrip.Text = "toolStrip1";
             // 
@@ -226,7 +226,7 @@ namespace vector_accelerator_project
             // 
             this.AddressTextBox.Name = "AddressTextBox";
             this.AddressTextBox.Size = new System.Drawing.Size(450, 32);
-            this.AddressTextBox.Text = "COM14 --direct --baud 19200 --subscribe ALL";
+            this.AddressTextBox.Text = "192.168.1.1 --direct --baud 19200 --subscribe ALL";
             this.AddressTextBox.Click += new System.EventHandler(this.AddressTextBox_Click);
             // 
             // toolStripButton2
