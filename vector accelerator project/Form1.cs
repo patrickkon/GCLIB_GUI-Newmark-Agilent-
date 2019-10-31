@@ -269,12 +269,11 @@ namespace vector_accelerator_project
         {
             try
             {
-                int units = distance_units;
                 PrintOutput(textBox1, "Preparing " + axis + " axis for PR movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
                 gclib.GCommand("AB;MO;SH" + axis);
                 //compound commands are possible though typically not recommended
                 PrintOutput(textBox1, "Ok");
-                gclib.GCommand("PR" + axis + "=" + units);
+                gclib.GCommand("PR" + axis + "=" + distance_units);
 
                 //might implement speed control parameter in future
                 gclib.GCommand("SP" + axis + "=" +speed);
@@ -298,13 +297,11 @@ namespace vector_accelerator_project
         {
             try
             {
-                int units = distance_units;
-
                 PrintOutput(textBox1, "Preparing " + axis + " axis for PA movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
                 gclib.GCommand("AB;MO;SH" + axis);
                 //compound commands are possible though typically not recommended
                 PrintOutput(textBox1, "Ok");
-                gclib.GCommand("PA" + axis + "=" + units);
+                gclib.GCommand("PA" + axis + "=" + distance_units);
 
                 //might implement speed control parameter in future
                 gclib.GCommand("SP" + axis + "=" + speed);
@@ -314,7 +311,7 @@ namespace vector_accelerator_project
                 gclib.GMotionComplete(axis);
                 PrintOutput(textBox1, "done");
                 //update absolute position and display in textBox2:
-                cur_abs_pos(abs_position);
+                //cur_abs_pos(abs_position);  // as stated in Master, this is commented as it has been identified as the source of neg move problem
             }
             catch (Exception ex)
             {
@@ -348,8 +345,7 @@ namespace vector_accelerator_project
             int[] arr = new int[2];
 
             try
-            {
-                
+            {  
                 Array.Copy(prev_position, arr, 0);
                 string temp = text.Substring(0, text.IndexOf(", "));
                 if (!(Int32.TryParse(temp, out prev_position[0])))
@@ -365,25 +361,21 @@ namespace vector_accelerator_project
                     //if conversion failed
                     prev_position[1] = arr[1];
                 }
-
-                if (mmButton.Checked)
-                {
-                    prev_position[0] = (int)((float)prev_position[0] * 207);
-                    prev_position[1] = (int)((float)prev_position[1] * 207);
-                }
             }
             catch (Exception ex)
             {
                 PrintOutput(textBox1, "ERROR in converting text to int: " + ex.Message, PrintStyle.Instruction);
                 // revert back to previous values.  
-                prev_position[1] = arr[1]; prev_position[0] = arr[0];
+                prev_position[1] = arr[1]; prev_position[0] = arr[0]; 
+            }
+            finally
+            {
                 if (mmButton.Checked)
                 {
                     prev_position[0] = (int)((float)prev_position[0] * 207);
                     prev_position[1] = (int)((float)prev_position[1] * 207);
                 }
             }
-
         }
 
 
@@ -425,12 +417,12 @@ namespace vector_accelerator_project
                 textBox4.Text += "B(start): " + b[3] + ", B(end): " + b[4] + ", delta B: " + b[5] + Environment.NewLine + Environment.NewLine;
                 
             }
-
             textBox4.Text += "Drop bar by (units): " + drop_by + Environment.NewLine;
             textBox4.Text += "Axis-c resting position: " + axis_c_rest_position + Environment.NewLine;
         }
 
-
+        #region "currently unused"
+        // Currently unused
         private int convert_mm_step(int axis, int input)
         {
             // Parameters:
@@ -465,12 +457,6 @@ namespace vector_accelerator_project
                 gclib.GOpen(address + " -d"); //Set an appropriate IP address here
                 textBox1.AppendText("GInfo: " + gclib.GInfo() + "\n");
                 textBox1.AppendText("GCommand: " + gclib.GCommand("MG TIME") + "\n");
-
-
-
-
-
-
             }
             catch (Exception ex)
             {
@@ -484,6 +470,7 @@ namespace vector_accelerator_project
             }
 
         }
+        #endregion
 
         #region "Threading"
 
@@ -532,7 +519,6 @@ namespace vector_accelerator_project
             DisconnectStripButton.Enabled = false;
         }
         #endregion
-
 
         #region "Controls currently unused"
 
@@ -655,8 +641,6 @@ namespace vector_accelerator_project
                 PrintOutput(textBox1, "Cannot be Null. Enter a FULL GOpen() address above and click Go", PrintStyle.Instruction);
                 return;
             }
-
- 
             try
             {   
                 string address = AddressTextBox.Text;
@@ -684,7 +668,6 @@ namespace vector_accelerator_project
             
             //Given previously, because it was meant to execute demo only ONCE, when the connect button is clicked. 
             //RunDemo(AddressTextBox.Text);
-
         }
 
         private void DisconnectStripButton_Click(object sender, EventArgs e)
@@ -990,6 +973,8 @@ namespace vector_accelerator_project
             }
         }
 
+
+        // This function is obsolete, since I will not implement mapped motion anymore:
         // For mapping grid to movement, based on mouse click in grid box:
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
