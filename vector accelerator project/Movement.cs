@@ -36,8 +36,11 @@ namespace vector_accelerator_project
             End_position = new int[2] { 0, 0 };
             //a list of integer arrays, each with 2 elements:
             Intermediate_positions = new List<int[]>();
+            Intermediate_positions.Add(new int[2] { 0, 0 });
 
             Segment_positions = new List<int[]>();
+            Segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+
 
             //Variables that store other parameters:
             Axis_c_drop_by = 0;  //axis-c drop by how many units while sampling
@@ -301,6 +304,16 @@ namespace vector_accelerator_project
             runAbsoluteMoveCommand("B", position[1], movementVariables.Speed_b);
             runAbsoluteMoveCommand("C", dropped_abs_position, movementVariables.Speed_c);
         }
+
+
+        // Return to Origin
+        public void goHome(MovementVariables movementVariables)
+        {
+            runAbsoluteMoveCommand("A", 0, movementVariables.Speed_a);
+            runAbsoluteMoveCommand("B", 0, movementVariables.Speed_b);
+            runAbsoluteMoveCommand("C", 0, movementVariables.Speed_c);
+            form.printTextBox1("Move back to origin successful!");
+        }
     }
 
     class Form1_EventListeners
@@ -343,6 +356,16 @@ namespace vector_accelerator_project
 
         public virtual void move() { }
         //public virtual void displayFunc() { } // Format for displaying your movement required values
+
+        public void goHome(MovementVariables movementVariables)
+        {
+            moveFactory.goHome(movementVariables);
+        }
+
+        public void runRelativeMoveCommand(string axis, int distance_units, int speed)
+        {
+            moveFactory.runRelativeMoveCommand(axis, distance_units, speed);
+        }
     }
     
     class ManualMovement : MovementType
@@ -360,7 +383,7 @@ namespace vector_accelerator_project
             // I replace it temporarily with a simple pause:
 
             // i add VNA stuff in now: 
-            analyzer.PNA_scan(movementVariables.Start_position, movementVariables.Axis_c_drop_by);
+            analyzer.PNA_scan(movementVariables.Start_position, movementVariables);
             //WANT TO PASS PNA_SCAN ARGUMENTS TO BE ACCESSED WITHIN THAT METHOD ITSELF
             System.Threading.Thread.Sleep(200);
             movementVariables.Intermediate_positions?.ForEach(a => {
@@ -370,7 +393,7 @@ namespace vector_accelerator_project
                 System.Threading.Thread.Sleep(200);
 
                 // i add VNA stuff in now:
-                analyzer.PNA_scan(a, movementVariables.Axis_c_drop_by);
+                analyzer.PNA_scan(a, movementVariables);
             });
 
             moveFactory.special_move_helper(movementVariables.End_position, movementVariables);
@@ -379,7 +402,7 @@ namespace vector_accelerator_project
             System.Threading.Thread.Sleep(200);
 
             // i add VNA stuff in now:
-            PNA_scan(movementVariables.End_position, movementVariables.Axis_c_drop_by);
+            analyzer.PNA_scan(movementVariables.End_position, movementVariables);
 
             // return to original axis-c rest position before ending movement:
             moveFactory.runAbsoluteMoveCommand("C", movementVariables.Axis_c_rest_position, movementVariables.Speed_c);
@@ -414,7 +437,7 @@ namespace vector_accelerator_project
                         moveFactory.special_move_helper(movementVariables.Start_position, movementVariables);
 
                         // i add VNA stuff in now:
-                        PNA_scan(movementVariables.Start_position, movementVariables.Axis_c_drop_by);
+                        analyzer.PNA_scan(movementVariables.Start_position, movementVariables);
 
                         if (movementVariables.Start_position[0] == a[1] || movementVariables.Start_position[1] == a[4]) break;                      
                     }
