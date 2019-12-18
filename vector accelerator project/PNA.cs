@@ -44,52 +44,6 @@ namespace vector_accelerator_project
             this.analyzer.Format = (PNA.FORMAT)this.comboBoxFormat.SelectedIndex;
             this.analyzer.SetupMeasurement();
         }
-
-        #region "agilent helper functions"
-
-
-
-        //Saving PNA datapoints that have been recorded:
-        public void SaveData(string filename)
-        {
-            using (StreamWriter sw = File.CreateText(filename))
-            {
-
-                if (this.dataPoints.Count != 0)
-                {
-                    sw.WriteLine("Number of probe points: {0}", this.dataPoints.Count);
-                    sw.WriteLine("Number of sweep points: {0}", this.dataPoints[0].Data.Length);
-                }
-                foreach (DataPoint dataPoint in this.dataPoints)
-                {
-                    sw.Write("{0}, {1}, {2}, ",
-                        dataPoint.Location.X,
-                        dataPoint.Location.Y,
-                        dataPoint.LocationZ);
-                    foreach (NAComplex nadata in dataPoint.Data)
-                    {
-                        sw.Write("{0}, {1}, ",
-                            nadata.Re, nadata.Im);
-                    }
-                    sw.WriteLine();
-                }
-                sw.Close();
-            }
-        }
-
-        // Clearing PNA dataPoints that have been recorded:
-        public void ClearDataPoints()
-        {
-            DialogResult result = MessageBox.Show("Are you sure you wish to clear all data points?",
-                "Warning", MessageBoxButtons.YesNo);
-            if (result == DialogResult.No)
-                return;
-            else
-                this.dataPoints.Clear();
-        }
-
-        #endregion
-
         #region "Other PNA event handlers"
         // when Save PNA data button is clicked:
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -100,13 +54,13 @@ namespace vector_accelerator_project
         // when SaveData button is clicked, we eventually enter this function:
         private void saveFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.SaveData(this.saveFileDialog.FileName);
+            this.analyzer.SaveData(this.saveFileDialog.FileName);
         }
 
         // when Clear PNA data button is clicked:
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            ClearDataPoints();
+            this.analyzer.ClearDataPoints();
         }
         #endregion
 
@@ -142,6 +96,7 @@ namespace vector_accelerator_project
         //private string guid; //variable to store calset guid
         private FORMAT format;
         private MEASUREMENT type;
+        private List<DataPoint> dataPoints;
 
         public float StartFrequency
         {
@@ -200,6 +155,7 @@ namespace vector_accelerator_project
         public PNA()
         {
             online = false;
+            dataPoints = new List<DataPoint>(); // Container we will use to store all PNA readings. 
         }
 
         public bool Open()
@@ -253,12 +209,8 @@ namespace vector_accelerator_project
             get { return application; }
         }
 
-
-
-
         public void SetupMeasurement()
-        {
-           
+        {    
             channel = application.Channel(2); //default channel when no calset (update: calset has been removed by me) selected
             channel.StartFrequency = startFreq;
             channel.StopFrequency = stopFreq;
@@ -266,32 +218,11 @@ namespace vector_accelerator_project
             channel.IFBandwidth = ifbw; //decreasing IF bandwidth has effect similar to avg'g but takes longer __ I disagree
             
             application.CreateMeasurement(2, type.ToString(), 1, 1); //make the first argument 1 for S11, 2 for S21, or whatever the calset says
-            measurement = (IArrayTransfer)application.ActiveMeasurement;
-            
+            measurement = (IArrayTransfer)application.ActiveMeasurement;        
         }
 
-        /*
-        public void Init()
-        {
-            StartFrequency
-                = Convert.ToSingle(this.numericUpDownStart.Value) * 1e6F;
-            StopFrequency
-                 = Convert.ToSingle(this.numericUpDownStop.Value) * 1e6F;
-            Points =
-                 Convert.ToInt32(this.numericUpDownPoints.Value);
-            IFBW =
-                Convert.ToInt32(this.numericUpDownIFBW.Value);
-            AvgFactor =
-                 Convert.ToInt32(this.numericUpDownAvg.Value); //added this line
-            //this.analyzer.CalFile = calFileTemp;  *This is supposed to store PNA state, but I don't want to implement it now, might make it more complex
-            Type = (PNA.MEASUREMENT)this.comboBoxMeasure.SelectedIndex;
-            Format = (PNA.FORMAT)this.comboBoxFormat.SelectedIndex;
-            SetupMeasurement();
-
-        }
-        */
         // run PNA VNA scanning when position has been reached by controller:
-        public List<DataPoint> PNA_scan(List<DataPoint> list, int[] coor, int drop_by, int axis_c_rest_position)
+        public void PNA_scan(int[] coor, MovementVariables movementVariables)
         {
             DataPoint dbpt = new DataPoint(Points);
             // Let the probe settle
@@ -299,10 +230,9 @@ namespace vector_accelerator_project
             dbpt.Data = Measure();
             // Landing point to do PNA scan:
             dbpt.Location = new Point(coor[0], coor[1]);
-            dbpt.LocationZ = axis_c_rest_position + drop_by;
+            dbpt.LocationZ = movementVariables.Axis_c_rest_position + movementVariables.Axis_c_drop_by;
             //dbpt.Index = i;
-            list.Add(dbpt);
-            return list;
+            dataPoints.Add(dbpt);
         }
 
 
@@ -327,5 +257,50 @@ namespace vector_accelerator_project
             }
             return data;
         }
+
+
+        #region "agilent helper functions"
+
+
+
+        //Saving PNA datapoints that have been recorded:
+        public void SaveData(string filename)
+        {
+            using (StreamWriter sw = File.CreateText(filename))
+            {
+
+                if (this.dataPoints.Count != 0)
+                {
+                    sw.WriteLine("Number of probe points: {0}", this.dataPoints.Count);
+                    sw.WriteLine("Number of sweep points: {0}", this.dataPoints[0].Data.Length);
+                }
+                foreach (DataPoint dataPoint in this.dataPoints)
+                {
+                    sw.Write("{0}, {1}, {2}, ",
+                        dataPoint.Location.X,
+                        dataPoint.Location.Y,
+                        dataPoint.LocationZ);
+                    foreach (NAComplex nadata in dataPoint.Data)
+                    {
+                        sw.Write("{0}, {1}, ",
+                            nadata.Re, nadata.Im);
+                    }
+                    sw.WriteLine();
+                }
+                sw.Close();
+            }
+        }
+
+        // Clearing PNA dataPoints that have been recorded:
+        public void ClearDataPoints()
+        {
+            DialogResult result = MessageBox.Show("Are you sure you wish to clear all data points?",
+                "Warning", MessageBoxButtons.YesNo);
+            if (result == DialogResult.No)
+                return;
+            else
+                this.dataPoints.Clear();
+        }
+        #endregion
     }
 }

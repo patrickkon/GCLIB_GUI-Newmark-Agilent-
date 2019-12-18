@@ -89,7 +89,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CoordinateManipulation.cs" />
     <Compile Include="DataPoint.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

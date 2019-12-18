@@ -14,10 +14,10 @@ namespace vector_accelerator_project
 {
     public partial class Form1 : Form
     {
-        //Agilent VNA variable declaration (mixture of items I gathered from SurfaceScan proj:
+        // Linking other modules
         private PNA analyzer; //this is an instance of a defined class - look it up!
-        private List<DataPoint> dataPoints;
-
+        private MovementVariables movementVariables;
+        private MovementType movementType;
 
         public const int G_SMALL_BUFFER = 1024;
 
@@ -25,24 +25,8 @@ namespace vector_accelerator_project
         //global gclib so that other functions can use the most updated one
         //e.g. are we connected or not..
         gclib gclib = null;
-        // value is given by unitbox, otherwise keep default
-        //Note to self: might reformat this to include values
-        // for each independent axis, and type of movement. Total = 6
-        private int increment_unit = 10000;
-        private int speed_a = 5000; //recommended speed
-        private int speed_b = 5000; //recommended speed
-        private int speed_c = 400000; //recommended speed
 
-        //Variables that store coordinates:
-        private int[] start_position = new int[2] {0, 0};
-        private int[] end_position = new int[2] {0, 0};
-        //a list of integer arrays, each with 2 elements:
-        private List<int[]> intermediate_positions = null;
-
-        // used for movement by segment:
-        // each int[] has 6 elements (in-order): 
-        // a(start), a(end), a(delta), b(start), b(end), b(delta)
-        private List<int[]> segment_positions= new List<int[]>();
+        #region "Might remove"
 
         // for abs_position the coor will be constantly displayed/updated, so I use this method:
         // Accessor function for private variable _abs_position (absolute position of gantry)
@@ -57,11 +41,6 @@ namespace vector_accelerator_project
             }
         }
         private int[] _abs_position = new int[3] {0,0,0};
-
-
-        //7/11/19 refactoring inheritance new variables/object instances:
-        MovementType moveType;   // assigns this during manual/segment button checks
-
 
 
         //Retrieve absolute position of gantry (Axes a,b, c):
@@ -110,30 +89,20 @@ namespace vector_accelerator_project
                 PrintOutput(textBox1, "ERROR in TD command (absolute position): " + ex.Message, PrintStyle.Instruction);
             }
         }
-
-        //Variables that store other parameters:
-        private int drop_by = 0;  //axis-c drop by how many units while sampling
-        //private int[] sample_units = new int[2] { 0, 0 }; //sample every "sample_units" units
-        private int axis_c_rest_position = 0;
-
-        // Used in "mapped" movement to store X, Y coordinates:
-        Point coordinates = new Point();  //unused currently
-
-
+        #endregion
         #endregion
 
         public Form1()
         {
             InitializeComponent();
-            InitializePNA();
+            InitializePNA(); // Initializes PNA needed variables, and resets "dataPoints" List
+            movementVariables = new MovementVariables();
             this.Text = "gclib simple testing example (TITLE HERE)";
-            
         }
 
         //Runs when form loads
         private void Form1_Load(object sender, EventArgs e)
-        {
-            
+        { 
             gclib = new gclib(); //constructor can throw, so SHOULD keep it in a Try block
 
             PrintOutput(textBox1, "Enter a FULL GOpen() address above and press Enter", PrintStyle.Instruction);
@@ -154,22 +123,19 @@ namespace vector_accelerator_project
                     PrintOutput(textBox1, a, PrintStyle.GclibData);
                 }
             }
-
-
             //disable ability to move before a connection with controller has been established
             DisconnectStripButton.Enabled = false; groupBox1.Enabled = false;
             GeneralGroup.Enabled = false; configBox.Enabled = false;
             originButton.Enabled = false; returnOriginButton.Enabled = false;
-            pictureBox1.Enabled = false; textBox6.Enabled = false;
-
+            textBox6.Enabled = false;
         }
 
         // Added on 1st Oct 2019 (Post other PNA additions):
+        // Edited 18/12/19
         #region PNA Settings
         private void InitializePNA()
         {
             this.analyzer = new PNA(); //instantiate an object PNA - find out what this does!  
-            dataPoints = new List<DataPoint>();
             this.comboBoxMeasure.Items.Insert((int)PNA.MEASUREMENT.S11, "S11"); //give it the properties entered in the form
             this.comboBoxMeasure.Items.Insert((int)PNA.MEASUREMENT.S12, "S12");
             this.comboBoxMeasure.Items.Insert((int)PNA.MEASUREMENT.S21, "S21");
@@ -186,10 +152,8 @@ namespace vector_accelerator_project
             this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.SWR, "SWR");
             this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.Real, "Real");
             this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.Imaginary, "Imaginary");
-
+        
             this.comboBoxFormat.SelectedIndex = (int)PNA.FORMAT.LinearMag;
-
-            
         }
 
         private void numericUpDownPoints_ValueChanged(object sender, EventArgs e)
@@ -198,63 +162,6 @@ namespace vector_accelerator_project
         }
         #endregion
 
-        //Various print styles.
-        public enum PrintStyle
-        {
-            Instruction,
-            Normal,
-            GalilData,
-            GclibData,
-            Err,
-        }
-
-        private void PrintOutput(System.Windows.Forms.RichTextBox Output, string Message, PrintStyle Style = PrintStyle.Normal, bool SuppressCrLf = false)
-        {
-            if (Output.InvokeRequired)
-            {
-                Output.Invoke(new Printer(PrintOutput), new object[] {Output, Message, Style, SuppressCrLf });
-            }
-            else
-            {
-                Color color;
-
-                switch (Style)
-                {
-                    case PrintStyle.Instruction:
-                        color = Color.Black;
-                        break;
-                    case PrintStyle.GalilData:
-                        color = Color.Green;
-                        break;
-                    case PrintStyle.Normal:
-                        color = Color.Blue;
-                        break;
-                    case PrintStyle.Err:
-                        color = Color.Red;
-                        break;
-                    case PrintStyle.GclibData:
-                        color = Color.Magenta;
-                        break;
-                    default:
-                        color = Color.Blue;
-                        break;
-                }//switch
-
-                Output.SelectionStart = Output.Text.Length;
-                Output.SelectionColor = color;
-                Output.AppendText(Message);
-
-                if (!SuppressCrLf)
-                    Output.AppendText("\r\n");
-
-            }//invoke check
-        }
-
-
-        public void printTextBox1(string a, PrintStyle printStyle = PrintStyle.Normal)
-        {
-            PrintOutput(textBox1, a,printStyle, true);
-        }
 
         #region "Events to export"
         // Events to export
@@ -270,11 +177,6 @@ namespace vector_accelerator_project
 
 
         #endregion
-
-
-
-       
-        
 
         //Function for event when enter key is pressed, for "unitbox". 
         //registered as eventhandler for unitbox in .designer file
@@ -294,6 +196,18 @@ namespace vector_accelerator_project
             }
         }
 
+        #region "Helper functions"
+
+        // Handler when "unit of measure" buttons events fire:
+        private void unitChangeHandler()
+        {
+            if (mmButton.Checked || stepperButton.Checked)
+            {
+                on_unitSelected();
+                if (mmButton.Checked) movementVariables = new MovementVariables_mmUnit();
+                else if (stepperButton.Checked) movementVariables = new MovementVariables_stepperUnit();
+            }
+        }
 
         // From string from textBox, to X, Y coordinates in int array:
         private void coor_string_to_intArr(string text, int[] prev_position)
@@ -368,6 +282,67 @@ namespace vector_accelerator_project
             textBox4.Text += "Drop bar by (units): " + drop_by + Environment.NewLine;
             textBox4.Text += "Axis-c resting position: " + axis_c_rest_position + Environment.NewLine;
         }
+
+
+
+        //Various print styles.
+        public enum PrintStyle
+        {
+            Instruction,
+            Normal,
+            GalilData,
+            GclibData,
+            Err,
+        }
+
+        private void PrintOutput(System.Windows.Forms.RichTextBox Output, string Message, PrintStyle Style = PrintStyle.Normal, bool SuppressCrLf = false)
+        {
+            if (Output.InvokeRequired)
+            {
+                Output.Invoke(new Printer(PrintOutput), new object[] { Output, Message, Style, SuppressCrLf });
+            }
+            else
+            {
+                Color color;
+
+                switch (Style)
+                {
+                    case PrintStyle.Instruction:
+                        color = Color.Black;
+                        break;
+                    case PrintStyle.GalilData:
+                        color = Color.Green;
+                        break;
+                    case PrintStyle.Normal:
+                        color = Color.Blue;
+                        break;
+                    case PrintStyle.Err:
+                        color = Color.Red;
+                        break;
+                    case PrintStyle.GclibData:
+                        color = Color.Magenta;
+                        break;
+                    default:
+                        color = Color.Blue;
+                        break;
+                }//switch
+
+                Output.SelectionStart = Output.Text.Length;
+                Output.SelectionColor = color;
+                Output.AppendText(Message);
+
+                if (!SuppressCrLf)
+                    Output.AppendText("\r\n");
+
+            }//invoke check
+        }
+
+
+        public void printTextBox1(string a, PrintStyle printStyle = PrintStyle.Normal)
+        {
+            PrintOutput(textBox1, a, printStyle, true);
+        }
+        #endregion
 
         #region "currently unused"
         // Currently unused
@@ -586,9 +561,19 @@ namespace vector_accelerator_project
 
         #endregion
 
-
-
         #region "Completed control implementations"
+
+        #region "Unit of measure related controls"
+        private void mmButton_CheckedChanged(object sender, EventArgs e)
+        {
+            unitChangeHandler();
+        }
+
+        private void stepperButton_CheckedChanged(object sender, EventArgs e)
+        {
+            unitChangeHandler();
+        }
+        #endregion
 
         private void ConnectStripButton_Click(object sender, EventArgs e)
         {
@@ -637,7 +622,7 @@ namespace vector_accelerator_project
             DisconnectStripButton.Enabled = false; groupBox1.Enabled = false;
             GeneralGroup.Enabled = false; configBox.Enabled = false;
             originButton.Enabled = false; returnOriginButton.Enabled = false;
-            pictureBox1.Enabled = false; textBox6.Enabled = false;
+            textBox6.Enabled = false;
             mmButton.Checked = false; stepperButton.Checked = false;
 
             this.analyzer.Close();
@@ -705,12 +690,12 @@ namespace vector_accelerator_project
         }
 
         // GUI components to enable once a unit (either mm or stepper count) is selected:
-        private void unit_selected()
+        private void on_unitSelected()
         {
             groupBox1.Enabled = true;
             GeneralGroup.Enabled = true;
             originButton.Enabled = true; returnOriginButton.Enabled = true;
-            pictureBox1.Enabled = true; textBox6.Enabled = true;
+            textBox6.Enabled = true;
             axisCinputBox.Enabled = false; manualBox.Enabled = false; segmentBox.Enabled = false;
 
             //Also Update gantry absolute position to variable abs_position:
@@ -721,15 +706,12 @@ namespace vector_accelerator_project
         //Return to origin button:
         private void returnOriginButton_Click(object sender, EventArgs e)
         {
-            runAbsoluteMoveCommand("A", 0, speed_a);
-            runAbsoluteMoveCommand("B", 0, speed_b);
-            runAbsoluteMoveCommand("C", 0, speed_c);
-            PrintOutput(textBox1, "Move back to origin successful!");
+            movementType.goHome(movementVariables);
             cur_abs_pos(abs_position);
         }
 
 
-        #region "Special movement controls"
+        #region "Manual movement controls + some common controls"
 
         // Set number of units to drop axis-c, according to input from textBox5: 
         private void button11_Click(object sender, EventArgs e)
@@ -749,8 +731,6 @@ namespace vector_accelerator_project
             if (manualButton.Checked == true) display_textbox4_manual();
 
             if (segmentButton.Checked == true) display_textbox4_segment();
-
-
         }
 
         //Set Axis-c rest position (for special movement)
@@ -780,7 +760,6 @@ namespace vector_accelerator_project
             coor_string_to_intArr(textBox3.Text, start_position);
             //System.Threading.Thread.Sleep(200);
             display_textbox4_manual();
-
         }
 
         //Set end position:
@@ -803,10 +782,11 @@ namespace vector_accelerator_project
         //Clear all intermediate positions:
         private void button9_Click(object sender, EventArgs e)
         {
-            intermediate_positions.Clear();
+            unitChangeHandler();
             display_textbox4_manual();
         }
-        
+
+        #endregion
 
         //Button for start special movement (movement depends on which radio box (manual or segment) is checked):
         private void button13_Click(object sender, EventArgs e)
@@ -816,226 +796,125 @@ namespace vector_accelerator_project
             PNA_init();
             #endregion
 
-
-            if (manualButton.Checked == true)
-            {
-                special_manual_movement();
-            }
-            else if (segmentButton.Checked == true)
-            {
-                int counter = 0; // indicates how many segments have been processed.
-                segment_positions?.ForEach(a =>
-                {
-                    
-                    int multiplier = 0;
-                    // Do not consider last element of segment_positions as it does not contain validated input that has passed through the function button21_clicked:
-                    if (counter < segment_positions.Count - 1)
-                    {
-                        while (true)
-                        {
-
-                            if (!mmButton.Checked)
-                            {
-                                start_position[0] = multiplier * a[2] + a[0];
-                                start_position[1] = multiplier * a[5] + a[3];
-                            }
-                            else
-                            {
-                                start_position[0] = multiplier * 207 * a[2] + 207 * a[0];
-                                start_position[1] = multiplier * 207 * a[5] + 207 * a[3];
-                            }
-
-                            multiplier += 1;
-                            //if ( (start_position[0] < 0 && (Math.Abs(start_position[0]) > Math.Abs(a[1])  || Math.Abs(start_position[1]) > Math.Abs(a[4])) ) || (start_position[0] < 0 && (Math.Abs(start_position[0]) > Math.Abs(a[1]) || Math.Abs(start_position[1]) > Math.Abs(a[4])))) break;
-                            special_move_helper(start_position, drop_by);
-                            // BLOCK of code to complete user specified task....
-                            // I replace it temporarily with a simple pause:
-                            System.Threading.Thread.Sleep(200);
-
-                            // i add VNA stuff in now:
-                            PNA_scan(start_position, drop_by);
-
-                            if (!mmButton.Checked)
-                            {
-                                if (start_position[0] == a[1] || start_position[1] == a[4]) break;
-                            }
-
-                            else {
-                                if (start_position[0] == 207 * a[1] || start_position[1] == 207 * a[4]) break;
-                            }
-
-                        }
-                        counter += 1;
-                    }
-
-                });
-
-                // return to original axis-c rest position before ending movement:
-                runAbsoluteMoveCommand("C", axis_c_rest_position, speed_c);
-            }
+            movementType.move();
         }
 
-        #endregion
+       
 
         #endregion
 
         #region "controllers under construction"
 
+        #region "Speed button event handlers:
+        //axis-a slew speed button:
+        private void button23_Click(object sender, EventArgs e)
+        {
+            int speed = 5000;
+            if (!(Int32.TryParse(textBox8.Text, out speed)))
+            {
+                //if conversion failed, revert to default slew speed
+                speed = 5000;
+            }
+            movementVariables.Speed_a = speed;
+        }
+
+        //axis-b slew speed button:
+        private void button24_Click(object sender, EventArgs e)
+        {
+            int speed = 5000;
+            if (!(Int32.TryParse(textBox8.Text, out speed)))
+            {
+                //if conversion failed, revert to default slew speed
+                speed = 5000;
+            }
+            movementVariables.Speed_b = speed;
+        }
+
+        //axis-c slew speed button:
+        private void button25_Click(object sender, EventArgs e)
+        {
+            int speed = 5000;
+            if (!(Int32.TryParse(textBox8.Text, out speed)))
+            {
+                //if conversion failed, revert to default slew speed
+                speed = 5000;
+            }
+            movementVariables.Speed_c = speed;
+        }
+        #endregion
+
         #region "Segment_movement input buttons"
+
+        private void segment_position_insert(int index)
+        {
+            int value = 0;
+            int.TryParse(textBox7.Text, out value);
+            movementVariables.set_SegmentPosition(index, value);
+            display_textbox4_segment();
+        }
 
         // Segment movement: A (start) button:
         private void button12_Click(object sender, EventArgs e)
         {
-            // initialize if segment_positions has not been initialized before
-            // length (.Count) of list is now 1. This is important because we only display in 
-            // textBox4 if list has items. 
-            if (segment_positions.Count == 0) {
-                segment_positions = new List<int[]>();
-                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
-            }
-            if (!(Int32.TryParse(textBox7.Text, out segment_positions.Last()[0]))) {
-                segment_positions.Last()[0] = 0;
-            }
-
-            display_textbox4_segment();
-
+            segment_position_insert(0);
         }
 
         // Segment movement: A (end) button:
         private void button17_Click(object sender, EventArgs e)
         {
-            // initialize if segment_positions has not been initialized before
-            // length (.Count) of list is now 1. This is important because we only display in 
-            // textBox4 if list has items. 
-            if (segment_positions.Count == 0)
-            {
-                segment_positions = new List<int[]>();
-                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
-            }
-            if (!(Int32.TryParse(textBox7.Text, out segment_positions.Last()[1])))
-            {
-                segment_positions.Last()[1] = 0;
-            }
-
-            display_textbox4_segment();
+            segment_position_insert(1);
         }
 
         // Segment movement: A (delta) button:
         private void button19_Click(object sender, EventArgs e)
         {
-            // initialize if segment_positions has not been initialized before
-            // length (.Count) of list is now 1. This is important because we only display in 
-            // textBox4 if list has items. 
-            if (segment_positions.Count == 0)
-            {
-                segment_positions = new List<int[]>();
-                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
-            }
-            if (!(Int32.TryParse(textBox7.Text, out segment_positions.Last()[2])))
-            {
-                segment_positions.Last()[2] = 0;
-            }
-            display_textbox4_segment();
+            segment_position_insert(2);
         }
 
         // Segment movement: B (start) button:
         private void button16_Click(object sender, EventArgs e)
         {
-            // initialize if segment_positions has not been initialized before
-            // length (.Count) of list is now 1. This is important because we only display in 
-            // textBox4 if list has items. 
-            if (segment_positions.Count == 0)
-            {
-                segment_positions = new List<int[]>();
-                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
-            }
-            if (!(Int32.TryParse(textBox7.Text, out segment_positions.Last()[3])))
-            {
-                segment_positions.Last()[3] = 0;
-            }
-            display_textbox4_segment();
+            segment_position_insert(3);
         }
 
         // Segment movement: B (end) button:
         private void button18_Click(object sender, EventArgs e)
         {
-            // initialize if segment_positions has not been initialized before
-            // length (.Count) of list is now 1. This is important because we only display in 
-            // textBox4 if list has items. 
-            if (segment_positions.Count == 0)
-            {
-                segment_positions = new List<int[]>();
-                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
-            }
-            if (!(Int32.TryParse(textBox7.Text, out segment_positions.Last()[4])))
-            {
-                segment_positions.Last()[4] = 0;
-            }
-            display_textbox4_segment();
+            segment_position_insert(4);
         }
 
         // Segment movement: B (delta) button:
         private void button20_Click(object sender, EventArgs e)
         {
-            // initialize if segment_positions has not been initialized before
-            // length (.Count) of list is now 1. This is important because we only display in 
-            // textBox4 if list has items. 
-            if (segment_positions.Count == 0)
-            {
-                segment_positions = new List<int[]>();
-                segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
-            }
-            if (!(Int32.TryParse(textBox7.Text, out segment_positions.Last()[5])))
-            {
-                segment_positions.Last()[5] = 0;
-            }
-            display_textbox4_segment();
+            segment_position_insert(5);
         }
 
         // Segment movement: clear segments button:
         private void button22_Click(object sender, EventArgs e)
         {
-            segment_positions.Clear();
+            unitChangeHandler();
             textBox4.Clear();
         }
 
         // Segment movement: add segment button:
         private void button21_Click(object sender, EventArgs e)
         {
-            if (segment_positions.Count > 0)
-            {
-                // check if segment values are valid (i.e. if they add up):
-                bool same_num_samples = false;
-                //bool no_movement = (segment_positions.Last()[0] == segment_positions.Last()[1] && == segment_positions.Last()[2]);
-                int b_sample_num = (Math.Abs(segment_positions.Last()[5]) > 0) ? (segment_positions.Last()[4] - segment_positions.Last()[3]) / segment_positions.Last()[5] : 0;
-                int a_sample_num = (Math.Abs(segment_positions.Last()[2]) > 0) ? (segment_positions.Last()[1] - segment_positions.Last()[0]) / segment_positions.Last()[2] : 0;
-                same_num_samples = (b_sample_num == 0 || a_sample_num == 0 || (b_sample_num != a_sample_num)) ? false : true;
-                if ((same_num_samples && ((segment_positions.Last()[1] - segment_positions.Last()[0]) % segment_positions.Last()[2] == 0) && ((segment_positions.Last()[4] - segment_positions.Last()[3]) % segment_positions.Last()[5] == 0)))
-                               
-
-                    {
-                        segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
-                }
-                else
-                {
-                    MessageBox.Show("Segment values do not add up. Check your input values.", "Invalid Input.");
-                }
-                display_textbox4_segment();
-            }
+            movementVariables.add_Segment(display_textbox4_segment);
         }
 
 
-       
+        #endregion
+
+
         //Configuration of GUI if manual_button is checked:
         private void manualButton_CheckedChanged(object sender, EventArgs e)
         {
             if (manualButton.Checked == true)
             {
-                if(segment_positions.Any()) segment_positions.Clear();
+                movementType = new ManualMovement(analyzer, this, gclib, movementVariables);
+                unitChangeHandler();  
                 segmentBox.Enabled = false; axisCinputBox.Enabled = true;
                 manualBox.Enabled = true;
-                start_position = new int[2]; end_position = new int[2];
-                if (intermediate_positions !=null) intermediate_positions.Clear();
                 textBox4.Clear();
             }
         }
@@ -1045,69 +924,16 @@ namespace vector_accelerator_project
         {
             if (segmentButton.Checked == true)
             {
+                movementType = new SegmentMovement(analyzer, this, gclib, movementVariables);
+                unitChangeHandler();
                 segmentBox.Enabled = true; axisCinputBox.Enabled = true;
                 manualBox.Enabled = false;
-                start_position = new int[2]; end_position = new int[2];
-                if (intermediate_positions != null) intermediate_positions.Clear();
                 textBox4.Clear();
             }
         }
 
-
-
         #endregion
 
-        #endregion
-
-        private void mmButton_CheckedChanged(object sender, EventArgs e)
-        {
-            if (mmButton.Checked || stepperButton.Checked)
-            {
-                unit_selected();
-            }
-        }
-
-
-
-        private void stepperButton_CheckedChanged(object sender, EventArgs e)
-        {
-            if (mmButton.Checked || stepperButton.Checked)
-            {
-                unit_selected();
-            }
-        }
-
-        //axis-a slew speed button:
-        private void button23_Click(object sender, EventArgs e)
-        {
-
-            if (!(Int32.TryParse(textBox8.Text, out speed_a)))
-            {
-                //if conversion failed, revert to default slew speed
-                speed_a = 5000;
-            }
-        }
-
-        //axis-b slew speed button:
-        private void button24_Click(object sender, EventArgs e)
-        {
-            if (!(Int32.TryParse(textBox8.Text, out speed_b)))
-            {
-                //if conversion failed, revert to default slew speed
-                speed_a = 5000;
-            }
-        }
-
-        //axis-c slew speed button:
-        private void button25_Click(object sender, EventArgs e)
-        {
-            if (!(Int32.TryParse(textBox8.Text, out speed_c)))
-            {
-                //if conversion failed, revert to default slew speed
-                speed_a = 400000;
-            }
-        }
-        
     }
 
 }
