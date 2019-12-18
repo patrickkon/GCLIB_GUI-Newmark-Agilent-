@@ -111,12 +111,12 @@ namespace vector_accelerator_project
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.segmentButton = new System.Windows.Forms.RadioButton();
             this.label20 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            //this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.returnOriginButton = new System.Windows.Forms.Button();
-            this.button14 = new System.Windows.Forms.Button();
+           // this.button14 = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.mmButton = new System.Windows.Forms.RadioButton();
             this.stepperButton = new System.Windows.Forms.RadioButton();
@@ -143,7 +143,7 @@ namespace vector_accelerator_project
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPoints)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIFBW)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            //((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.configBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -875,7 +875,6 @@ namespace vector_accelerator_project
             0,
             0,
             0});
-            this.numericUpDownStart.ValueChanged += new System.EventHandler(this.numericUpDownStart_ValueChanged);
             // 
             // labelMeasure
             // 
@@ -1091,7 +1090,7 @@ namespace vector_accelerator_project
             this.label20.Size = new System.Drawing.Size(53, 20);
             this.label20.TabIndex = 50;
             this.label20.Text = "Mode:";
-            // 
+            /* 
             // pictureBox1
             // 
             this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
@@ -1103,7 +1102,7 @@ namespace vector_accelerator_project
             this.pictureBox1.Visible = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
-            // 
+            */ 
             // textBox6
             // 
             this.textBox6.Location = new System.Drawing.Point(1346, 889);
@@ -1142,7 +1141,7 @@ namespace vector_accelerator_project
             this.returnOriginButton.Text = "Return to Origin";
             this.returnOriginButton.UseVisualStyleBackColor = true;
             this.returnOriginButton.Click += new System.EventHandler(this.returnOriginButton_Click);
-            // 
+            /* 
             // button14
             // 
             this.button14.Location = new System.Drawing.Point(1359, 921);
@@ -1153,7 +1152,7 @@ namespace vector_accelerator_project
             this.button14.UseVisualStyleBackColor = true;
             this.button14.Visible = false;
             this.button14.Click += new System.EventHandler(this.button14_Click);
-            // 
+            */ 
             // richTextBox1
             // 
             this.richTextBox1.Location = new System.Drawing.Point(1350, 316);
@@ -1212,7 +1211,6 @@ namespace vector_accelerator_project
             this.textBox8.Name = "textBox8";
             this.textBox8.Size = new System.Drawing.Size(139, 26);
             this.textBox8.TabIndex = 41;
-            this.textBox8.TextChanged += new System.EventHandler(this.textBox8_TextChanged);
             // 
             // configBox
             // 
@@ -1277,7 +1275,7 @@ namespace vector_accelerator_project
             this.ClientSize = new System.Drawing.Size(1837, 1050);
             this.Controls.Add(this.configBox);
             this.Controls.Add(this.richTextBox1);
-            this.Controls.Add(this.button14);
+          //  this.Controls.Add(this.button14);
             this.Controls.Add(this.returnOriginButton);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.groupBox1);
@@ -1286,7 +1284,7 @@ namespace vector_accelerator_project
             this.Controls.Add(this.textBox6);
             this.Controls.Add(this.MainToolStrip);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.pictureBox1);
+            //this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.originButton);
@@ -1318,7 +1316,7 @@ namespace vector_accelerator_project
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPoints)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIFBW)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            //((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.configBox.ResumeLayout(false);
             this.configBox.PerformLayout();
             this.ResumeLayout(false);
@@ -1364,12 +1362,12 @@ namespace vector_accelerator_project
         private Label label9;
         private Label label10;
         private Button button11;
-        private PictureBox pictureBox1;
+        //private PictureBox pictureBox1;
         private TextBox textBox6;
         private Label label11;
         private Label label12;
         private Button returnOriginButton;
-        private Button button14;
+        //private Button button14;
         private Button button15;
         private Button button13;
         private RichTextBox richTextBox1;

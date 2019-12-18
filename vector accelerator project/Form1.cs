@@ -58,6 +58,12 @@ namespace vector_accelerator_project
         }
         private int[] _abs_position = new int[3] {0,0,0};
 
+
+        //7/11/19 refactoring inheritance new variables/object instances:
+        MovementType moveType;   // assigns this during manual/segment button checks
+
+
+
         //Retrieve absolute position of gantry (Axes a,b, c):
         //Note that retrieval can only be done when the gantry is no longer moving.
         private void cur_abs_pos(int[] abs_position)
@@ -111,7 +117,7 @@ namespace vector_accelerator_project
         private int axis_c_rest_position = 0;
 
         // Used in "mapped" movement to store X, Y coordinates:
-        Point coordinates = new Point();
+        Point coordinates = new Point();  //unused currently
 
 
         #endregion
@@ -193,7 +199,7 @@ namespace vector_accelerator_project
         #endregion
 
         //Various print styles.
-        private enum PrintStyle
+        public enum PrintStyle
         {
             Instruction,
             Normal,
@@ -245,86 +251,30 @@ namespace vector_accelerator_project
         }
 
 
-        // function still not used as of yet:
-        private void runCommand(string command)
+        public void printTextBox1(string a, PrintStyle printStyle = PrintStyle.Normal)
         {
-            try
-            {
-                PrintOutput(textBox1, "Downloading Program... ", PrintStyle.Normal, true);
-                gclib.GProgramDownload(command, "");
-                PrintOutput(textBox1, "Uploading Program");
-                PrintOutput(textBox1, gclib.GProgramUpload(), PrintStyle.GalilData);
+            PrintOutput(textBox1, a,printStyle, true);
+        }
 
-                PrintOutput(textBox1, "Blocking GMessage call");
-                gclib.GCommand("XQ");
-                System.Threading.Thread.Sleep(200);
-                //wait a bit to queue up some messages
-                PrintOutput(textBox1, gclib.GMessage(), PrintStyle.GalilData);
-                //get them all in one blocking read
-            }
-            catch (Exception ex)
-            {
-                PrintOutput(textBox1, "ERROR in runCommand: " + ex.Message, PrintStyle.Instruction);
-            }
+        #region "Events to export"
+        // Events to export
+        public bool mmButton_checked()
+        {
+            return mmButton.Checked;
+        }
+
+        public void clearMovementValue_textBox()
+        {
+            textBox4.Clear();
         }
 
 
-        //Note to self: axis must be in Capital letters.
-        //Simple PR movement:
-        private void runRelativeMoveCommand(string axis, int distance_units, int speed)
-        {
-            try
-            {
-                PrintOutput(textBox1, "Preparing " + axis + " axis for PR movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
-                gclib.GCommand("AB;MO;SH" + axis);
-                //compound commands are possible though typically not recommended
-                PrintOutput(textBox1, "Ok");
-                gclib.GCommand("PR" + axis + "=" + distance_units);
+        #endregion
 
-                //might implement speed control parameter in future
-                gclib.GCommand("SP" + axis + "=" +speed);
-                PrintOutput(textBox1, "Profiling a move on axis"+ axis + "... ", PrintStyle.Normal, true);
-                gclib.GCommand("BG" + axis);
-                PrintOutput(textBox1, "Waiting for motion to complete... ", PrintStyle.Normal, true);
-                gclib.GMotionComplete(axis);
-                PrintOutput(textBox1, "done");
-                //update absolute position and display in textBox2:
-                cur_abs_pos(abs_position);
-            }
-            catch (Exception ex)
-            {
-                PrintOutput(textBox1, "ERROR in runRelativeMoveCommand on axis " + axis+ ": " + ex.Message, PrintStyle.Instruction);
-            }
-        }
 
-        //Note to self: axis must be in Capital letters
-        //Simple PA movement:
-        private void runAbsoluteMoveCommand(string axis, int distance_units, int speed)
-        {
-            try
-            {
-                PrintOutput(textBox1, "Preparing " + axis + " axis for PA movement. This could cause errors if the axis is not initialized...", PrintStyle.Normal, true);
-                gclib.GCommand("AB;MO;SH" + axis);
-                //compound commands are possible though typically not recommended
-                PrintOutput(textBox1, "Ok");
-                gclib.GCommand("PA" + axis + "=" + distance_units);
 
-                //might implement speed control parameter in future
-                gclib.GCommand("SP" + axis + "=" + speed);
-                PrintOutput(textBox1, "Profiling a move on axis" + axis + "... ", PrintStyle.Normal, true);
-                gclib.GCommand("BG" + axis);
-                PrintOutput(textBox1, "Waiting for motion to complete... ", PrintStyle.Normal, true);
-                gclib.GMotionComplete(axis);
-                PrintOutput(textBox1, "done");
-                //update absolute position and display in textBox2:
-                //cur_abs_pos(abs_position);  // as stated in Master, this is commented as it has been identified as the source of neg move problem
-            }
-            catch (Exception ex)
-            {
-                PrintOutput(textBox1, "ERROR in runAbsoluteMoveCommand on axis " + axis + ": " + ex.Message, PrintStyle.Instruction);
-            }
-        }
-
+       
+        
 
         //Function for event when enter key is pressed, for "unitbox". 
         //registered as eventhandler for unitbox in .designer file
@@ -373,14 +323,6 @@ namespace vector_accelerator_project
                 PrintOutput(textBox1, "ERROR in converting text to int: " + ex.Message, PrintStyle.Instruction);
                 // revert back to previous values.  
                 prev_position[1] = arr[1]; prev_position[0] = arr[0]; 
-            }
-            finally
-            {
-                if (mmButton.Checked)
-                {
-                    prev_position[0] = (int)((float)prev_position[0] * 207);
-                    prev_position[1] = (int)((float)prev_position[1] * 207);
-                }
             }
         }
 
@@ -632,6 +574,16 @@ namespace vector_accelerator_project
 
         }
 
+        private void label19_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
+
         #endregion
 
 
@@ -854,71 +806,14 @@ namespace vector_accelerator_project
             intermediate_positions.Clear();
             display_textbox4_manual();
         }
-
-        //Simplifier function used for function proceeding this:
-        private void special_move_helper(int[] position, int drop_by)
-        {
-            int dropped_abs_position = drop_by + axis_c_rest_position;
-            runAbsoluteMoveCommand("C", axis_c_rest_position, speed_c);
-            runAbsoluteMoveCommand("A", position[0], speed_a);
-            runAbsoluteMoveCommand("B", position[1], speed_b);
-            runAbsoluteMoveCommand("C", dropped_abs_position, speed_c);
-        }
-
-        private void special_manual_movement()
-        {
-            special_move_helper(start_position, drop_by);
-            // BLOCK of code to complete user specified task....
-            // I replace it temporarily with a simple pause:
-
-            // i add VNA stuff in now:
-            PNA_scan(start_position, drop_by);
-
-            System.Threading.Thread.Sleep(200);
-            intermediate_positions?.ForEach(a => {
-                special_move_helper(a, drop_by);
-                // BLOCK of code to complete user specified task....
-                // I replace it temporarily with a simple pause:
-                System.Threading.Thread.Sleep(200);
-
-                // i add VNA stuff in now:
-                PNA_scan(a, drop_by);
-            });
-
-                special_move_helper(end_position, drop_by);
-                // BLOCK of code to complete user specified task....
-                // I replace it temporarily with a simple pause:
-                System.Threading.Thread.Sleep(200);
-
-            // i add VNA stuff in now:
-            PNA_scan(end_position, drop_by);
-
-            // return to original axis-c rest position before ending movement:
-            runAbsoluteMoveCommand("C", axis_c_rest_position, speed_c);
-        }
+        
 
         //Button for start special movement (movement depends on which radio box (manual or segment) is checked):
         private void button13_Click(object sender, EventArgs e)
         {
             #region "agilent setup"
             //Agilent VNA (surfaceScan) code:
-
-            this.analyzer.StartFrequency
-                = Convert.ToSingle(this.numericUpDownStart.Value) * 1e6F;
-            this.analyzer.StopFrequency
-                = Convert.ToSingle(this.numericUpDownStop.Value) * 1e6F;
-            this.analyzer.Points =
-                Convert.ToInt32(this.numericUpDownPoints.Value);
-            this.analyzer.IFBW =
-                Convert.ToInt32(this.numericUpDownIFBW.Value);
-            this.analyzer.AvgFactor =
-                Convert.ToInt32(this.numericUpDownAvg.Value); //added this line
-            //this.analyzer.CalFile = calFileTemp;  *This is supposed to store PNA state, but I don't want to implement it now, might make it more complex
-            this.analyzer.Type = (PNA.MEASUREMENT)this.comboBoxMeasure.SelectedIndex;
-            this.analyzer.Format = (PNA.FORMAT)this.comboBoxFormat.SelectedIndex;
-            this.analyzer.SetupMeasurement();
-
-
+            PNA_init();
             #endregion
 
 
@@ -979,35 +874,6 @@ namespace vector_accelerator_project
                 runAbsoluteMoveCommand("C", axis_c_rest_position, speed_c);
             }
         }
-
-
-        // This function is obsolete, since I will not implement mapped motion anymore:
-        // For mapping grid to movement, based on mouse click in grid box:
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
-        {
-            coordinates = e.Location;
-            textBox6.Clear();
-            textBox6.Text += "X = " + coordinates.X.ToString() + ", Y = " + coordinates.Y.ToString();
-
-        }
-
-
-        // This function is obsolete, since I will not implement mapped motion anymore:
-        // Start "mapped" motion:
-        // i.e. move gantry to mouse click position on "map" (X,Y coordinates)
-        private void button14_Click(object sender, EventArgs e)
-        {
-            //first, go to bottom left edge (move faster than normal):
-            runRelativeMoveCommand("A", -249000, speed_a + 10000);
-            runRelativeMoveCommand("B", 249000, speed_b + 10000);
-
-            //go to position indicated by mouse click on "map":
-            runRelativeMoveCommand("A", 1245 * coordinates.Y, speed_a);
-            runRelativeMoveCommand("B", 1245 * coordinates.X, speed_b);
-        }
-
-
-
 
         #endregion
 
@@ -1201,15 +1067,7 @@ namespace vector_accelerator_project
             }
         }
 
-        private void label19_Click(object sender, EventArgs e)
-        {
 
-        }
-
-        private void groupBox2_Enter(object sender, EventArgs e)
-        {
-
-        }
 
         private void stepperButton_CheckedChanged(object sender, EventArgs e)
         {
@@ -1217,11 +1075,6 @@ namespace vector_accelerator_project
             {
                 unit_selected();
             }
-        }
-
-        private void textBox8_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         //axis-a slew speed button:
@@ -1254,91 +1107,6 @@ namespace vector_accelerator_project
                 speed_a = 400000;
             }
         }
-
-
-
-
-
-        #region "agilent helper functions"
-
-        // run PNA VNA scanning when position has been reached by controller:
-        private void PNA_scan(int[] coor, int drop_by)
-        {
-            DataPoint dbpt = new DataPoint(analyzer.Points);
-            // Let the probe settle
-            System.Threading.Thread.Sleep(200);
-            dbpt.Data = analyzer.Measure();
-            // Landing point to do PNA scan:
-            dbpt.Location = new Point(coor[0], coor[1]);
-            dbpt.LocationZ = this.axis_c_rest_position + drop_by;
-            //dbpt.Index = i;
-            this.dataPoints.Add(dbpt);
-        }
-
-        //Saving PNA datapoints that have been recorded:
-        public void SaveData(string filename)
-        {
-            using (StreamWriter sw = File.CreateText(filename))
-            {
-
-                if (this.dataPoints.Count != 0)
-                {
-                    sw.WriteLine("Number of probe points: {0}", this.dataPoints.Count);
-                    sw.WriteLine("Number of sweep points: {0}", this.dataPoints[0].Data.Length);
-                }
-                foreach (DataPoint dataPoint in this.dataPoints)
-                {
-                    sw.Write("{0}, {1}, {2}, ",
-                        dataPoint.Location.X,
-                        dataPoint.Location.Y,
-                        dataPoint.LocationZ);
-                    foreach (NAComplex nadata in dataPoint.Data)
-                    {
-                        sw.Write("{0}, {1}, ",
-                            nadata.Re, nadata.Im);
-                    }
-                    sw.WriteLine();
-                }
-                sw.Close();
-            }
-        }
-
-        // Clearing PNA dataPoints that have been recorded:
-        public void ClearDataPoints()
-        {
-            DialogResult result = MessageBox.Show("Are you sure you wish to clear all data points?",
-                "Warning", MessageBoxButtons.YesNo);
-            if (result == DialogResult.No)
-                return;
-            else
-                this.dataPoints.Clear();
-        }
-
-        #endregion
-
-        private void numericUpDownStart_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        // when Save PNA data button is clicked:
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            this.saveFileDialog.ShowDialog();
-        }
-
-        // when SaveData button is clicked, we eventually enter this function:
-        private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
-        {
-            this.SaveData(this.saveFileDialog.FileName);
-        }
-
-        // when Clear PNA data button is clicked:
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            ClearDataPoints();
-        }
-
         
     }
 

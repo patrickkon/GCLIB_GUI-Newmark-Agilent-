@@ -4,15 +4,115 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using AgilentPNA835x;
+using System.Drawing;
+using System.IO;
 
-// Pat:
-// I assume that the packages missing here will be included once i include the above missing
-// agilent library. 
+/// <remarks>
+/// Pat:
+/// I assume that the packages missing here will be included once i include the above missing
+/// agilent library. 
+///
+/// Note that I converted the line AgilentPNA835x.ApplicationClass application to AgilentPNA835x.Application application
+/// </remarks>
 
-// Note that I converted the line AgilentPNA835x.ApplicationClass application to AgilentPNA835x.Application application
+
+/// <summary>
+/// Package contains most classes and methods related to PNA functions, from its setup, and usage.
+/// </summary>
 
 namespace vector_accelerator_project
 {
+
+    // Partial class for Agilent PNA functions used:
+    partial class Form1
+    {
+        // Setup for PNA, used everytime special movement is initiated (i.e button 13 is clicked).
+        private void PNA_init()
+        {
+            this.analyzer.StartFrequency
+                = Convert.ToSingle(this.numericUpDownStart.Value) * 1e6F;
+            this.analyzer.StopFrequency
+                = Convert.ToSingle(this.numericUpDownStop.Value) * 1e6F;
+            this.analyzer.Points =
+                Convert.ToInt32(this.numericUpDownPoints.Value);
+            this.analyzer.IFBW =
+                Convert.ToInt32(this.numericUpDownIFBW.Value);
+            this.analyzer.AvgFactor =
+                Convert.ToInt32(this.numericUpDownAvg.Value); //added this line
+            //this.analyzer.CalFile = calFileTemp;  *This is supposed to store PNA state, but I don't want to implement it now, might make it more complex
+            this.analyzer.Type = (PNA.MEASUREMENT)this.comboBoxMeasure.SelectedIndex;
+            this.analyzer.Format = (PNA.FORMAT)this.comboBoxFormat.SelectedIndex;
+            this.analyzer.SetupMeasurement();
+        }
+
+        #region "agilent helper functions"
+
+
+
+        //Saving PNA datapoints that have been recorded:
+        public void SaveData(string filename)
+        {
+            using (StreamWriter sw = File.CreateText(filename))
+            {
+
+                if (this.dataPoints.Count != 0)
+                {
+                    sw.WriteLine("Number of probe points: {0}", this.dataPoints.Count);
+                    sw.WriteLine("Number of sweep points: {0}", this.dataPoints[0].Data.Length);
+                }
+                foreach (DataPoint dataPoint in this.dataPoints)
+                {
+                    sw.Write("{0}, {1}, {2}, ",
+                        dataPoint.Location.X,
+                        dataPoint.Location.Y,
+                        dataPoint.LocationZ);
+                    foreach (NAComplex nadata in dataPoint.Data)
+                    {
+                        sw.Write("{0}, {1}, ",
+                            nadata.Re, nadata.Im);
+                    }
+                    sw.WriteLine();
+                }
+                sw.Close();
+            }
+        }
+
+        // Clearing PNA dataPoints that have been recorded:
+        public void ClearDataPoints()
+        {
+            DialogResult result = MessageBox.Show("Are you sure you wish to clear all data points?",
+                "Warning", MessageBoxButtons.YesNo);
+            if (result == DialogResult.No)
+                return;
+            else
+                this.dataPoints.Clear();
+        }
+
+        #endregion
+
+        #region "Other PNA event handlers"
+        // when Save PNA data button is clicked:
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            this.saveFileDialog.ShowDialog();
+        }
+
+        // when SaveData button is clicked, we eventually enter this function:
+        private void saveFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.SaveData(this.saveFileDialog.FileName);
+        }
+
+        // when Clear PNA data button is clicked:
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            ClearDataPoints();
+        }
+        #endregion
+
+    }
+
+
     class PNA
     {
         public enum MEASUREMENT { S11 = 0, S12 = 1, S21 = 2, S22 = 3};
@@ -153,6 +253,9 @@ namespace vector_accelerator_project
             get { return application; }
         }
 
+
+
+
         public void SetupMeasurement()
         {
            
@@ -166,6 +269,42 @@ namespace vector_accelerator_project
             measurement = (IArrayTransfer)application.ActiveMeasurement;
             
         }
+
+        /*
+        public void Init()
+        {
+            StartFrequency
+                = Convert.ToSingle(this.numericUpDownStart.Value) * 1e6F;
+            StopFrequency
+                 = Convert.ToSingle(this.numericUpDownStop.Value) * 1e6F;
+            Points =
+                 Convert.ToInt32(this.numericUpDownPoints.Value);
+            IFBW =
+                Convert.ToInt32(this.numericUpDownIFBW.Value);
+            AvgFactor =
+                 Convert.ToInt32(this.numericUpDownAvg.Value); //added this line
+            //this.analyzer.CalFile = calFileTemp;  *This is supposed to store PNA state, but I don't want to implement it now, might make it more complex
+            Type = (PNA.MEASUREMENT)this.comboBoxMeasure.SelectedIndex;
+            Format = (PNA.FORMAT)this.comboBoxFormat.SelectedIndex;
+            SetupMeasurement();
+
+        }
+        */
+        // run PNA VNA scanning when position has been reached by controller:
+        public List<DataPoint> PNA_scan(List<DataPoint> list, int[] coor, int drop_by, int axis_c_rest_position)
+        {
+            DataPoint dbpt = new DataPoint(Points);
+            // Let the probe settle
+            System.Threading.Thread.Sleep(200);
+            dbpt.Data = Measure();
+            // Landing point to do PNA scan:
+            dbpt.Location = new Point(coor[0], coor[1]);
+            dbpt.LocationZ = axis_c_rest_position + drop_by;
+            //dbpt.Index = i;
+            list.Add(dbpt);
+            return list;
+        }
+
 
         public NAComplex[] Measure()
         {
