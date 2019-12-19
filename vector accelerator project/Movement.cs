@@ -240,7 +240,6 @@ namespace vector_accelerator_project
             this.gclib = gclib;
         }
 
-
         //Basic PA movement, while printing output to TextBox1:
         protected internal void runAbsoluteMoveCommand(string axis, int distance_units, int speed)
         {
@@ -260,6 +259,7 @@ namespace vector_accelerator_project
                 gclib.GMotionComplete(axis);
                 form.printTextBox1("done");
                 //update absolute position and display in textBox2:
+                //System.Threading.Thread.Sleep(200); // maybe pausing first might fix this error
                 //cur_abs_pos(abs_position);  // as stated in Master, this is commented as it has been identified as the source of neg move problem
             }
             catch (Exception ex)
@@ -314,27 +314,6 @@ namespace vector_accelerator_project
             runAbsoluteMoveCommand("C", 0, movementVariables.Speed_c);
             form.printTextBox1("Move back to origin successful!");
         }
-    }
-
-    class Form1_EventListeners
-    {
-        private Form1 form;
-
-        public Form1_EventListeners(Form1 form)
-        {
-            this.form = form;
-        }
-
-        internal Boolean mmButton_checked()
-        {
-            return form.mmButton_checked();
-        }
-
-        //internal void clearMovementValueDisplay()
-        //{
-       //     form.clearMovementValue_textBox();
-       // }
-
     }
 
     // Currently supports both manual and segmented movement:
@@ -449,6 +428,8 @@ namespace vector_accelerator_project
         }
     }
 
+    #region "Classes currently ununsed"
+    // Not needed. Left in case
     public class Movement
     {
         public Movement()
@@ -457,5 +438,26 @@ namespace vector_accelerator_project
         }
     }
 
-    
+
+    class Form1_EventListeners
+    {
+        private Form1 form;
+
+        public Form1_EventListeners(Form1 form)
+        {
+            this.form = form;
+        }
+
+        internal Boolean mmButton_checked()
+        {
+            return form.mmButton_checked();
+        }
+
+        //internal void clearMovementValueDisplay()
+        //{
+        //     form.clearMovementValue_textBox();
+        // }
+
+    }
+    #endregion
 }

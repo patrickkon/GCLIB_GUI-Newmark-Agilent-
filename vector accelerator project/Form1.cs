@@ -19,8 +19,6 @@ namespace vector_accelerator_project
         private MovementVariables movementVariables;
         private MovementType movementType;
 
-        public const int G_SMALL_BUFFER = 1024;
-
         #region "Variable declaration"
         //global gclib so that other functions can use the most updated one
         //e.g. are we connected or not..
@@ -45,9 +43,9 @@ namespace vector_accelerator_project
 
         //Retrieve absolute position of gantry (Axes a,b, c):
         //Note that retrieval can only be done when the gantry is no longer moving.
+        // 19/12/19: this is a function I did not modify. 
         private void cur_abs_pos(int[] abs_position)
         {
-
             try
             {
                 PrintOutput(textBox1, "Updating absolute position.. ", PrintStyle.Normal, true);
@@ -58,7 +56,7 @@ namespace vector_accelerator_project
                 gclib.GCommand("XQ");
                 string td_value = gclib.GMessage();
                 // Needed to extract substring because for some reason there is another string being outputted:
-                td_value =td_value.Substring(0, td_value.IndexOf(Environment.NewLine));
+                td_value = td_value.Substring(0, td_value.IndexOf(Environment.NewLine));
                 PrintOutput(textBox2, td_value , PrintStyle.GalilData);
                 PrintOutput(textBox1, "Done!", PrintStyle.Normal, true);
 
@@ -86,10 +84,11 @@ namespace vector_accelerator_project
         #endregion
         #endregion
 
+        #region "Initialization of form"
         public Form1()
         {
             InitializeComponent();
-            InitializePNA(); // Initializes PNA needed variables, and resets "dataPoints" List
+            InitializePNA(); // Initializes PNA needed variables, and resets internal "dataPoints" List
             movementVariables = new MovementVariables();
             this.Text = "gclib simple testing example (TITLE HERE)";
         }
@@ -121,8 +120,8 @@ namespace vector_accelerator_project
             DisconnectStripButton.Enabled = false; groupBox1.Enabled = false;
             GeneralGroup.Enabled = false; configBox.Enabled = false;
             originButton.Enabled = false; returnOriginButton.Enabled = false;
-            textBox6.Enabled = false;
         }
+        #endregion
 
         // Added on 1st Oct 2019 (Post other PNA additions):
         // Edited 18/12/19
@@ -171,24 +170,6 @@ namespace vector_accelerator_project
 
 
         #endregion
-
-        //Function for event when enter key is pressed, for "unitbox". 
-        //registered as eventhandler for unitbox in .designer file
-        private void CheckEnter_unitbox(object sender, System.Windows.Forms.KeyPressEventArgs e)
-        {
-            if (e.KeyChar == (char)13)
-            {
-                // Enter key pressed. Now do:
-                if (!(Int32.TryParse(unitbox.Text, out increment_unit)))
-                {
-                    //if parsing attempt was unsuccessful
-                    //need to revert back to default because:
-                    //value is zero if the conversion failed.
-                    // source: https://docs.microsoft.com/en-us/dotnet/api/system.int32.tryparse?redirectedfrom=MSDN&view=netframework-4.8#System_Int32_TryParse_System_String_System_Int32__
-                    increment_unit = 10000;
-                }
-            }
-        }
 
         #region "Helper functions"
 
@@ -239,15 +220,17 @@ namespace vector_accelerator_project
         private void display_textbox4_manual()
         {   
             textBox4.Clear();
-            textBox4.Text += "Start position: " + start_position[0] + ", " + start_position[1] + Environment.NewLine;
-            
-            intermediate_positions?.ForEach(a => {
+            textBox4.Text += "Start position: " + movementVariables.Start_position[0] + ", " 
+                + movementVariables.Start_position[1] + Environment.NewLine;
+
+            movementVariables.Intermediate_positions?.ForEach(a => {
                 textBox4.Text += "Intermediate position: " + a[0] + ", " + a[1] + Environment.NewLine;
             });
-            textBox4.Text += "End position: " + end_position[0] + ", " + end_position[1] + Environment.NewLine;
-            textBox4.Text += "Drop bar by (units): " + drop_by + Environment.NewLine;
+            textBox4.Text += "End position: " + movementVariables.End_position[0] + ", " 
+                + movementVariables.End_position[1] + Environment.NewLine;
+            textBox4.Text += "Drop bar by (units): " + movementVariables.Axis_c_drop_by + Environment.NewLine;
             //textBox4.Text += "Sample every (units): " + sample_units[0] + ", " + sample_units[1] + Environment.NewLine;
-            textBox4.Text += "Axis-c resting position: " + axis_c_rest_position;
+            textBox4.Text += "Axis-c resting position: " + movementVariables.Axis_c_rest_position;
         }
       
         private void display_textbox4_segment()
@@ -255,8 +238,8 @@ namespace vector_accelerator_project
             textBox4.Clear();
             int counter = 1;
             //here we display completed/validated segments:
-            segment_positions?.ForEach(a => {
-                if (counter != segment_positions.Count)
+            movementVariables.Segment_positions?.ForEach(a => {
+                if (counter != movementVariables.Segment_positions.Count)
                 {
                     textBox4.Text += "Segment " + counter + ".. " + Environment.NewLine;
                     textBox4.Text += "A(start): " + a[0] + ", A(end): " + a[1] + ", delta A: " + a[2] + Environment.NewLine;
@@ -265,19 +248,17 @@ namespace vector_accelerator_project
                 }
             });
             //here we display the segment that that the user is currently trying to input:
-            if (segment_positions.Count > 0)
+            if (movementVariables.Segment_positions.Count > 0)
             {
-                int[] b = segment_positions.Last();
+                int[] b = movementVariables.Segment_positions.Last();
                 textBox4.Text += "Current segment input.. : " + Environment.NewLine;
                 textBox4.Text += "A(start): " + b[0] + ", A(end): " + b[1] + ", delta A: " + b[2] + Environment.NewLine;
                 textBox4.Text += "B(start): " + b[3] + ", B(end): " + b[4] + ", delta B: " + b[5] + Environment.NewLine + Environment.NewLine;
                 
             }
-            textBox4.Text += "Drop bar by (units): " + drop_by + Environment.NewLine;
-            textBox4.Text += "Axis-c resting position: " + axis_c_rest_position + Environment.NewLine;
+            textBox4.Text += "Drop bar by (units): " + movementVariables.Axis_c_drop_by + Environment.NewLine;
+            textBox4.Text += "Axis-c resting position: " + movementVariables.Axis_c_rest_position + Environment.NewLine;
         }
-
-
 
         //Various print styles.
         public enum PrintStyle
@@ -338,57 +319,6 @@ namespace vector_accelerator_project
         }
         #endregion
 
-        #region "currently unused"
-        // Currently unused
-        private int convert_mm_step(int axis, int input)
-        {
-            // Parameters:
-            // axis: 0 = axis-a, 1 = axis-b, 2 = axis-c
-
-            int converted = 0;
- 
-            // convert mm to step:
-            // Note measured mm lengths for axis a b and c, are ~120,120,34cm respectively. 
-            if(axis == 0) converted = input * 207;
-            if (axis == 1) converted = input * 207;
-            if (axis == 2) converted = input * 14970;
-
-            return converted;
-        }
-
-
-        //Note to self: currently not working
-        public void Main(string address)
-        {
-            gclib gclib = new gclib();
-
-            try
-            {
-                //execute any program as dictated by all buttons and given script
-
-                //i plan to change the way we do this abit. i want to establish a connection. check for it
-                // then just use this Main function to execute the intention of the comment 2 lines above this
-
-                //calls to gclib should be in a try-catch
-                textBox1.AppendText("GVersion: " + gclib.GVersion() + "\n");
-                gclib.GOpen(address + " -d"); //Set an appropriate IP address here
-                textBox1.AppendText("GInfo: " + gclib.GInfo() + "\n");
-                textBox1.AppendText("GCommand: " + gclib.GCommand("MG TIME") + "\n");
-            }
-            catch (Exception ex)
-            {
-                textBox1.AppendText("ERROR: " + ex.Message);
-
-            }
-
-            finally
-            {
-                gclib.GClose(); //Don't forget to close!
-            }
-
-        }
-        #endregion
-
         #region "Threading"
 
         /// <summary>
@@ -427,7 +357,7 @@ namespace vector_accelerator_project
         }
 
         /// <summary>
-        /// Runs in the main thread after the second thread returns.
+        /// Runs in the main thread after the second thread returns. Currently unused.
         /// </summary>
         private void GClibBackgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -437,123 +367,6 @@ namespace vector_accelerator_project
         }
         #endregion
 
-        #region "Controls currently unused"
-
-        private void label14_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void richTextBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-
-        private void textBox4_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox6_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox5_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void unitbox_TextChanged(object sender, EventArgs e)
-        {
-
-
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void GeneralGroup_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AddressTextBox_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label19_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void groupBox2_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        #endregion
 
         #region "Completed control implementations"
 
@@ -569,6 +382,8 @@ namespace vector_accelerator_project
         }
         #endregion
 
+
+        #region "Gclib connection button controls"
         private void ConnectStripButton_Click(object sender, EventArgs e)
         {
             //only checking for empty string, otherwise we enter the Main program.
@@ -616,15 +431,15 @@ namespace vector_accelerator_project
             DisconnectStripButton.Enabled = false; groupBox1.Enabled = false;
             GeneralGroup.Enabled = false; configBox.Enabled = false;
             originButton.Enabled = false; returnOriginButton.Enabled = false;
-            textBox6.Enabled = false;
             mmButton.Checked = false; stepperButton.Checked = false;
 
             this.analyzer.Close();
 
             PrintOutput(textBox1, "DISCONNECTED!", PrintStyle.Normal);
-        }        
+        }
+        #endregion
 
-        //Note to self: this is complete. Can be applied to other buttons in this group
+        #region "Relative movement button controls"
         // general movement, + axis-a incremental movement button: 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -632,56 +447,39 @@ namespace vector_accelerator_project
             //runCommand("i=0\r#A;MG i{N};i=i+1;WT10;JP#A,i<10;EN");
 
             //take a single button click as moving 10000 units in a-axis
-            runRelativeMoveCommand("A", increment_unit, speed_a);           
+            movementType.runRelativeMoveCommand("A", movementVariables.Increment_unit, movementVariables.Speed_a);           
         }
 
         // general movement, - axis-a incremental movement button: 
         private void button2_Click_1(object sender, EventArgs e)
         {
-            runRelativeMoveCommand("A", -1 * increment_unit, speed_a);
+            movementType.runRelativeMoveCommand("A", -1 * movementVariables.Increment_unit, movementVariables.Speed_a);
         } 
 
         // general movement, + axis-b incremental movement button: 
         private void button4_Click_1(object sender, EventArgs e)
         {
-            runRelativeMoveCommand("B", increment_unit, speed_b);
+            movementType.runRelativeMoveCommand("B", movementVariables.Increment_unit, movementVariables.Speed_b);
         }
 
         // general movement, - axis-b incremental movement button: 
         private void button3_Click_1(object sender, EventArgs e)
         {
-            runRelativeMoveCommand("B", -1 * increment_unit, speed_b);
+            movementType.runRelativeMoveCommand("B", -1 * movementVariables.Increment_unit, movementVariables.Speed_b);
         }
 
         // general movement, + axis-c incremental movement button: 
         private void button6_Click(object sender, EventArgs e)
         {
-            runRelativeMoveCommand("C", increment_unit, speed_c);
+            movementType.runRelativeMoveCommand("C", movementVariables.Increment_unit, movementVariables.Speed_c);
         }
 
         // general movement, - axis-c incremental movement button: 
         private void button5_Click(object sender, EventArgs e)
         {
-            runRelativeMoveCommand("C", -1 * increment_unit, speed_c);
+            movementType.runRelativeMoveCommand("C", -1 * movementVariables.Increment_unit, movementVariables.Speed_c);
         }
-
-        //Set as origin button:
-        private void originButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                PrintOutput(textBox1, "Setting origin..", PrintStyle.Normal, true);
-                gclib.GCommand("AB;MO;SHA");
-                //command to controller to set origin:
-                gclib.GCommand("DP0,0,0");
-                PrintOutput(textBox1, "done");
-                cur_abs_pos(abs_position);
-            }
-            catch (Exception ex)
-            {
-                PrintOutput(textBox1, "ERROR in setting gantry origin: " + ex.Message, PrintStyle.Instruction);
-            }
-        }
+        #endregion
 
         // GUI components to enable once a unit (either mm or stepper count) is selected:
         private void on_unitSelected()
@@ -689,87 +487,70 @@ namespace vector_accelerator_project
             groupBox1.Enabled = true;
             GeneralGroup.Enabled = true;
             originButton.Enabled = true; returnOriginButton.Enabled = true;
-            textBox6.Enabled = true;
             axisCinputBox.Enabled = false; manualBox.Enabled = false; segmentBox.Enabled = false;
 
             //Also Update gantry absolute position to variable abs_position:
             cur_abs_pos(abs_position);
         }
 
-
-        //Return to origin button:
-        private void returnOriginButton_Click(object sender, EventArgs e)
-        {
-            movementType.goHome(movementVariables);
-            cur_abs_pos(abs_position);
-        }
-
-
         #region "Manual movement controls + some common controls"
+
+        #region "Other parameter input textbox related controls: 
 
         // Set number of units to drop axis-c, according to input from textBox5: 
         private void button11_Click(object sender, EventArgs e)
         {
-            int temp = drop_by; //restore in case of conversion failure of input from textBox
-            if (!(Int32.TryParse(textBox5.Text, out drop_by)))
-            {
-                //if conversion failed
-                drop_by = temp;
-            }
-
-            if (mmButton.Checked)
-            {
-                drop_by = drop_by * 14970;
-            }
+            int value = 0;
+            int.TryParse(textBox5.Text, out value);
+            movementVariables.Axis_c_drop_by = value;
 
             if (manualButton.Checked == true) display_textbox4_manual();
-
             if (segmentButton.Checked == true) display_textbox4_segment();
         }
 
         //Set Axis-c rest position (for special movement)
         private void button15_Click(object sender, EventArgs e)
         {
-            int temp = axis_c_rest_position; //restore in case of conversion failure of input from textBox
-            if (!(Int32.TryParse(textBox5.Text, out axis_c_rest_position)))
-            {
-                //if conversion failed
-                axis_c_rest_position = temp;
-            }
-
-            if (mmButton.Checked)
-            {
-                axis_c_rest_position = axis_c_rest_position * 14970;
-            }
+            int value = 0;
+            int.TryParse(textBox5.Text, out value);
+            movementVariables.Axis_c_rest_position = value;
 
             if (manualButton.Checked == true) display_textbox4_manual();
-
             if (segmentButton.Checked == true) display_textbox4_segment();
         }
 
+        #endregion
+
+        #region "Manual movement specific textbox related controls"
+        public delegate bool set_Position(int index, int value);
+        private void set_manualVariables(set_Position s)
+        {
+            int[] positionArray = new int[2] { 0, 0 };
+            coor_string_to_intArr(textBox3.Text, positionArray);
+            s(0, positionArray[0]);
+            s(1, positionArray[1]);
+        }
 
         //Set start_position:
         private void button7_Click(object sender, EventArgs e)
         {
-            coor_string_to_intArr(textBox3.Text, start_position);
-            //System.Threading.Thread.Sleep(200);
+
+            set_manualVariables(movementVariables.set_StartPosition);
             display_textbox4_manual();
         }
 
         //Set end position:
         private void button10_Click(object sender, EventArgs e)
         {
-            coor_string_to_intArr(textBox3.Text, end_position);
+            set_manualVariables(movementVariables.set_EndPosition);
             display_textbox4_manual();
         }
 
         //Add intermediate position:
         private void button8_Click(object sender, EventArgs e)
         {
-            int[] temp_pos = new int[2] { 0, 0 };
-            coor_string_to_intArr(textBox3.Text, temp_pos);
-            if (intermediate_positions == null) intermediate_positions = new List<int[]>();
-            intermediate_positions.Add(temp_pos);
+            set_manualVariables(movementVariables.set_IntermediatePosition);
+            movementVariables.Intermediate_positions.Add(new int[2] { 0, 0 });
             display_textbox4_manual();
         }
 
@@ -779,7 +560,7 @@ namespace vector_accelerator_project
             unitChangeHandler();
             display_textbox4_manual();
         }
-
+        #endregion
         #endregion
 
         //Button for start special movement (movement depends on which radio box (manual or segment) is checked):
@@ -792,12 +573,50 @@ namespace vector_accelerator_project
 
             movementType.move();
         }
+        #region "Others"
+        //Return to origin button:
+        private void returnOriginButton_Click(object sender, EventArgs e)
+        {
+            movementType.goHome(movementVariables);
+            cur_abs_pos(abs_position);
+        }
 
-       
+        //Set as origin button:
+        private void originButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                PrintOutput(textBox1, "Setting origin..", PrintStyle.Normal, true);
+                gclib.GCommand("AB;MO;SHA");
+                //command to controller to set origin:
+                gclib.GCommand("DP0,0,0");
+                PrintOutput(textBox1, "done");
+                System.Threading.Thread.Sleep(200);
+                cur_abs_pos(abs_position);
+            }
+            catch (Exception ex)
+            {
+                PrintOutput(textBox1, "ERROR in setting gantry origin: " + ex.Message, PrintStyle.Instruction);
+            }
+        }
 
+        //Function for event when enter key is pressed, for "unitbox". 
+        //registered as eventhandler for unitbox in .designer file
+        private void CheckEnter_unitbox(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)13)
+            {
+                // Enter key pressed. Now do:
+                int value = 10000; // self determined default value
+                Int32.TryParse(unitbox.Text, out value);
+                movementVariables.Increment_unit = value;
+            }
+        }
         #endregion
 
-        #region "controllers under construction"
+        #endregion // Completed controllers all encompassing region
+
+        #region "Controllers under construction (update: completed)"
 
         #region "Speed button event handlers:
         //axis-a slew speed button:
@@ -928,6 +747,172 @@ namespace vector_accelerator_project
 
         #endregion
 
-    }
+        #region "Controls + methods currently unused. Feel free to disassociate"
 
+        #region "currently unused"
+        // Currently unused
+        private int convert_mm_step(int axis, int input)
+        {
+            // Parameters:
+            // axis: 0 = axis-a, 1 = axis-b, 2 = axis-c
+
+            int converted = 0;
+
+            // convert mm to step:
+            // Note measured mm lengths for axis a b and c, are ~120,120,34cm respectively. 
+            if (axis == 0) converted = input * 207;
+            if (axis == 1) converted = input * 207;
+            if (axis == 2) converted = input * 14970;
+
+            return converted;
+        }
+
+
+        //Note to self: currently not working
+        public void Main(string address)
+        {
+            gclib gclib = new gclib();
+
+            try
+            {
+                //execute any program as dictated by all buttons and given script
+
+                //i plan to change the way we do this abit. i want to establish a connection. check for it
+                // then just use this Main function to execute the intention of the comment 2 lines above this
+
+                //calls to gclib should be in a try-catch
+                textBox1.AppendText("GVersion: " + gclib.GVersion() + "\n");
+                gclib.GOpen(address + " -d"); //Set an appropriate IP address here
+                textBox1.AppendText("GInfo: " + gclib.GInfo() + "\n");
+                textBox1.AppendText("GCommand: " + gclib.GCommand("MG TIME") + "\n");
+            }
+            catch (Exception ex)
+            {
+                textBox1.AppendText("ERROR: " + ex.Message);
+
+            }
+            finally
+            {
+                gclib.GClose(); //Don't forget to close!
+            }
+
+        }
+        #endregion
+
+        private void label14_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox6_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox5_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void unitbox_TextChanged(object sender, EventArgs e)
+        {
+
+
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void GeneralGroup_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AddressTextBox_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label19_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        #endregion
+    }
 }

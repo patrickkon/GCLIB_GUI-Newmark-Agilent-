@@ -111,12 +111,7 @@ namespace vector_accelerator_project
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.segmentButton = new System.Windows.Forms.RadioButton();
             this.label20 = new System.Windows.Forms.Label();
-            //this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
             this.returnOriginButton = new System.Windows.Forms.Button();
-           // this.button14 = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.mmButton = new System.Windows.Forms.RadioButton();
             this.stepperButton = new System.Windows.Forms.RadioButton();
@@ -128,6 +123,7 @@ namespace vector_accelerator_project
             this.button24 = new System.Windows.Forms.Button();
             this.button23 = new System.Windows.Forms.Button();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.textBox6 = new System.Windows.Forms.TextBox();
             this.MainToolStrip.SuspendLayout();
             this.GeneralGroup.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -143,7 +139,6 @@ namespace vector_accelerator_project
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPoints)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIFBW)).BeginInit();
-            //((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.configBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -540,13 +535,13 @@ namespace vector_accelerator_project
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(6, 24);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(169, 20);
+            this.label10.Size = new System.Drawing.Size(259, 20);
             this.label10.TabIndex = 30;
-            this.label10.Text = "Other parameter input:";
+            this.label10.Text = "Other parameter input (format: \"Z\"):";
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(181, 24);
+            this.textBox5.Location = new System.Drawing.Point(274, 24);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(100, 26);
             this.textBox5.TabIndex = 27;
@@ -1030,11 +1025,11 @@ namespace vector_accelerator_project
             // button13
             // 
             this.button13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button13.Location = new System.Drawing.Point(115, 624);
+            this.button13.Location = new System.Drawing.Point(115, 606);
             this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(221, 39);
+            this.button13.Size = new System.Drawing.Size(221, 57);
             this.button13.TabIndex = 32;
-            this.button13.Text = "Start special motion";
+            this.button13.Text = "Start special movement";
             this.button13.UseVisualStyleBackColor = true;
             this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
@@ -1068,7 +1063,7 @@ namespace vector_accelerator_project
             this.textBox4.Size = new System.Drawing.Size(422, 562);
             this.textBox4.TabIndex = 25;
             this.textBox4.Text = "Click on button once input has been added. Allows multi intermediate points. This" +
-    " textbox displays our parameters";
+    " textbox displays our parameter values";
             this.textBox4.TextChanged += new System.EventHandler(this.textBox4_TextChanged);
             // 
             // segmentButton
@@ -1090,47 +1085,6 @@ namespace vector_accelerator_project
             this.label20.Size = new System.Drawing.Size(53, 20);
             this.label20.TabIndex = 50;
             this.label20.Text = "Mode:";
-            /* 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(1352, 642);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(200, 200);
-            this.pictureBox1.TabIndex = 25;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Visible = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
-            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
-            */ 
-            // textBox6
-            // 
-            this.textBox6.Location = new System.Drawing.Point(1346, 889);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.ReadOnly = true;
-            this.textBox6.Size = new System.Drawing.Size(224, 26);
-            this.textBox6.TabIndex = 26;
-            this.textBox6.Visible = false;
-            this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
-            // 
-            // label11
-            // 
-            this.label11.Location = new System.Drawing.Point(1346, 609);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(242, 30);
-            this.label11.TabIndex = 27;
-            this.label11.Text = "Single Coor (Clickable Map):";
-            this.label11.Visible = false;
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(1346, 866);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(184, 20);
-            this.label12.TabIndex = 28;
-            this.label12.Text = "Mapped relative position:";
-            this.label12.Visible = false;
             // 
             // returnOriginButton
             // 
@@ -1141,18 +1095,7 @@ namespace vector_accelerator_project
             this.returnOriginButton.Text = "Return to Origin";
             this.returnOriginButton.UseVisualStyleBackColor = true;
             this.returnOriginButton.Click += new System.EventHandler(this.returnOriginButton_Click);
-            /* 
-            // button14
             // 
-            this.button14.Location = new System.Drawing.Point(1359, 921);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(181, 30);
-            this.button14.TabIndex = 31;
-            this.button14.Text = "Start mapped motion";
-            this.button14.UseVisualStyleBackColor = true;
-            this.button14.Visible = false;
-            this.button14.Click += new System.EventHandler(this.button14_Click);
-            */ 
             // richTextBox1
             // 
             this.richTextBox1.Location = new System.Drawing.Point(1350, 316);
@@ -1267,31 +1210,35 @@ namespace vector_accelerator_project
             this.saveFileDialog.Title = "Save";
             this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
             // 
+            // textBox6
+            // 
+            this.textBox6.Location = new System.Drawing.Point(1608, 1003);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(192, 26);
+            this.textBox6.TabIndex = 44;
+            this.textBox6.Text = "Made by Patrick Kon 2019";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1837, 1050);
+            this.Controls.Add(this.textBox6);
             this.Controls.Add(this.configBox);
             this.Controls.Add(this.richTextBox1);
-          //  this.Controls.Add(this.button14);
             this.Controls.Add(this.returnOriginButton);
-            this.Controls.Add(this.label12);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.GeneralGroup);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.textBox6);
             this.Controls.Add(this.MainToolStrip);
             this.Controls.Add(this.label7);
-            //this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.originButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBox1);
             this.Name = "Form1";
-            this.Text = "Vector Accelerator";
+            this.Text = "Surface Scan 2.0";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.MainToolStrip.ResumeLayout(false);
             this.MainToolStrip.PerformLayout();
@@ -1316,7 +1263,6 @@ namespace vector_accelerator_project
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPoints)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIFBW)).EndInit();
-            //((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.configBox.ResumeLayout(false);
             this.configBox.PerformLayout();
             this.ResumeLayout(false);
@@ -1362,10 +1308,6 @@ namespace vector_accelerator_project
         private Label label9;
         private Label label10;
         private Button button11;
-        //private PictureBox pictureBox1;
-        private TextBox textBox6;
-        private Label label11;
-        private Label label12;
         private Button returnOriginButton;
         //private Button button14;
         private Button button15;
@@ -1422,6 +1364,7 @@ namespace vector_accelerator_project
         private Label label23;
         private SaveFileDialog saveFileDialog;
         private ToolStripButton toolStripButton2;
+        private TextBox textBox6;
     }
 }
 
