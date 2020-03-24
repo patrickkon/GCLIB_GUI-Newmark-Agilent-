@@ -45,6 +45,7 @@ namespace vector_accelerator_project
             this.DisconnectStripButton = new System.Windows.Forms.ToolStripButton();
             this.ConnectStripButton = new System.Windows.Forms.ToolStripButton();
             this.AddressTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.GeneralGroup = new System.Windows.Forms.GroupBox();
             this.label5 = new System.Windows.Forms.Label();
             this.unitbox = new System.Windows.Forms.TextBox();
@@ -113,15 +114,18 @@ namespace vector_accelerator_project
             this.label20 = new System.Windows.Forms.Label();
             this.returnOriginButton = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.mmButton = new System.Windows.Forms.RadioButton();
-            this.stepperButton = new System.Windows.Forms.RadioButton();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.textBox8 = new System.Windows.Forms.TextBox();
             this.configBox = new System.Windows.Forms.GroupBox();
+            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.StartupConfig = new System.Windows.Forms.TabPage();
             this.button25 = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
             this.button24 = new System.Windows.Forms.Button();
+            this.stepperButton = new System.Windows.Forms.RadioButton();
             this.button23 = new System.Windows.Forms.Button();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.mmButton = new System.Windows.Forms.RadioButton();
+            this.label21 = new System.Windows.Forms.Label();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.MainToolStrip.SuspendLayout();
@@ -140,6 +144,8 @@ namespace vector_accelerator_project
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPoints)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIFBW)).BeginInit();
             this.configBox.SuspendLayout();
+            this.tabControl2.SuspendLayout();
+            this.StartupConfig.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox1
@@ -151,6 +157,7 @@ namespace vector_accelerator_project
             this.textBox1.Size = new System.Drawing.Size(623, 197);
             this.textBox1.TabIndex = 0;
             this.textBox1.Text = "";
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // label2
             // 
@@ -204,10 +211,11 @@ namespace vector_accelerator_project
             this.toolStripLabel1,
             this.DisconnectStripButton,
             this.ConnectStripButton,
-            this.AddressTextBox});
+            this.AddressTextBox,
+            this.toolStripButton3});
             this.MainToolStrip.Location = new System.Drawing.Point(0, 0);
             this.MainToolStrip.Name = "MainToolStrip";
-            this.MainToolStrip.Size = new System.Drawing.Size(1118, 32);
+            this.MainToolStrip.Size = new System.Drawing.Size(1146, 32);
             this.MainToolStrip.TabIndex = 15;
             this.MainToolStrip.Text = "toolStrip1";
             // 
@@ -262,6 +270,15 @@ namespace vector_accelerator_project
             this.AddressTextBox.Size = new System.Drawing.Size(450, 32);
             this.AddressTextBox.Text = "COM14 --direct --baud 19200 --subscribe ALL";
             this.AddressTextBox.Click += new System.EventHandler(this.AddressTextBox_Click);
+            // 
+            // toolStripButton3
+            // 
+            this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
+            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton3.Name = "toolStripButton3";
+            this.toolStripButton3.Size = new System.Drawing.Size(28, 29);
+            this.toolStripButton3.Text = "toolStripButton3";
             // 
             // GeneralGroup
             // 
@@ -341,7 +358,7 @@ namespace vector_accelerator_project
             this.button3.TabIndex = 16;
             this.button3.Text = "- (b-axis)";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click_1);
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // label3
             // 
@@ -360,7 +377,7 @@ namespace vector_accelerator_project
             this.button4.TabIndex = 14;
             this.button4.Text = "+ (b-axis)";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click_1);
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button2
             // 
@@ -370,7 +387,7 @@ namespace vector_accelerator_project
             this.button2.TabIndex = 13;
             this.button2.Text = "- (a-axis)";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click_1);
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // label1
             // 
@@ -427,7 +444,7 @@ namespace vector_accelerator_project
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(205, 34);
             this.button9.TabIndex = 20;
-            this.button9.Text = "Clear Intermediate points";
+            this.button9.Text = "Reset all points";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
@@ -628,7 +645,7 @@ namespace vector_accelerator_project
             this.button22.Name = "button22";
             this.button22.Size = new System.Drawing.Size(160, 34);
             this.button22.TabIndex = 48;
-            this.button22.Text = "Clear all segments";
+            this.button22.Text = "Reset all segments";
             this.button22.UseVisualStyleBackColor = true;
             this.button22.Click += new System.EventHandler(this.button22_Click);
             // 
@@ -1106,102 +1123,134 @@ namespace vector_accelerator_project
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged);
             // 
-            // mmButton
+            // configBox
             // 
-            this.mmButton.AutoSize = true;
-            this.mmButton.Location = new System.Drawing.Point(25, 56);
-            this.mmButton.Name = "mmButton";
-            this.mmButton.Size = new System.Drawing.Size(60, 24);
-            this.mmButton.TabIndex = 33;
-            this.mmButton.TabStop = true;
-            this.mmButton.Text = "Mm";
-            this.mmButton.UseVisualStyleBackColor = true;
-            this.mmButton.CheckedChanged += new System.EventHandler(this.mmButton_CheckedChanged);
+            this.configBox.Controls.Add(this.tabControl2);
+            this.configBox.Location = new System.Drawing.Point(1134, 44);
+            this.configBox.Name = "configBox";
+            this.configBox.Size = new System.Drawing.Size(455, 260);
+            this.configBox.TabIndex = 43;
+            this.configBox.TabStop = false;
+            this.configBox.Text = "Settings";
+            this.configBox.Enter += new System.EventHandler(this.groupBox2_Enter);
+            // 
+            // tabControl2
+            // 
+            this.tabControl2.Controls.Add(this.StartupConfig);
+            this.tabControl2.Controls.Add(this.tabPage2);
+            this.tabControl2.Location = new System.Drawing.Point(6, 23);
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.SelectedIndex = 0;
+            this.tabControl2.Size = new System.Drawing.Size(443, 231);
+            this.tabControl2.TabIndex = 45;
+            // 
+            // StartupConfig
+            // 
+            this.StartupConfig.Controls.Add(this.button25);
+            this.StartupConfig.Controls.Add(this.label13);
+            this.StartupConfig.Controls.Add(this.button24);
+            this.StartupConfig.Controls.Add(this.stepperButton);
+            this.StartupConfig.Controls.Add(this.button23);
+            this.StartupConfig.Controls.Add(this.textBox8);
+            this.StartupConfig.Controls.Add(this.mmButton);
+            this.StartupConfig.Controls.Add(this.label21);
+            this.StartupConfig.Location = new System.Drawing.Point(4, 29);
+            this.StartupConfig.Name = "StartupConfig";
+            this.StartupConfig.Padding = new System.Windows.Forms.Padding(3);
+            this.StartupConfig.Size = new System.Drawing.Size(435, 198);
+            this.StartupConfig.TabIndex = 0;
+            this.StartupConfig.Text = "Startup Config";
+            this.StartupConfig.UseVisualStyleBackColor = true;
+            // 
+            // button25
+            // 
+            this.button25.Location = new System.Drawing.Point(214, 142);
+            this.button25.Name = "button25";
+            this.button25.Size = new System.Drawing.Size(75, 29);
+            this.button25.TabIndex = 53;
+            this.button25.Text = "axis-c";
+            this.button25.UseVisualStyleBackColor = true;
+            this.button25.Click += new System.EventHandler(this.button25_Click);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(19, 14);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(113, 20);
+            this.label13.TabIndex = 48;
+            this.label13.Text = "Unit of Choice:";
+            // 
+            // button24
+            // 
+            this.button24.Location = new System.Drawing.Point(123, 142);
+            this.button24.Name = "button24";
+            this.button24.Size = new System.Drawing.Size(75, 29);
+            this.button24.TabIndex = 52;
+            this.button24.Text = "axis-b";
+            this.button24.UseVisualStyleBackColor = true;
+            this.button24.Click += new System.EventHandler(this.button24_Click);
             // 
             // stepperButton
             // 
             this.stepperButton.AutoSize = true;
-            this.stepperButton.Location = new System.Drawing.Point(25, 87);
+            this.stepperButton.Location = new System.Drawing.Point(23, 68);
             this.stepperButton.Name = "stepperButton";
             this.stepperButton.Size = new System.Drawing.Size(132, 24);
-            this.stepperButton.TabIndex = 34;
+            this.stepperButton.TabIndex = 47;
             this.stepperButton.TabStop = true;
             this.stepperButton.Text = "Stepper Units";
             this.stepperButton.UseVisualStyleBackColor = true;
             this.stepperButton.CheckedChanged += new System.EventHandler(this.stepperButton_CheckedChanged);
             // 
-            // label13
+            // button23
             // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(21, 33);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(113, 20);
-            this.label13.TabIndex = 35;
-            this.label13.Text = "Unit of Choice:";
+            this.button23.Location = new System.Drawing.Point(35, 142);
+            this.button23.Name = "button23";
+            this.button23.Size = new System.Drawing.Size(75, 29);
+            this.button23.TabIndex = 51;
+            this.button23.Text = "axis-a";
+            this.button23.UseVisualStyleBackColor = true;
+            this.button23.Click += new System.EventHandler(this.button23_Click);
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(123, 110);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(139, 26);
+            this.textBox8.TabIndex = 49;
+            this.textBox8.TextChanged += new System.EventHandler(this.textBox8_TextChanged);
+            // 
+            // mmButton
+            // 
+            this.mmButton.AutoSize = true;
+            this.mmButton.Location = new System.Drawing.Point(23, 37);
+            this.mmButton.Name = "mmButton";
+            this.mmButton.Size = new System.Drawing.Size(60, 24);
+            this.mmButton.TabIndex = 46;
+            this.mmButton.TabStop = true;
+            this.mmButton.Text = "Mm";
+            this.mmButton.UseVisualStyleBackColor = true;
+            this.mmButton.CheckedChanged += new System.EventHandler(this.mmButton_CheckedChanged);
             // 
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(21, 132);
+            this.label21.Location = new System.Drawing.Point(19, 113);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(98, 20);
-            this.label21.TabIndex = 42;
+            this.label21.TabIndex = 50;
             this.label21.Text = "Slew Speed:";
             // 
-            // textBox8
+            // tabPage2
             // 
-            this.textBox8.Location = new System.Drawing.Point(125, 129);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(139, 26);
-            this.textBox8.TabIndex = 41;
-            // 
-            // configBox
-            // 
-            this.configBox.Controls.Add(this.button25);
-            this.configBox.Controls.Add(this.button24);
-            this.configBox.Controls.Add(this.button23);
-            this.configBox.Controls.Add(this.label13);
-            this.configBox.Controls.Add(this.label21);
-            this.configBox.Controls.Add(this.mmButton);
-            this.configBox.Controls.Add(this.textBox8);
-            this.configBox.Controls.Add(this.stepperButton);
-            this.configBox.Location = new System.Drawing.Point(1134, 58);
-            this.configBox.Name = "configBox";
-            this.configBox.Size = new System.Drawing.Size(420, 223);
-            this.configBox.TabIndex = 43;
-            this.configBox.TabStop = false;
-            this.configBox.Text = "Start-up Config";
-            this.configBox.Enter += new System.EventHandler(this.groupBox2_Enter);
-            // 
-            // button25
-            // 
-            this.button25.Location = new System.Drawing.Point(216, 161);
-            this.button25.Name = "button25";
-            this.button25.Size = new System.Drawing.Size(75, 29);
-            this.button25.TabIndex = 45;
-            this.button25.Text = "axis-c";
-            this.button25.UseVisualStyleBackColor = true;
-            this.button25.Click += new System.EventHandler(this.button25_Click);
-            // 
-            // button24
-            // 
-            this.button24.Location = new System.Drawing.Point(125, 161);
-            this.button24.Name = "button24";
-            this.button24.Size = new System.Drawing.Size(75, 29);
-            this.button24.TabIndex = 44;
-            this.button24.Text = "axis-b";
-            this.button24.UseVisualStyleBackColor = true;
-            this.button24.Click += new System.EventHandler(this.button24_Click);
-            // 
-            // button23
-            // 
-            this.button23.Location = new System.Drawing.Point(37, 161);
-            this.button23.Name = "button23";
-            this.button23.Size = new System.Drawing.Size(75, 29);
-            this.button23.TabIndex = 43;
-            this.button23.Text = "axis-a";
-            this.button23.UseVisualStyleBackColor = true;
-            this.button23.Click += new System.EventHandler(this.button23_Click);
+            this.tabPage2.Location = new System.Drawing.Point(4, 29);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(435, 198);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Calibration";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // saveFileDialog
             // 
@@ -1264,7 +1313,9 @@ namespace vector_accelerator_project
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPoints)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownIFBW)).EndInit();
             this.configBox.ResumeLayout(false);
-            this.configBox.PerformLayout();
+            this.tabControl2.ResumeLayout(false);
+            this.StartupConfig.ResumeLayout(false);
+            this.StartupConfig.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1313,9 +1364,6 @@ namespace vector_accelerator_project
         private Button button15;
         private Button button13;
         private RichTextBox richTextBox1;
-        private RadioButton mmButton;
-        private RadioButton stepperButton;
-        private Label label13;
         private Label label15;
         private Label label14;
         private RadioButton segmentButton;
@@ -1332,15 +1380,10 @@ namespace vector_accelerator_project
         private Button button19;
         private Button button20;
         private Label label20;
-        private Label label21;
-        private TextBox textBox8;
         private GroupBox segmentBox;
         private GroupBox manualBox;
         private GroupBox configBox;
         private GroupBox axisCinputBox;
-        private Button button25;
-        private Button button24;
-        private Button button23;
         private ToolStripButton toolStripButton1;
         private TabControl tabControl1;
         private TabPage translatorTabPage;
@@ -1365,6 +1408,18 @@ namespace vector_accelerator_project
         private SaveFileDialog saveFileDialog;
         private ToolStripButton toolStripButton2;
         private TextBox textBox6;
+        private ToolStripButton toolStripButton3;
+        private TabControl tabControl2;
+        private TabPage StartupConfig;
+        private Button button25;
+        private Label label13;
+        private Button button24;
+        private RadioButton stepperButton;
+        private Button button23;
+        private TextBox textBox8;
+        private RadioButton mmButton;
+        private Label label21;
+        private TabPage tabPage2;
     }
 }
 
