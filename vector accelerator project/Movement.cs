@@ -4,8 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("MovementTests")]
+
+
 namespace vector_accelerator_project
-{   
+{
     class MovementVariables
     {
         //Variables that store coordinates: 
@@ -29,6 +34,7 @@ namespace vector_accelerator_project
         public virtual int Speed_b { get; set; } //recommended speed
         public virtual int Speed_c { get; set; } //recommended speed
 
+
         public MovementVariables()
         {
             //Variables that store coordinates:
@@ -36,7 +42,7 @@ namespace vector_accelerator_project
             End_position = new int[2] { 0, 0 };
             //a list of integer arrays, each with 2 elements:
             Intermediate_positions = new List<int[]>();
-            Intermediate_positions.Add(new int[2] { 0, 0 });
+            //Intermediate_positions.Add(new int[2] { 0, 0 });
 
             Segment_positions = new List<int[]>();
             Segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
@@ -69,16 +75,37 @@ namespace vector_accelerator_project
             if (same_num_samples && ((Segment_positions.Last()[1] - Segment_positions.Last()[0]) % Segment_positions.Last()[2] == 0) && ((Segment_positions.Last()[4] - Segment_positions.Last()[3]) % Segment_positions.Last()[5] == 0))
             {
                 Segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+                display?.Invoke();
+                return true;
             }
-            else
+            else if(b_sample_num != 0 || a_sample_num != 0)
             {
+                // added 24/3/2020
+                // edge case: if either a or b direction is stationary, but not both
+
+                if(b_sample_num != 0)
+                {
+                    if (((Segment_positions.Last()[4] - Segment_positions.Last()[3]) % Segment_positions.Last()[5] == 0))
+                    {
+                        Segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+                        display?.Invoke();
+                        return true;
+                    }
+                }
+                else if(a_sample_num != 0)
+                {
+                    if(((Segment_positions.Last()[1] - Segment_positions.Last()[0]) % Segment_positions.Last()[2] == 0))
+                    {
+                        Segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+                        display?.Invoke();
+                        return true;
+                    }
+                }
+            }
+            // if has not return, it is false
                 System.Windows.Forms.MessageBox.Show("Segment values do not add up. Check your input values.", "Invalid Input.");
                 return false;
-            }
-            display();
-            return true;     
         }
-
     }
 
     class MovementVariables_stepperUnit : MovementVariables
@@ -229,6 +256,8 @@ namespace vector_accelerator_project
 
     }
 
+    // Not to be exposed to other modules. (clean code purposes)
+    // Use higher level wrappers listed below instead
     class MoveFactory
     {
         private Form1 form;
@@ -319,21 +348,21 @@ namespace vector_accelerator_project
     // Currently supports both manual and segmented movement:
     class MovementType
     {
-        protected MovementVariables movementVariables;
+        //protected MovementVariables movementVariables;
         protected PNA analyzer;
         protected MoveFactory moveFactory;
         protected Form1_EventListeners form1_EventListeners;
         
-        public MovementType(PNA analyzer, Form1 form, gclib gclib, MovementVariables movementVariables)
+        public MovementType(PNA analyzer, Form1 form, gclib gclib /*ref MovementVariables movementVariables*/)
         {
-            this.movementVariables = movementVariables;
+            //this.movementVariables = movementVariables;
             this.analyzer = analyzer;
             this.moveFactory = new MoveFactory(form, gclib);
             this.form1_EventListeners = new Form1_EventListeners(form);
             //this.gclib = gclib;
         }
 
-        public virtual void move() { }
+        public virtual void move(MovementVariables movementVariables) { }
         //public virtual void displayFunc() { } // Format for displaying your movement required values
 
         public void goHome(MovementVariables movementVariables)
@@ -349,13 +378,13 @@ namespace vector_accelerator_project
     
     class ManualMovement : MovementType
     {
-        public ManualMovement(PNA analyzer, Form1 form, gclib gclib, MovementVariables movementVariables)
-            : base(analyzer, form, gclib, movementVariables)
+        public ManualMovement(PNA analyzer, Form1 form, gclib gclib/* ref MovementVariables movementVariables*/)
+            : base(analyzer, form, gclib/* ref movementVariables*/)
         {
         }
 
         override
-        public void move()
+        public void move(MovementVariables movementVariables)
         {
             moveFactory.special_move_helper(movementVariables.Start_position, movementVariables);
             // BLOCK of code to complete user specified task....
@@ -386,19 +415,17 @@ namespace vector_accelerator_project
             // return to original axis-c rest position before ending movement:
             moveFactory.runAbsoluteMoveCommand("C", movementVariables.Axis_c_rest_position, movementVariables.Speed_c);
         }
-
-
     }
 
     class SegmentMovement : MovementType
     {
-        public SegmentMovement(PNA analyzer, Form1 form, gclib gclib, MovementVariables movementVariables)
-            : base(analyzer, form, gclib, movementVariables)
+        public SegmentMovement(PNA analyzer, Form1 form, gclib gclib/*, ref MovementVariables movementVariables*/)
+            : base(analyzer, form, gclib/*, ref movementVariables*/)
         {
         }
 
         override
-        public void move()
+        public void move(MovementVariables movementVariables)
         {
             int counter = 0; // indicates how many segments have been processed.
             movementVariables.Segment_positions?.ForEach(a =>
@@ -409,6 +436,7 @@ namespace vector_accelerator_project
                 {
                     while (true)
                     {
+                        // Reuse Start_position array to place each of our segment movement coordinates
                         movementVariables.Start_position[0] = multiplier * a[2] + a[0];
                         movementVariables.Start_position[1] = multiplier * a[5] + a[3];                                 
                         multiplier += 1;

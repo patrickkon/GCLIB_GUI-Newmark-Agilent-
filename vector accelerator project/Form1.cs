@@ -8,7 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Text.RegularExpressions;
 using AgilentPNA835x;
+using System.Diagnostics;
 
 namespace vector_accelerator_project
 {
@@ -50,15 +52,46 @@ namespace vector_accelerator_project
             {
                 PrintOutput(textBox1, "Updating absolute position.. ", PrintStyle.Normal, true);
                 PrintOutput(textBox2, "Updating absolute position.. ", PrintStyle.Normal, true);
+
+                /*
+
                 // Apparently GCommand would not allow me to display the TD returned result in GMessage
                 // So I used these 2 lines instead:
+                // Flush out outdated value:
                 gclib.GProgramDownload("TD", "");
                 gclib.GCommand("XQ");
                 string td_value = gclib.GMessage();
+
+                // Get updated value:
+                gclib.GProgramDownload("TD", "");   
+                gclib.GCommand("XQ");
+                td_value = gclib.GMessage();
+
+                var watch = Stopwatch.StartNew();
+                while (!Regex.IsMatch(td_value, @"[0-9]+,\s[0-9]+,\s[0-9]+"))
+                {   
+                    gclib.GProgramDownload("TD", "");
+                    gclib.GCommand("XQ");
+                    td_value = gclib.GMessage();
+
+                    if(watch.ElapsedMilliseconds > 3000)
+                    {
+                        watch.Stop();
+                        throw new TimeoutException("TD command output result format incorrect after 3sec conversion!");
+                    }
+                }
+                watch.Stop();
+                //throw new System.IndexOutOfRangeException("TD command invalid return..Ignore");
+
                 // Needed to extract substring because for some reason there is another string being outputted:
                 td_value = td_value.Substring(0, td_value.IndexOf(Environment.NewLine));
-                PrintOutput(textBox2, td_value , PrintStyle.GalilData);
-                PrintOutput(textBox1, "Done!", PrintStyle.Normal, true);
+                */
+
+                // V2: found a better way to do the above, avoiding all the bugs...
+                string td_value = gclib.GCommand("PA?,?,?");
+       
+
+                PrintOutput(textBox1, "Converting..", PrintStyle.Normal, true);
 
                 // Here onwards we update the variable abs_position:
                 // this function only updates X, Y coordinates
@@ -74,7 +107,8 @@ namespace vector_accelerator_project
                     //if conversion failed
                     abs_position[2] = temp_abs;
                 }
-
+                PrintOutput(textBox1, "Done!", PrintStyle.Normal, true);
+                PrintOutput(textBox2, td_value, PrintStyle.GalilData);
             }
             catch (Exception ex)
             {
@@ -88,8 +122,8 @@ namespace vector_accelerator_project
         public Form1()
         {
             InitializeComponent();
-            InitializePNA(); // Initializes PNA needed variables, and resets internal "dataPoints" List
-            movementVariables = new MovementVariables();
+            InitializePNA(); // Initializes PNA needed variables, and resets internal "dataPoints" List. Sets analyzer
+            
             this.Text = "gclib simple testing example (TITLE HERE)";
         }
 
@@ -97,6 +131,9 @@ namespace vector_accelerator_project
         private void Form1_Load(object sender, EventArgs e)
         { 
             gclib = new gclib(); //constructor can throw, so SHOULD keep it in a Try block
+            movementVariables = new MovementVariables();
+            movementType = new MovementType(analyzer, this, gclib/*, ref movementVariables*/); // declaring here for the sole purpose of allowing "general relative movement"
+
 
             PrintOutput(textBox1, "Enter a FULL GOpen() address above and press Enter", PrintStyle.Instruction);
             PrintOutput(textBox1, "NOTE: This demo will attempt to move Axis A", PrintStyle.Instruction);
@@ -373,12 +410,14 @@ namespace vector_accelerator_project
         #region "Unit of measure related controls"
         private void mmButton_CheckedChanged(object sender, EventArgs e)
         {
+            if(mmButton.Checked)
             unitChangeHandler();
         }
 
         private void stepperButton_CheckedChanged(object sender, EventArgs e)
         {
-            unitChangeHandler();
+            if (stepperButton.Checked)
+                unitChangeHandler();
         }
         #endregion
 
@@ -408,6 +447,12 @@ namespace vector_accelerator_project
                 configBox.Enabled = true;
 
                 this.analyzer.Open(); // meaning, we activate analyzer as soon as connect button is pressed.
+
+                // Call this multiple times, as a warm up. 
+                // Previous problem: there would be nothing (or problems) to read from Gclib.message() if we don't call the preceding Gclib commands multiple times
+                cur_abs_pos(abs_position);
+                cur_abs_pos(abs_position);
+                cur_abs_pos(abs_position);
 
                 return;
             }
@@ -447,37 +492,44 @@ namespace vector_accelerator_project
             //runCommand("i=0\r#A;MG i{N};i=i+1;WT10;JP#A,i<10;EN");
 
             //take a single button click as moving 10000 units in a-axis
-            movementType.runRelativeMoveCommand("A", movementVariables.Increment_unit, movementVariables.Speed_a);           
+            movementType.runRelativeMoveCommand("A", movementVariables.Increment_unit, movementVariables.Speed_a);
+
+            cur_abs_pos(abs_position);
         }
 
         // general movement, - axis-a incremental movement button: 
-        private void button2_Click_1(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
             movementType.runRelativeMoveCommand("A", -1 * movementVariables.Increment_unit, movementVariables.Speed_a);
+            cur_abs_pos(abs_position);
         } 
 
         // general movement, + axis-b incremental movement button: 
-        private void button4_Click_1(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e)
         {
             movementType.runRelativeMoveCommand("B", movementVariables.Increment_unit, movementVariables.Speed_b);
+            cur_abs_pos(abs_position);
         }
 
         // general movement, - axis-b incremental movement button: 
-        private void button3_Click_1(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
             movementType.runRelativeMoveCommand("B", -1 * movementVariables.Increment_unit, movementVariables.Speed_b);
+            cur_abs_pos(abs_position);
         }
 
         // general movement, + axis-c incremental movement button: 
         private void button6_Click(object sender, EventArgs e)
         {
             movementType.runRelativeMoveCommand("C", movementVariables.Increment_unit, movementVariables.Speed_c);
+            cur_abs_pos(abs_position);
         }
 
         // general movement, - axis-c incremental movement button: 
         private void button5_Click(object sender, EventArgs e)
         {
             movementType.runRelativeMoveCommand("C", -1 * movementVariables.Increment_unit, movementVariables.Speed_c);
+            cur_abs_pos(abs_position);
         }
         #endregion
 
@@ -549,15 +601,17 @@ namespace vector_accelerator_project
         //Add intermediate position:
         private void button8_Click(object sender, EventArgs e)
         {
+            movementVariables.Intermediate_positions.Add(new int[2] { 0, 0 }); // add one more element to prevent overrding (update: 4/2/2020)
             set_manualVariables(movementVariables.set_IntermediatePosition);
-            movementVariables.Intermediate_positions.Add(new int[2] { 0, 0 });
+            //movementVariables.Intermediate_positions.Add(new int[2] { 0, 0 }); 
             display_textbox4_manual();
         }
 
-        //Clear all intermediate positions:
+        //Reset all (manual) positions:
         private void button9_Click(object sender, EventArgs e)
         {
             unitChangeHandler();
+            axisCinputBox.Enabled = true; manualBox.Enabled = true; // enable these 2 interfaces as the above function call disables them
             display_textbox4_manual();
         }
         #endregion
@@ -571,7 +625,8 @@ namespace vector_accelerator_project
             PNA_init();
             #endregion
 
-            movementType.move();
+            movementType.move(movementVariables);
+            cur_abs_pos(abs_position);
         }
         #region "Others"
         //Return to origin button:
@@ -702,10 +757,11 @@ namespace vector_accelerator_project
             segment_position_insert(5);
         }
 
-        // Segment movement: clear segments button:
+        // Segment movement: reset all segments button:
         private void button22_Click(object sender, EventArgs e)
         {
             unitChangeHandler();
+            axisCinputBox.Enabled = true; segmentBox.Enabled = true; // enable these 2 interfaces as the above function call disables them 
             textBox4.Clear();
         }
 
@@ -724,8 +780,9 @@ namespace vector_accelerator_project
         {
             if (manualButton.Checked == true)
             {
-                movementType = new ManualMovement(analyzer, this, gclib, movementVariables);
-                unitChangeHandler();  
+                unitChangeHandler(); // Move up as it resets movementVariables below.. need to fix this side effect
+                movementType = new ManualMovement(analyzer, this, gclib/*, ref movementVariables*/);
+                
                 segmentBox.Enabled = false; axisCinputBox.Enabled = true;
                 manualBox.Enabled = true;
                 textBox4.Clear();
@@ -737,8 +794,9 @@ namespace vector_accelerator_project
         {
             if (segmentButton.Checked == true)
             {
-                movementType = new SegmentMovement(analyzer, this, gclib, movementVariables);
                 unitChangeHandler();
+                movementType = new SegmentMovement(analyzer, this, gclib/*, ref movementVariables*/);
+                
                 segmentBox.Enabled = true; axisCinputBox.Enabled = true;
                 manualBox.Enabled = false;
                 textBox4.Clear();
@@ -822,7 +880,8 @@ namespace vector_accelerator_project
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-
+            textBox2.SelectionStart = textBox2.Text.Length;
+            textBox2.ScrollToCaret();
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)
@@ -878,25 +937,12 @@ namespace vector_accelerator_project
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void label3_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
 
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void label6_Click(object sender, EventArgs e)
         {
@@ -914,5 +960,16 @@ namespace vector_accelerator_project
         }
 
         #endregion
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            textBox1.SelectionStart = textBox1.Text.Length;
+            textBox1.ScrollToCaret();
+        }
+
+        private void textBox8_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
