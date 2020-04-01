@@ -106,6 +106,59 @@ namespace vector_accelerator_project
                 System.Windows.Forms.MessageBox.Show("Segment values do not add up. Check your input values.", "Invalid Input.");
                 return false;
         }
+
+        // added 24/3/2020. Updated 1 april 2020
+        // Feature update: Grid segment type movement, that "reformats" the segment value input. This is different from add_segment above
+        public bool add_SegmentGrid(displayFunc display)
+        {
+            // Note now: y = a axis in GUI
+            // Note now: x = b axis in GUI
+            // Note -a = move backwards
+            // Note -b = move right
+            int anchorStart_y = Segment_positions.Last()[0];
+            int anchorStart_x = Segment_positions.Last()[3];
+
+            int anchorEnd_y = Segment_positions.Last()[1];
+            int anchorEnd_x = Segment_positions.Last()[4];
+
+            int increment_y = Segment_positions.Last()[2];
+            int increment_x = Segment_positions.Last()[5];
+
+            // We iterate through y_axis end to end, then move increment x_axis once, then repeat:
+
+            // Section1: check alignment: increment multiple is valid
+
+
+            // sub-section1: normal non-zero multiple:
+            bool validIncrement_x = (Math.Abs(Segment_positions.Last()[5]) > 0) ? (Segment_positions.Last()[4] - Segment_positions.Last()[3]) % Segment_positions.Last()[5] == 0 ? true : false : false;
+            bool validIncrement_y = (Math.Abs(Segment_positions.Last()[2]) > 0) ? (Segment_positions.Last()[1] - Segment_positions.Last()[0]) % Segment_positions.Last()[2] == 0 ? true : false : false;
+
+            // sub-section2: edge case of 0 increment:
+            validIncrement_y = (validIncrement_y == false && increment_y == 0) ? (anchorStart_y - anchorEnd_y == 0) ? true : false : false;
+            validIncrement_x = (validIncrement_x == false && increment_x == 0) ? (anchorStart_x - anchorEnd_x == 0) ? true : false : false;
+
+            if (!validIncrement_x || !validIncrement_y)
+            {
+                System.Windows.Forms.MessageBox.Show("Segment values do not add up. Check your input values.", "Invalid Input.");
+                return false;
+            }
+
+            // Start inserting segments into array:
+            for (int j = anchorStart_y; Math.Abs(j) <= Math.Abs(anchorEnd_y); j += increment_y)
+            {
+                Segment_positions.Last()[0] = j;
+                Segment_positions.Last()[1] = j;
+                Segment_positions.Last()[2] = 0;
+
+                Segment_positions.Last()[3] = anchorStart_x;
+                Segment_positions.Last()[4] = anchorEnd_x;
+                Segment_positions.Last()[5] = increment_x;
+
+                Segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+            }
+
+            return true;
+        }
     }
 
     class MovementVariables_stepperUnit : MovementVariables
