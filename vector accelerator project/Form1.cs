@@ -771,10 +771,21 @@ namespace vector_accelerator_project
             textBox4.Clear();
         }
 
+        //// Segment movement: add segment button:
+        //private void button21_Click(object sender, EventArgs e)
+        //{
+        //    movementVariables.add_Segment(display_textbox4_segment);
+        //}
+
+
+        // Update 1 april 2020: for fast grid movement compatibility
         // Segment movement: add segment button:
         private void button21_Click(object sender, EventArgs e)
         {
-            movementVariables.add_Segment(display_textbox4_segment);
+            if (segmentNormalButton.Checked)
+                movementVariables.add_Segment(display_textbox4_segment);
+            else if (segmentGridButton.Checked)
+                movementVariables.add_SegmentGrid(display_textbox4_segment);
         }
 
 
@@ -977,5 +988,21 @@ namespace vector_accelerator_project
         {
 
         }
+
+        // Update: 1 april 2020: fast grid movement compatibility
+        private void segmentNormalButton_CheckedChanged(object sender, EventArgs e)
+        {
+            unitChangeHandler();
+        }
+
+        // Update: 1 april 2020: fast grid movement compatibility
+        private void segmentGridButton_CheckedChanged(object sender, EventArgs e)
+        {
+            unitChangeHandler();
+        }
+
+
+
+
     }
 }
