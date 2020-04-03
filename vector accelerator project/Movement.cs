@@ -500,7 +500,7 @@ namespace vector_accelerator_project
                         multiplier += 1;
                         //if ( (start_position[0] < 0 && (Math.Abs(start_position[0]) > Math.Abs(a[1])  || Math.Abs(start_position[1]) > Math.Abs(a[4])) ) || (start_position[0] < 0 && (Math.Abs(start_position[0]) > Math.Abs(a[1]) || Math.Abs(start_position[1]) > Math.Abs(a[4])))) break;
                         moveFactory.special_move_helper(movementVariables.Start_position, movementVariables);
-
+                        //
                         // i add VNA stuff in now:
                         analyzer.PNA_scan(movementVariables.Start_position, movementVariables);
 
