@@ -68,6 +68,19 @@ namespace vector_accelerator_project
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.translatorTabPage = new System.Windows.Forms.TabPage();
+            this.segmentBox = new System.Windows.Forms.GroupBox();
+            this.segmentGridButton = new System.Windows.Forms.RadioButton();
+            this.segmentNormalButton = new System.Windows.Forms.RadioButton();
+            this.label18 = new System.Windows.Forms.Label();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.button18 = new System.Windows.Forms.Button();
+            this.button17 = new System.Windows.Forms.Button();
+            this.button22 = new System.Windows.Forms.Button();
+            this.button16 = new System.Windows.Forms.Button();
+            this.button21 = new System.Windows.Forms.Button();
+            this.button12 = new System.Windows.Forms.Button();
+            this.button19 = new System.Windows.Forms.Button();
+            this.button20 = new System.Windows.Forms.Button();
             this.manualBox = new System.Windows.Forms.GroupBox();
             this.axisCinputBox = new System.Windows.Forms.GroupBox();
             this.label10 = new System.Windows.Forms.Label();
@@ -117,24 +130,12 @@ namespace vector_accelerator_project
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.textBox6 = new System.Windows.Forms.TextBox();
-            this.segmentBox = new System.Windows.Forms.GroupBox();
-            this.segmentGridButton = new System.Windows.Forms.RadioButton();
-            this.segmentNormalButton = new System.Windows.Forms.RadioButton();
-            this.label18 = new System.Windows.Forms.Label();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.button18 = new System.Windows.Forms.Button();
-            this.button17 = new System.Windows.Forms.Button();
-            this.button22 = new System.Windows.Forms.Button();
-            this.button16 = new System.Windows.Forms.Button();
-            this.button21 = new System.Windows.Forms.Button();
-            this.button12 = new System.Windows.Forms.Button();
-            this.button19 = new System.Windows.Forms.Button();
-            this.button20 = new System.Windows.Forms.Button();
             this.MainToolStrip.SuspendLayout();
             this.GeneralGroup.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.translatorTabPage.SuspendLayout();
+            this.segmentBox.SuspendLayout();
             this.manualBox.SuspendLayout();
             this.axisCinputBox.SuspendLayout();
             this.PNAtabPage.SuspendLayout();
@@ -147,7 +148,6 @@ namespace vector_accelerator_project
             this.configBox.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.StartupConfig.SuspendLayout();
-            this.segmentBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox1
@@ -516,10 +516,151 @@ namespace vector_accelerator_project
             this.translatorTabPage.Location = new System.Drawing.Point(4, 29);
             this.translatorTabPage.Name = "translatorTabPage";
             this.translatorTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.translatorTabPage.Size = new System.Drawing.Size(430, 553);
+            this.translatorTabPage.Size = new System.Drawing.Size(430, 550);
             this.translatorTabPage.TabIndex = 0;
             this.translatorTabPage.Text = "Translator";
             this.translatorTabPage.UseVisualStyleBackColor = true;
+            // 
+            // segmentBox
+            // 
+            this.segmentBox.Controls.Add(this.segmentGridButton);
+            this.segmentBox.Controls.Add(this.segmentNormalButton);
+            this.segmentBox.Controls.Add(this.label18);
+            this.segmentBox.Controls.Add(this.textBox7);
+            this.segmentBox.Controls.Add(this.button18);
+            this.segmentBox.Controls.Add(this.button17);
+            this.segmentBox.Controls.Add(this.button22);
+            this.segmentBox.Controls.Add(this.button16);
+            this.segmentBox.Controls.Add(this.button21);
+            this.segmentBox.Controls.Add(this.button12);
+            this.segmentBox.Controls.Add(this.button19);
+            this.segmentBox.Controls.Add(this.button20);
+            this.segmentBox.Location = new System.Drawing.Point(12, 299);
+            this.segmentBox.Name = "segmentBox";
+            this.segmentBox.Size = new System.Drawing.Size(407, 247);
+            this.segmentBox.TabIndex = 52;
+            this.segmentBox.TabStop = false;
+            this.segmentBox.Text = "Input by segment:";
+            // 
+            // segmentGridButton
+            // 
+            this.segmentGridButton.AutoSize = true;
+            this.segmentGridButton.Location = new System.Drawing.Point(152, 26);
+            this.segmentGridButton.Name = "segmentGridButton";
+            this.segmentGridButton.Size = new System.Drawing.Size(64, 24);
+            this.segmentGridButton.TabIndex = 50;
+            this.segmentGridButton.Text = "Grid";
+            this.segmentGridButton.UseVisualStyleBackColor = true;
+            this.segmentGridButton.CheckedChanged += new System.EventHandler(this.segmentGridButton_CheckedChanged);
+            // 
+            // segmentNormalButton
+            // 
+            this.segmentNormalButton.AutoSize = true;
+            this.segmentNormalButton.Checked = true;
+            this.segmentNormalButton.Location = new System.Drawing.Point(14, 26);
+            this.segmentNormalButton.Name = "segmentNormalButton";
+            this.segmentNormalButton.Size = new System.Drawing.Size(84, 24);
+            this.segmentNormalButton.TabIndex = 49;
+            this.segmentNormalButton.TabStop = true;
+            this.segmentNormalButton.Text = "Normal";
+            this.segmentNormalButton.UseVisualStyleBackColor = true;
+            this.segmentNormalButton.CheckedChanged += new System.EventHandler(this.segmentNormalButton_CheckedChanged);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(6, 60);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(176, 20);
+            this.label18.TabIndex = 40;
+            this.label18.Text = "Point Input (format \"Z\"):";
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(208, 57);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(179, 26);
+            this.textBox7.TabIndex = 39;
+            // 
+            // button18
+            // 
+            this.button18.Location = new System.Drawing.Point(135, 138);
+            this.button18.Name = "button18";
+            this.button18.Size = new System.Drawing.Size(121, 34);
+            this.button18.TabIndex = 43;
+            this.button18.Text = "B (end)";
+            this.button18.UseVisualStyleBackColor = true;
+            this.button18.Click += new System.EventHandler(this.button18_Click);
+            // 
+            // button17
+            // 
+            this.button17.Location = new System.Drawing.Point(135, 102);
+            this.button17.Name = "button17";
+            this.button17.Size = new System.Drawing.Size(121, 30);
+            this.button17.TabIndex = 44;
+            this.button17.Text = "A (end)";
+            this.button17.UseVisualStyleBackColor = true;
+            this.button17.Click += new System.EventHandler(this.button17_Click);
+            // 
+            // button22
+            // 
+            this.button22.Location = new System.Drawing.Point(209, 195);
+            this.button22.Name = "button22";
+            this.button22.Size = new System.Drawing.Size(160, 34);
+            this.button22.TabIndex = 48;
+            this.button22.Text = "Clear all segments";
+            this.button22.UseVisualStyleBackColor = true;
+            this.button22.Click += new System.EventHandler(this.button22_Click);
+            // 
+            // button16
+            // 
+            this.button16.Location = new System.Drawing.Point(8, 138);
+            this.button16.Name = "button16";
+            this.button16.Size = new System.Drawing.Size(121, 34);
+            this.button16.TabIndex = 42;
+            this.button16.Text = "B (start)";
+            this.button16.UseVisualStyleBackColor = true;
+            this.button16.Click += new System.EventHandler(this.button16_Click);
+            // 
+            // button21
+            // 
+            this.button21.Location = new System.Drawing.Point(51, 195);
+            this.button21.Name = "button21";
+            this.button21.Size = new System.Drawing.Size(121, 34);
+            this.button21.TabIndex = 47;
+            this.button21.Text = "Add Segment";
+            this.button21.UseVisualStyleBackColor = true;
+            this.button21.Click += new System.EventHandler(this.button21_Click);
+            // 
+            // button12
+            // 
+            this.button12.Location = new System.Drawing.Point(8, 102);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(121, 30);
+            this.button12.TabIndex = 41;
+            this.button12.Text = "A (start)";
+            this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
+            // 
+            // button19
+            // 
+            this.button19.Location = new System.Drawing.Point(266, 102);
+            this.button19.Name = "button19";
+            this.button19.Size = new System.Drawing.Size(121, 30);
+            this.button19.TabIndex = 46;
+            this.button19.Text = "A (delta)";
+            this.button19.UseVisualStyleBackColor = true;
+            this.button19.Click += new System.EventHandler(this.button19_Click);
+            // 
+            // button20
+            // 
+            this.button20.Location = new System.Drawing.Point(266, 138);
+            this.button20.Name = "button20";
+            this.button20.Size = new System.Drawing.Size(121, 34);
+            this.button20.TabIndex = 45;
+            this.button20.Text = "B (delta)";
+            this.button20.UseVisualStyleBackColor = true;
+            this.button20.Click += new System.EventHandler(this.button20_Click);
             // 
             // manualBox
             // 
@@ -618,7 +759,7 @@ namespace vector_accelerator_project
             this.PNAtabPage.Location = new System.Drawing.Point(4, 29);
             this.PNAtabPage.Name = "PNAtabPage";
             this.PNAtabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.PNAtabPage.Size = new System.Drawing.Size(430, 516);
+            this.PNAtabPage.Size = new System.Drawing.Size(430, 550);
             this.PNAtabPage.TabIndex = 1;
             this.PNAtabPage.Text = "PNA";
             this.PNAtabPage.UseVisualStyleBackColor = true;
@@ -1154,140 +1295,6 @@ namespace vector_accelerator_project
             this.textBox6.TabIndex = 44;
             this.textBox6.Text = "Made by Patrick Kon 2019";
             // 
-            // segmentBox
-            // 
-            this.segmentBox.Controls.Add(this.segmentGridButton);
-            this.segmentBox.Controls.Add(this.segmentNormalButton);
-            this.segmentBox.Controls.Add(this.label18);
-            this.segmentBox.Controls.Add(this.textBox7);
-            this.segmentBox.Controls.Add(this.button18);
-            this.segmentBox.Controls.Add(this.button17);
-            this.segmentBox.Controls.Add(this.button22);
-            this.segmentBox.Controls.Add(this.button16);
-            this.segmentBox.Controls.Add(this.button21);
-            this.segmentBox.Controls.Add(this.button12);
-            this.segmentBox.Controls.Add(this.button19);
-            this.segmentBox.Controls.Add(this.button20);
-            this.segmentBox.Location = new System.Drawing.Point(12, 299);
-            this.segmentBox.Name = "segmentBox";
-            this.segmentBox.Size = new System.Drawing.Size(407, 247);
-            this.segmentBox.TabIndex = 52;
-            this.segmentBox.TabStop = false;
-            this.segmentBox.Text = "Input by segment:";
-            // 
-            // segmentGridButton
-            // 
-            this.segmentGridButton.AutoSize = true;
-            this.segmentGridButton.Location = new System.Drawing.Point(152, 26);
-            this.segmentGridButton.Name = "segmentGridButton";
-            this.segmentGridButton.Size = new System.Drawing.Size(64, 24);
-            this.segmentGridButton.TabIndex = 50;
-            this.segmentGridButton.Text = "Grid";
-            this.segmentGridButton.UseVisualStyleBackColor = true;
-            this.segmentGridButton.CheckedChanged += new System.EventHandler(this.segmentGridButton_CheckedChanged);
-            // 
-            // segmentNormalButton
-            // 
-            this.segmentNormalButton.AutoSize = true;
-            this.segmentNormalButton.Checked = true;
-            this.segmentNormalButton.Location = new System.Drawing.Point(14, 26);
-            this.segmentNormalButton.Name = "segmentNormalButton";
-            this.segmentNormalButton.Size = new System.Drawing.Size(84, 24);
-            this.segmentNormalButton.TabIndex = 49;
-            this.segmentNormalButton.TabStop = true;
-            this.segmentNormalButton.Text = "Normal";
-            this.segmentNormalButton.UseVisualStyleBackColor = true;
-            this.segmentNormalButton.CheckedChanged += new System.EventHandler(this.segmentNormalButton_CheckedChanged);
-
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(6, 60);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(176, 20);
-            this.label18.TabIndex = 40;
-            this.label18.Text = "Point Input (format \"Z\"):";
-            // 
-            // textBox7
-            // 
-            this.textBox7.Location = new System.Drawing.Point(208, 57);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(179, 26);
-            this.textBox7.TabIndex = 39;
-            // 
-            // button18
-            // 
-            this.button18.Location = new System.Drawing.Point(135, 138);
-            this.button18.Name = "button18";
-            this.button18.Size = new System.Drawing.Size(121, 34);
-            this.button18.TabIndex = 43;
-            this.button18.Text = "B (end)";
-            this.button18.UseVisualStyleBackColor = true;
-            // 
-            // button17
-            // 
-            this.button17.Location = new System.Drawing.Point(135, 102);
-            this.button17.Name = "button17";
-            this.button17.Size = new System.Drawing.Size(121, 30);
-            this.button17.TabIndex = 44;
-            this.button17.Text = "A (end)";
-            this.button17.UseVisualStyleBackColor = true;
-            // 
-            // button22
-            // 
-            this.button22.Location = new System.Drawing.Point(209, 195);
-            this.button22.Name = "button22";
-            this.button22.Size = new System.Drawing.Size(160, 34);
-            this.button22.TabIndex = 48;
-            this.button22.Text = "Clear all segments";
-            this.button22.UseVisualStyleBackColor = true;
-            // 
-            // button16
-            // 
-            this.button16.Location = new System.Drawing.Point(8, 138);
-            this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(121, 34);
-            this.button16.TabIndex = 42;
-            this.button16.Text = "B (start)";
-            this.button16.UseVisualStyleBackColor = true;
-            // 
-            // button21
-            // 
-            this.button21.Location = new System.Drawing.Point(51, 195);
-            this.button21.Name = "button21";
-            this.button21.Size = new System.Drawing.Size(121, 34);
-            this.button21.TabIndex = 47;
-            this.button21.Text = "Add Segment";
-            this.button21.UseVisualStyleBackColor = true;
-            // 
-            // button12
-            // 
-            this.button12.Location = new System.Drawing.Point(8, 102);
-            this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(121, 30);
-            this.button12.TabIndex = 41;
-            this.button12.Text = "A (start)";
-            this.button12.UseVisualStyleBackColor = true;
-            // 
-            // button19
-            // 
-            this.button19.Location = new System.Drawing.Point(266, 102);
-            this.button19.Name = "button19";
-            this.button19.Size = new System.Drawing.Size(121, 30);
-            this.button19.TabIndex = 46;
-            this.button19.Text = "A (delta)";
-            this.button19.UseVisualStyleBackColor = true;
-            // 
-            // button20
-            // 
-            this.button20.Location = new System.Drawing.Point(266, 138);
-            this.button20.Name = "button20";
-            this.button20.Size = new System.Drawing.Size(121, 34);
-            this.button20.TabIndex = 45;
-            this.button20.Text = "B (delta)";
-            this.button20.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -1318,6 +1325,8 @@ namespace vector_accelerator_project
             this.groupBox1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.translatorTabPage.ResumeLayout(false);
+            this.segmentBox.ResumeLayout(false);
+            this.segmentBox.PerformLayout();
             this.manualBox.ResumeLayout(false);
             this.manualBox.PerformLayout();
             this.axisCinputBox.ResumeLayout(false);
@@ -1335,8 +1344,6 @@ namespace vector_accelerator_project
             this.tabControl2.ResumeLayout(false);
             this.StartupConfig.ResumeLayout(false);
             this.StartupConfig.PerformLayout();
-            this.segmentBox.ResumeLayout(false);
-            this.segmentBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

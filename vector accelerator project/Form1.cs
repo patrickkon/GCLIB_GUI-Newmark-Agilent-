@@ -1000,9 +1000,5 @@ namespace vector_accelerator_project
         {
             unitChangeHandler();
         }
-
-
-
-
     }
 }
