@@ -134,8 +134,8 @@ namespace vector_accelerator_project
             bool validIncrement_y = (Math.Abs(Segment_positions.Last()[2]) > 0) ? (Segment_positions.Last()[1] - Segment_positions.Last()[0]) % Segment_positions.Last()[2] == 0 ? true : false : false;
 
             // sub-section2: edge case of 0 increment:
-            validIncrement_y = (validIncrement_y == false && increment_y == 0) ? (anchorStart_y - anchorEnd_y == 0) ? true : false : false;
-            validIncrement_x = (validIncrement_x == false && increment_x == 0) ? (anchorStart_x - anchorEnd_x == 0) ? true : false : false;
+            validIncrement_y = (validIncrement_y == false && increment_y == 0) ? (anchorStart_y - anchorEnd_y == 0) ? true : false : validIncrement_y;
+            validIncrement_x = (validIncrement_x == false && increment_x == 0) ? (anchorStart_x - anchorEnd_x == 0) ? true : false : validIncrement_x;
 
             if (!validIncrement_x || !validIncrement_y)
             {
@@ -155,7 +155,12 @@ namespace vector_accelerator_project
                 Segment_positions.Last()[5] = increment_x;
 
                 Segment_positions.Add(new int[6] { 0, 0, 0, 0, 0, 0 });
+
+                // Prevent infinite loop
+                if (increment_y == 0 && increment_x == 0) break;
             }
+
+            display?.Invoke();
 
             return true;
         }
@@ -499,7 +504,7 @@ namespace vector_accelerator_project
                         // i add VNA stuff in now:
                         analyzer.PNA_scan(movementVariables.Start_position, movementVariables);
 
-                        if (movementVariables.Start_position[0] == a[1] || movementVariables.Start_position[1] == a[4]) break;                      
+                        if (movementVariables.Start_position[0] == a[1] && movementVariables.Start_position[1] == a[4]) break;                      
                     }
                     counter += 1;
                 }

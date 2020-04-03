@@ -992,13 +992,13 @@ namespace vector_accelerator_project
         // Update: 1 april 2020: fast grid movement compatibility
         private void segmentNormalButton_CheckedChanged(object sender, EventArgs e)
         {
-            unitChangeHandler();
+           // keeping empty. only need checkbutton status elsewhere
         }
 
         // Update: 1 april 2020: fast grid movement compatibility
         private void segmentGridButton_CheckedChanged(object sender, EventArgs e)
         {
-            unitChangeHandler();
+            // keeping empty. only need checkbutton status elsewhere
         }
     }
 }
