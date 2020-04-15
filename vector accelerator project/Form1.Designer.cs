@@ -412,7 +412,7 @@ namespace vector_accelerator_project
             // 
             // originButton
             // 
-            this.originButton.Location = new System.Drawing.Point(1390, 4);
+            this.originButton.Location = new System.Drawing.Point(1189, 4);
             this.originButton.Name = "originButton";
             this.originButton.Size = new System.Drawing.Size(124, 34);
             this.originButton.TabIndex = 17;
@@ -1133,7 +1133,7 @@ namespace vector_accelerator_project
             // 
             // returnOriginButton
             // 
-            this.returnOriginButton.Location = new System.Drawing.Point(1396, 4);
+            this.returnOriginButton.Location = new System.Drawing.Point(1329, 4);
             this.returnOriginButton.Name = "returnOriginButton";
             this.returnOriginButton.Size = new System.Drawing.Size(134, 34);
             this.returnOriginButton.TabIndex = 29;
