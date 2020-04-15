@@ -70,19 +70,22 @@ namespace vector_accelerator_project
     class PNA
     {
         public enum MEASUREMENT { S11 = 0, S12 = 1, S21 = 2, S22 = 3};
+        // UPDATE: 15/4: Changed format order to align with NADATAFORMAT
         public enum FORMAT {
-            LogMag = 0,
-            Phase = 1, 
-            GroupDelay = 2,
-            SmithChart = 3, 
-            Polar = 4, 
-            LinearMag = 5, 
-            SWR = 6, 
-            Real = 7, 
-            Imaginary = 8};
+            LinMag = 0,
+            LogMag = 1,
+            Phase = 2,  
+            Polar = 3,
+            Smith = 4,
+            Delay = 5,
+            Real = 6, 
+            Imaginary = 7,
+            SWR = 8,
+        };
+        
 
-        // Pat: I uncommented this. Appears to be a mistake
-        private bool online;
+    // Pat: I uncommented this. Appears to be a mistake
+    private bool online;
         private AgilentPNA835x.Application application; //send all instructions via this variable "application" which repr. PNA
         private IChannel channel;
         private IArrayTransfer measurement;
@@ -218,7 +221,14 @@ namespace vector_accelerator_project
             channel.IFBandwidth = ifbw; //decreasing IF bandwidth has effect similar to avg'g but takes longer __ I disagree
             
             application.CreateMeasurement(2, type.ToString(), 1, 1); //make the first argument 1 for S11, 2 for S21, or whatever the calset says
-            measurement = (IArrayTransfer)application.ActiveMeasurement;        
+
+
+            // UPDATE 15/4: fixing format changing, make it work 
+            IMeasurement measurementSet = application.ActiveMeasurement;
+            measurementSet.Format = (NADataFormat)format;
+
+            measurement = (IArrayTransfer)measurementSet; 
+         
         }
 
         // run PNA VNA scanning when position has been reached by controller:

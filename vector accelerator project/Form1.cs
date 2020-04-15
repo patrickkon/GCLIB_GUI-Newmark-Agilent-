@@ -179,17 +179,19 @@ namespace vector_accelerator_project
 
             this.comboBoxMeasure.SelectedIndex = (int)PNA.MEASUREMENT.S11; // default measurement setting
 
+            // UPDATE 15/4: fix for format changing. 
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.LinMag, "Linear Magnitude");
             this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.LogMag, "Log Magnitude");
             this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.Phase, "Phase");
-            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.GroupDelay, "Group Delay");
-            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.SmithChart, "Smith Chart");
             this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.Polar, "Polar");
-            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.LinearMag, "Linear Magnitude");
-            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.SWR, "SWR");
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.Smith, "Smith");
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.Delay, "Delay");
             this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.Real, "Real");
             this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.Imaginary, "Imaginary");
-        
-            this.comboBoxFormat.SelectedIndex = (int)PNA.FORMAT.LinearMag;
+            this.comboBoxFormat.Items.Insert((int)PNA.FORMAT.SWR, "SWR");
+           
+
+            this.comboBoxFormat.SelectedIndex = (int)PNA.FORMAT.LinMag;
         }
 
         private void numericUpDownPoints_ValueChanged(object sender, EventArgs e)
@@ -1000,5 +1002,6 @@ namespace vector_accelerator_project
         {
             // keeping empty. only need checkbutton status elsewhere
         }
+
     }
 }
