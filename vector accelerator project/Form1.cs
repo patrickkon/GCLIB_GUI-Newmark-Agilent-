@@ -26,6 +26,11 @@ namespace vector_accelerator_project
         //e.g. are we connected or not..
         gclib gclib = null;
 
+
+        // global persistent variables (used in movementVariables_mm):
+        private int myMmToStepper_unitAxisC;
+        private int myMmToStepper_unitAxisAB;
+
         #region "Might remove"
 
         // for abs_position the coor will be constantly displayed/updated, so I use this method:
@@ -140,6 +145,10 @@ namespace vector_accelerator_project
             movementVariables = new MovementVariables();
             movementType = new MovementType(analyzer, this, gclib/*, ref movementVariables*/); // declaring here for the sole purpose of allowing "general relative movement"
 
+            // UPDATE 30/4/20: Set up persistent variables (used in movementVariables):
+            myMmToStepper_unitAxisAB = movementVariables.mmToStepper_unitAxisAB;
+            myMmToStepper_unitAxisC = movementVariables.mmToStepper_unitAxisC;
+
 
             PrintOutput(textBox1, "Enter a FULL GOpen() address above and press Enter", PrintStyle.Instruction);
             PrintOutput(textBox1, "NOTE: This demo will attempt to move Axis A", PrintStyle.Instruction);
@@ -226,6 +235,10 @@ namespace vector_accelerator_project
                 on_unitSelected();
                 if (mmButton.Checked) movementVariables = new MovementVariables_mmUnit();
                 else if (stepperButton.Checked) movementVariables = new MovementVariables_stepperUnit();
+
+                // UPDATE 30/4/20:
+                movementVariables.mmToStepper_unitAxisAB = myMmToStepper_unitAxisAB;
+                movementVariables.mmToStepper_unitAxisC = myMmToStepper_unitAxisC;
             }
         }
 
@@ -1003,5 +1016,34 @@ namespace vector_accelerator_project
             // keeping empty. only need checkbutton status elsewhere
         }
 
+        private void label11_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox9_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        // Section: calibration settings
+
+        // Axis-c Calibration Set button:
+        private void button14_Click(object sender, EventArgs e)
+        {
+            int value;
+            Int32.TryParse(unitCalibrateTextBox.Text, out value);
+            myMmToStepper_unitAxisC = value;
+            movementVariables.mmToStepper_unitAxisC = value;
+        }
+
+        // Axis-a + Axis-b Calibration Set button:
+        private void button26_Click(object sender, EventArgs e)
+        {
+            int value;
+            Int32.TryParse(unitCalibrateTextBox.Text, out value);
+            myMmToStepper_unitAxisAB = value;
+            movementVariables.mmToStepper_unitAxisAB = value;
+        }
     }
 }

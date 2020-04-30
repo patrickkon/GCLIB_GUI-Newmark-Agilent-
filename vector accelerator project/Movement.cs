@@ -35,6 +35,10 @@ namespace vector_accelerator_project
         public virtual int Speed_c { get; set; } //recommended speed
 
 
+        // Calibration Units (stepper units per mm (assert Integer type)):
+        public virtual int mmToStepper_unitAxisC { get; set; }
+        public virtual int mmToStepper_unitAxisAB { get; set; }
+
         public MovementVariables()
         {
             //Variables that store coordinates:
@@ -56,6 +60,13 @@ namespace vector_accelerator_project
             Speed_a = 5000; //recommended speed
             Speed_b = 5000; //recommended speed
             Speed_c = 400000; //recommended speed
+
+
+            // UPDATE ON UNITS: 2000 => 8mm , 20000 => 80mm
+            // Set as DEFAULT. 
+            // Override option possible.
+            mmToStepper_unitAxisC = 14970;
+            mmToStepper_unitAxisAB = 250;
         }
 
         public virtual bool set_StartPosition(int index, int value) { return true; }
@@ -236,30 +247,48 @@ namespace vector_accelerator_project
         public MovementVariables_mmUnit()
             : base()
         {
+            // Increment_unit = 1;
         }
 
         //Variables that store other parameters:
         private int axis_c_drop_by;
         private int axis_c_rest_position;
+        // private int _increment_unit;
+
         public override int Axis_c_drop_by
         {
             get => axis_c_drop_by;
-            set => axis_c_drop_by = value * 14970;
+            // set => axis_c_drop_by = value * 14970;
 
+            // V2 Update 29/4:
+            set => axis_c_drop_by = value * mmToStepper_unitAxisC;
         }  
         public override int Axis_c_rest_position
         {
             get => axis_c_rest_position;
-            set => axis_c_rest_position = value * 14970;
+            // set => axis_c_rest_position = value * 14970;
+
+            // V2 Update 29/4:
+            set => axis_c_rest_position = value * mmToStepper_unitAxisC;
         }
 
-        public override int Increment_unit { get; set; }
+        public override int Increment_unit
+        {
+            get; set;
+            //  get { return _increment_unit * mmToStepper_unitAxisAB; }
+
+
+            // set { _increment_unit = value; }
+        }
 
         public override bool set_StartPosition(int index, int value)
         {
             try
             {
-                Start_position[index] = value * 207;
+                // Start_position[index] = value * 207;
+
+                // V2 Update 29/4:
+                Start_position[index] = value * mmToStepper_unitAxisAB;
             }
             catch (Exception e)
             {
@@ -273,7 +302,10 @@ namespace vector_accelerator_project
         {
             try
             {
-                End_position[index] = value * 207;
+               //  End_position[index] = value * 207;
+
+                // V2 Update 29/4:
+                End_position[index] = value * mmToStepper_unitAxisAB;
             }
             catch (Exception e)
             {
@@ -287,7 +319,10 @@ namespace vector_accelerator_project
         {
             try
             {
-                Intermediate_positions.Last()[index] = value * 207;
+                // Intermediate_positions.Last()[index] = value * 207;
+
+                // V2 Update 29/4:
+                Intermediate_positions.Last()[index] = value * mmToStepper_unitAxisAB;
             }
             catch (Exception e)
             {
@@ -301,7 +336,10 @@ namespace vector_accelerator_project
         {
             try
             {
-                Segment_positions.Last()[index] = value * 207;
+                // Segment_positions.Last()[index] = value * 207;
+
+                // V2 Update 29/4:
+                Segment_positions.Last()[index] = value * mmToStepper_unitAxisAB;
             }
             catch (Exception e)
             {
