@@ -128,6 +128,11 @@ namespace vector_accelerator_project
             this.mmButton = new System.Windows.Forms.RadioButton();
             this.label21 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
+            this.button26 = new System.Windows.Forms.Button();
+            this.button14 = new System.Windows.Forms.Button();
+            this.unitCalibrateTextBox = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.MainToolStrip.SuspendLayout();
@@ -148,6 +153,7 @@ namespace vector_accelerator_project
             this.configBox.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.StartupConfig.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox1
@@ -306,17 +312,16 @@ namespace vector_accelerator_project
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(325, 52);
+            this.label5.Location = new System.Drawing.Point(332, 67);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(104, 20);
+            this.label5.Size = new System.Drawing.Size(133, 47);
             this.label5.TabIndex = 20;
-            this.label5.Text = "Unit (>300):";
+            this.label5.Text = "Stepper Units (>300):";
             this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // unitbox
             // 
-            this.unitbox.Location = new System.Drawing.Point(329, 81);
+            this.unitbox.Location = new System.Drawing.Point(341, 120);
             this.unitbox.Name = "unitbox";
             this.unitbox.Size = new System.Drawing.Size(100, 26);
             this.unitbox.TabIndex = 17;
@@ -1272,13 +1277,65 @@ namespace vector_accelerator_project
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.richTextBox2);
+            this.tabPage2.Controls.Add(this.button26);
+            this.tabPage2.Controls.Add(this.button14);
+            this.tabPage2.Controls.Add(this.unitCalibrateTextBox);
+            this.tabPage2.Controls.Add(this.label11);
             this.tabPage2.Location = new System.Drawing.Point(4, 29);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(435, 198);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Calibration";
+            this.tabPage2.Text = "Calibration (reset on close)";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // richTextBox2
+            // 
+            this.richTextBox2.Location = new System.Drawing.Point(28, 119);
+            this.richTextBox2.Name = "richTextBox2";
+            this.richTextBox2.ReadOnly = true;
+            this.richTextBox2.Size = new System.Drawing.Size(250, 68);
+            this.richTextBox2.TabIndex = 55;
+            this.richTextBox2.Text = "Default values:\nAxis-a, Axis-b: 250\nAxis-c: 14970\n\n\n\n\n\n\n\n\n";
+            // 
+            // button26
+            // 
+            this.button26.Location = new System.Drawing.Point(276, 58);
+            this.button26.Name = "button26";
+            this.button26.Size = new System.Drawing.Size(112, 50);
+            this.button26.TabIndex = 54;
+            this.button26.Text = "Axis-a/Axis-b Set";
+            this.button26.UseVisualStyleBackColor = true;
+            this.button26.Click += new System.EventHandler(this.button26_Click);
+            // 
+            // button14
+            // 
+            this.button14.Location = new System.Drawing.Point(185, 58);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(85, 50);
+            this.button14.TabIndex = 53;
+            this.button14.Text = "Axis-c Set";
+            this.button14.UseVisualStyleBackColor = true;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
+            // 
+            // unitCalibrateTextBox
+            // 
+            this.unitCalibrateTextBox.Location = new System.Drawing.Point(198, 24);
+            this.unitCalibrateTextBox.Name = "unitCalibrateTextBox";
+            this.unitCalibrateTextBox.Size = new System.Drawing.Size(139, 26);
+            this.unitCalibrateTextBox.TabIndex = 51;
+            this.unitCalibrateTextBox.TextChanged += new System.EventHandler(this.textBox9_TextChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(18, 27);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(177, 20);
+            this.label11.TabIndex = 52;
+            this.label11.Text = "Stepper units/mm (INT):";
+            this.label11.Click += new System.EventHandler(this.label11_Click);
             // 
             // saveFileDialog
             // 
@@ -1344,6 +1401,8 @@ namespace vector_accelerator_project
             this.tabControl2.ResumeLayout(false);
             this.StartupConfig.ResumeLayout(false);
             this.StartupConfig.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1450,6 +1509,11 @@ namespace vector_accelerator_project
         private Button button12;
         private Button button19;
         private Button button20;
+        private TextBox unitCalibrateTextBox;
+        private Label label11;
+        private Button button14;
+        private Button button26;
+        private RichTextBox richTextBox2;
     }
 }
 
