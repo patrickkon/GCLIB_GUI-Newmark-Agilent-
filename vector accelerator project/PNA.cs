@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using AgilentPNA835x;
 using System.Drawing;
 using System.IO;
+using CsvHelper;
 
 /// <remarks>
 /// Pat:
@@ -54,7 +55,9 @@ namespace vector_accelerator_project
         // when SaveData button is clicked, we eventually enter this function:
         private void saveFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.analyzer.SaveData(this.saveFileDialog.FileName);
+            // Get file extension type:
+            var extension = Path.GetExtension(this.saveFileDialog.FileName);
+            this.analyzer.SaveData(this.saveFileDialog.FileName, extension);
         }
 
         // when Clear PNA data button is clicked:
@@ -274,31 +277,78 @@ namespace vector_accelerator_project
 
 
         //Saving PNA datapoints that have been recorded:
-        public void SaveData(string filename)
+        public void SaveData(string filename, string fileExt)
         {
-            using (StreamWriter sw = File.CreateText(filename))
+            // Check if file type is CSV (if yes use special save):
+            fileExt = fileExt.ToLower();
+            if(fileExt != ".csv")
             {
-
-                if (this.dataPoints.Count != 0)
+                using (StreamWriter sw = File.CreateText(filename))
                 {
-                    sw.WriteLine("Number of probe points: {0}", this.dataPoints.Count);
-                    sw.WriteLine("Number of sweep points: {0}", this.dataPoints[0].Data.Length);
-                }
-                foreach (DataPoint dataPoint in this.dataPoints)
-                {
-                    sw.Write("{0}, {1}, {2}, ",
-                        dataPoint.Location.X,
-                        dataPoint.Location.Y,
-                        dataPoint.LocationZ);
-                    foreach (NAComplex nadata in dataPoint.Data)
+                    if (this.dataPoints.Count != 0)
                     {
-                        sw.Write("{0}, {1}, ",
-                            nadata.Re, nadata.Im);
+                        sw.WriteLine("Number of probe points: {0}", this.dataPoints.Count);
+                        sw.WriteLine("Number of sweep points: {0}", this.dataPoints[0].Data.Length);
                     }
-                    sw.WriteLine();
+                    foreach (DataPoint dataPoint in this.dataPoints)
+                    {
+                        sw.Write("{0}, {1}, {2}, ",
+                            dataPoint.Location.X,
+                            dataPoint.Location.Y,
+                            dataPoint.LocationZ);
+                        foreach (NAComplex nadata in dataPoint.Data)
+                        {
+                            sw.Write("{0}, {1}, ",
+                                nadata.Re, nadata.Im);
+                        }
+                        sw.WriteLine();
+                    }
+                    sw.Close();
                 }
-                sw.Close();
             }
+            else
+            {
+                // if is CSV file ext:
+                using (StreamWriter sw = File.CreateText(filename))
+                using (var csv = new CsvWriter(sw, System.Globalization.CultureInfo.InvariantCulture))
+                {
+                    // get column length of datapoints of each probepoint:
+                    if(this.dataPoints.Count != 0)
+                    {
+                        int dataColLength = this.dataPoints[0].Data.Length;
+                        // SECTION: write headers:
+                        // 1st: x y z coor:
+                        csv.WriteField("X");
+                        csv.WriteField("Y");
+                        csv.WriteField("Z");
+                        for (int i = 0; i < dataColLength; i++)
+                        {
+                            csv.WriteField("Datapoint " + i + " Re");
+                            csv.WriteField("Datapoint " + i + " Im");
+                        }
+                        csv.NextRecord();
+
+
+                        // SECTION: write data row by row:
+                        foreach (DataPoint dataPoint in this.dataPoints)
+                        {
+                            csv.WriteField(dataPoint.Location.X);
+                            csv.WriteField(dataPoint.Location.Y);
+                            csv.WriteField(dataPoint.LocationZ);
+
+                            foreach (NAComplex nadata in dataPoint.Data)
+                            {
+                                csv.WriteField(nadata.Re);
+                                csv.WriteField(nadata.Im);
+                            }
+                            csv.NextRecord();
+                        }
+                    }
+                    
+                }
+            }
+
+
         }
 
         // Clearing PNA dataPoints that have been recorded:
