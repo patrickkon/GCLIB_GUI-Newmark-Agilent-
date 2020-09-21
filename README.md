@@ -8,15 +8,20 @@ This application integrates the functions of a [Newmark Galil controller](https:
 For documentation, please read the attached "VNA user manual.pdf" in the root folder. <br/>
 
 <br/>
-For enquiries, feel free to contact me here. <br/>
 
 ## Run
 #### To run the built executable directly on a PNA machine:
 1.	Download the entire root directory “Final executable backup”, place it on your PNA machine. 
 2.	Execute vector_accelerator_project.exe”
 
+## Enquiries
+#### Here are some contact points:
+1. File an issue here
+2. Reach me at patrikon2-c@my.cityu.edu.hk
+3. If you are unable to reach me: Contact [Dr. Kayode](https://scholar.google.com/citations?user=da14QzsAAAAJ&hl=en) or [Dr. Alex](ee.cityu.edu.hk/~amhwong/) 
 
-
+<br/>
+<br/>
 
 Note to self: 
 
