@@ -7,7 +7,6 @@ This application integrates the functions of a [Newmark Galil controller](https:
 ## Documentation
 For documentation, please read the attached "VNA user manual.pdf" in the root folder. <br/>
 
-<br/>
 
 ## Run
 #### To run the built executable directly on a PNA machine:
